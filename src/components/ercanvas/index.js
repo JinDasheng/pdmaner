@@ -191,7 +191,7 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
         minWidth: 80,
         minHeight: 40,
         enabled:  (node) => {
-          return !node.getProp('isLock') && (erRef.current.resizingEnabled(node) || mindRef.current.resizingEnabled(node));
+          return !node.getProp('isLock') && !node.getProp('autoSize') && (erRef.current.resizingEnabled(node) || mindRef.current.resizingEnabled(node));
         },
         preserveAspectRatio: (node) => {
           return erRef.current.preserveAspectRatio(node);

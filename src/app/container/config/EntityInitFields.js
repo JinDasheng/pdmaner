@@ -1,4 +1,4 @@
-import React, {useRef} from 'react';
+import React, {useCallback, useRef} from 'react';
 import { Table, SimpleTab, FormatMessage } from 'components';
 import {getPrefix} from '../../../lib/prefixUtil';
 import DefaultColumn from './DefaultColumn';
@@ -41,6 +41,11 @@ export default React.memo(({ prefix, dataSource, dataChange,
       });
       dataChange && dataChange(currentHeaders.current, 'profile.headers');
   }
+    const search = useCallback((f, value) => {
+        const reg = new RegExp((value || '')
+            .replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'i');
+        return reg.test(f.defName) || reg.test(f.defKey);
+    }, []);
   return <div className={`${currentPrefix}-setting-entity-init-fields`}><SimpleTab
       className={`${currentPrefix}-database-container-tab`}
       defaultActive={active.split('.')[1] || '1'}
@@ -49,6 +54,7 @@ export default React.memo(({ prefix, dataSource, dataChange,
           key: '1',
           title: FormatMessage.string({id: 'config.EntityInitFields'}),
           content: <Table
+              search={search}
               needHideInGraph={false}
               disableHeaderIcon
               getDataSource={getDataSource}

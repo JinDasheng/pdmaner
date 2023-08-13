@@ -90,3 +90,13 @@ export const unRepeated = (data = [], repeatKey) => {
   })
   return tempArray;
 }
+
+// 指定数据插入
+export const insertArray = (array, pKey, newData, keyName = 'id' ) => {
+  const tempNewData = [].concat(newData);
+  const tempArray = [...(array || [])];
+  const index = tempArray.findIndex(d => (typeof d === 'string' ? d : d[keyName]) === pKey);
+  index > -1 ? tempArray.splice(index + 1, 0, ...tempNewData)
+      : tempArray.push(...tempNewData)
+  return tempArray;
+}

@@ -1,4 +1,4 @@
-import React, { forwardRef } from 'react';
+import React, {forwardRef, useMemo} from 'react';
 import { Graph } from '@antv/x6';
 import '@antv/x6-react-shape';
 import { separator } from '../../../../../profile';
@@ -80,31 +80,8 @@ const Table = forwardRef(({node}, ref) => {
       </div>;
     });
   };
-  return <div
-    ref={ref}
-    className='chiner-er-table'
-    onDragOver={onDragOver}
-    onDrop={onDrop}
-    style={{color: node.getProp('fontColor')}}
-  >
-    <div
-      className='chiner-er-table-header'
-      style={{background: node.getProp('fillColor')}}
-    >
-      {
-        linkData.type ? <a style={{textDecoration: 'underline'}} onClick={nodeClickText}>{getTitle(data)}{store?.data.count > 0 ? `:${store?.data.count}` : ''}</a>
-            : `${getTitle(data)}${store?.data.count > 0 ? `:${store?.data.count}` : ''}`
-      }
-      {
-        data?.comment &&
-          <Tooltip title={data?.comment} force conversion={1} placement='top'>
-            <div className='chiner-er-table-header-icon'>
-              <div style={{borderRightColor: node.getProp('fillColor')}}>{}</div>
-            </div>
-          </Tooltip>
-      }
-    </div>
-    <div
+  const body = useMemo(() => {
+    return <div
       className='chiner-er-table-body'
       style={{background: calcColor(node.getProp('fillColor') || '#DDE5FF')}}
     >
@@ -119,20 +96,49 @@ const Table = forwardRef(({node}, ref) => {
         title={<div
           className='chiner-er-table-body'
           style={{
-            fontSize: '12px',
-            overflow: 'auto',
-        }}
-        >
+                fontSize: '12px',
+                overflow: 'auto',
+              }}
+          >
           {renderBody(data.fields.slice(sliceCount), (key) => {
-            return data.originWidth[key];
-          })}
+              return data.originWidth[key];
+            })}
         </div>}
       >
         <div
           style={{textAlign: 'center', position: 'fixed', bottom: 0, left: 0, width: '100%', cursor: 'pointer'}}
         >...</div>
       </Tooltip>}
-    </div>
+    </div>;
+  }, [data.maxWidth, store.data.targetPort, store.data.sourcePort]);
+  const title = `${getTitle(data)}${store?.data.count > 0 ? `:${store?.data.count}` : ''}`;
+  return <div
+    ref={ref}
+    className='chiner-er-table'
+    onDragOver={onDragOver}
+    onDrop={onDrop}
+    style={{color: node.getProp('fontColor')}}
+  >
+    <Tooltip title={title}>
+      <div
+        className='chiner-er-table-header'
+        style={{background: node.getProp('fillColor')}}
+      >
+        {
+          linkData.type ?
+            <a style={{textDecoration: 'underline'}} onClick={nodeClickText}>{title}</a> : title
+        }
+        {
+            data?.comment &&
+            <Tooltip title={data?.comment} force conversion={1} placement='top'>
+              <div className='chiner-er-table-header-icon'>
+                <div style={{borderRightColor: node.getProp('fillColor')}}>{}</div>
+              </div>
+            </Tooltip>
+        }
+      </div>
+    </Tooltip>
+    {body}
   </div>;
 });
 

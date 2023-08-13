@@ -1,4 +1,11 @@
-import React, {useState, useEffect, useRef, forwardRef, useImperativeHandle} from 'react';
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  forwardRef,
+  useImperativeHandle,
+  useCallback,
+} from 'react';
 import ReactDom from 'react-dom';
 
 import './style/index.less';
@@ -42,7 +49,7 @@ const Tooltip = React.memo(forwardRef(({prefix, children, offsetLeft = 0, offset
       clearTimeout(overStatusRef.current);
     }
     statusRef.current = setTimeout(() => {
-     containerRef.current && setTooltipVisible(false);
+      containerRef.current && setTooltipVisible(false);
     }, 100);
     !propagation && e.stopPropagation();
   };
@@ -79,17 +86,24 @@ const Tooltip = React.memo(forwardRef(({prefix, children, offsetLeft = 0, offset
       }
     }
   }, [tooltipVisible]);
-  return [React.cloneElement(children, {
-    key: 'parent',
-    onMouseOver: _onMouseOver,
-    onMouseLeave: _onMouseLeave,
-    onClick: (e) => {
-      if (clickClose) {
+  const Compose = useCallback(() => {
+    useEffect(() => {
+      return () => {
         setTooltipVisible(false);
-      }
-      children.props?.onClick?.(e);
-    },
-  }),
+      };
+    }, []);
+    return React.cloneElement(children, {
+      onMouseOver: _onMouseOver,
+      onMouseLeave: _onMouseLeave,
+      onClick: (e) => {
+        if (clickClose) {
+          setTooltipVisible(false);
+        }
+        children.props?.onClick?.(e);
+      },
+    });
+  }, [children]);
+  return [<Compose key='parent'/>,
   tooltipVisible && visible && ReactDom.createPortal(<div
     className={`${currentPrefix}-tooltip-container`}
     onMouseOver={onContainerMouseOver}

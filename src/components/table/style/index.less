@@ -42,6 +42,12 @@
     height: 100%;
     display: flex;
     flex-direction: column;
+    position: relative;
+    &-tools {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+    }
   }
   &-content {
     flex-grow: 1;
@@ -182,11 +188,11 @@
     &-setting {
       font-size: 12px;
       margin-bottom: 3px;
-      margin-right: 3px;
       margin-left: 10px;
       color: @primary-color;
       cursor: pointer;
       text-decoration: underline;
+      white-space: nowrap;
     }
     & > span {
       display: flex !important;
@@ -202,11 +208,6 @@
       i {
         //line-height: 25px;
       }
-    }
-    &-search {
-      position: absolute;
-      right: 20px;
-      top: 4px
     }
     &-help {
       background: @background-color;

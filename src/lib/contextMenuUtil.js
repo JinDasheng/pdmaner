@@ -45,6 +45,7 @@ import * as Component from 'components';
 import Note from '../app/container/tools/note';
 import {saveImages} from './middle';
 import moment from 'moment';
+import {insertArray} from './array_util';
 
 const opt = [{
   key: 'add',
@@ -623,7 +624,7 @@ const addOpt = (dataSource, menu, updateDataSource, oldData = {}, title, custome
                 if (data.group.includes(v.id)) {
                   return {
                     ...v,
-                    [refName]: v?.[refName]?.concat(modalData.empty.id),
+                    [refName]: insertArray(v?.[refName], dataKey, modalData.empty.id),
                   }
                 }
                 return v;
@@ -641,7 +642,7 @@ const addOpt = (dataSource, menu, updateDataSource, oldData = {}, title, custome
               ...tempDataSource,
               [realType]: {
                 ...(dataSource?.[realType] || {}),
-                mappings: (dataSource?.[realType]?.mappings || []).concat(getData())
+                mappings: insertArray(dataSource?.[realType]?.mappings, dataKey, getData())
               }
             };
           } else if (realType === 'dataTypeSupports' || realType === 'appCode') {
@@ -650,29 +651,30 @@ const addOpt = (dataSource, menu, updateDataSource, oldData = {}, title, custome
               ...tempDataSource,
               profile: {
                 ...(tempDataSource?.profile || {}),
-                dataTypeSupports: (tempDataSource?.profile?.dataTypeSupports || [])
-                  .concat(_.pick(newData, ['defKey', 'id'])),
+                dataTypeSupports: insertArray(tempDataSource?.profile?.dataTypeSupports || [],
+                    dataKey, _.pick(newData, ['defKey', 'id'])),
                 default: {
                   ..._.get(tempDataSource, 'profile.default', {}),
                   db: newData.defaultDb ? newData.id :
                     _.get(tempDataSource, 'profile.default.db', newData.id),
                 },
-                codeTemplates: _.get(tempDataSource, 'profile.codeTemplates', []).concat({
-                  applyFor: newData.id,
-                  type: realType === 'appCode' ? 'appCode' : (newData.type || 'dbDDL'),
-                  ...defaultTemplate[`${realType === 'appCode' ? 'appCode' : (newData.type || 'dbDDL')}Template`].reduce((a, b) => {
-                    const temp = {...a};
-                    temp[b] = newData[b] || '';
-                    return temp;
-                  }, {})
-                })
+                codeTemplates: insertArray(_.get(tempDataSource, 'profile.codeTemplates', [])
+                    , dataKey, {
+                      applyFor: newData.id,
+                      type: realType === 'appCode' ? 'appCode' : (newData.type || 'dbDDL'),
+                      ...defaultTemplate[`${realType === 'appCode' ? 'appCode' : (newData.type || 'dbDDL')}Template`].reduce((a, b) => {
+                        const temp = {...a};
+                        temp[b] = newData[b] || '';
+                        return temp;
+                      }, {})
+                    }, 'applyFor')
               },
             }, _.get(tempDataSource, 'profile.default.db'));
           } else {
             // viewGroup domains
             tempDataSource = {
               ...tempDataSource,
-              [realType]: (dataSource?.[realType] || []).concat(getData()),
+              [realType]: insertArray(dataSource?.[realType], dataKey, getData()),
             };
           }
           updateDataSource && updateDataSource({...tempDataSource});
@@ -926,9 +928,11 @@ export const getCopyRealData = (dataSource, data) => {
   return data.map(d => {
     return {
       ...d,
+      indexes: (data.indexes || []).map(i => ({...i, id: Math.uuid()})),
       fields: (d.fields || []).map(f => {
         return {
           ...f,
+          id: Math.uuid(),
           otherData: _.pick(transform(f, dataSource, db), ['domainData', 'refDictData', 'uiHintData', 'type']),
         }
       })
@@ -951,10 +955,13 @@ export const putCopyRealData = (dataSource, data) => {
   };
   return {
     ...data,
+    id: Math.uuid(),
+    indexes: (data.indexes || []).map(i => ({...i, id: Math.uuid()})),
     fields: (data.fields || []).map(f => {
       const domain = getDataId(dataSource.domains || [], f.otherData?.domainData, f.domain);
       return {
         ..._.omit(f, ['otherData']),
+        id: Math.uuid(),
         type: (domain ? null : f.otherData?.type) || f.type,
         len: domain ? '' : f.len,
         scale: domain ? '' : f.scale,
@@ -980,6 +987,12 @@ const copyOpt = (dataSource, menu, type = 'copy', cb) => {
       return data.includes(d.id);
     })
   };
+
+  const getCopyTemplateData = (dataSource, copyData) => {
+    const codeTemplates = _.get(dataSource, 'profile.codeTemplates', []);
+    const copyDataKeys = copyData.map(d => d.id);
+    return codeTemplates.filter(c => copyDataKeys.includes(c.applyFor));
+  }
   const getResult = (data, group) => {
     const tempOtherMenus = group ? otherMenus.filter(m => m.parentKey === group) : otherMenus;
     return checkData.filter(c => c.includes(dataType)).reduce((pre, next) => {
@@ -1024,6 +1037,8 @@ const copyOpt = (dataSource, menu, type = 'copy', cb) => {
         other.otherData = getCopyRealData(dataSource, getEntityData(dataSource, tempTypeData));
       } else if (dataType === 'entities' || dataType === 'entity' || dataType === 'view' || dataType === 'views') {
         tempTypeData = getCopyRealData(dataSource, tempTypeData);
+      } else if(dataType === 'dataType' || dataType === 'appCode'){
+        other.otherData = getCopyTemplateData(dataSource, tempTypeData);
       }
       Copy({ type, data: tempTypeData, ...other }, FormatMessage.string({id: `${type}Success`}));
     }
@@ -1144,7 +1159,7 @@ const injectEntities = (dataSource, entities, data) => {
 }
 
 const pasteOpt = (dataSource, menu, updateDataSource) => {
-  const { dataType, parentKey } = menu;
+  const { dataType, parentKey, dataKey } = menu;
   Paste((value) => {
     let data = {};
     try {
@@ -1178,13 +1193,13 @@ const pasteOpt = (dataSource, menu, updateDataSource) => {
           allKeys.push(key);
           const id = Math.uuid();
           if (dataType === 'dataType' || dataType === 'appCode') {
-            tempCodeTemplates = tempCodeTemplates
-              .concat(codeTemplates.filter(c => c.applyFor === e.id).map(c => {
-                return {
-                  ...c,
-                  applyFor: id,
-                };
-              }));
+            const newTemplate = (data.otherData || []).find(c => c.applyFor === e.id);
+            if(newTemplate) {
+              tempCodeTemplates.push({
+                ...newTemplate,
+                applyFor: id,
+              });
+            }
           } else if (dataType === 'entities' || dataType === 'entity' || dataType === 'view' || dataType === 'views') {
             return {
               ...putCopyRealData(dataSource, e),
@@ -1209,12 +1224,12 @@ const pasteOpt = (dataSource, menu, updateDataSource) => {
         const mainKeys = config.mainKey.split('.');
         let tempNewData = {};
         if (mainKeys.length > 1) {
-          tempNewData = _.set(dataSource, mainKeys, oldData.concat(realData));
+          tempNewData = _.set(dataSource, mainKeys, insertArray(oldData, dataKey, realData));
         } else {
           if (injectData) {
             tempNewData.entities = (dataSource.entities || []).concat(injectData.newEntity);
           }
-          tempNewData[config.mainKey] = oldData.concat(realData);
+          tempNewData[config.mainKey] = insertArray(oldData, dataKey, realData);
         }
         if (dataType === 'dataType' || dataType === 'appCode') {
           tempNewData.profile.codeTemplates = codeTemplates.concat(tempCodeTemplates);
@@ -1231,7 +1246,7 @@ const pasteOpt = (dataSource, menu, updateDataSource) => {
                 }
                 return {
                   ...v,
-                  [config.viewRefs]: (v[config.viewRefs] || []).concat(realData.map(e => e[config.key])),
+                  [config.viewRefs]: insertArray(v[config.viewRefs] || [], dataKey, realData.map(e => e[config.key])),
                   ...otherGroup,
                 }
               }

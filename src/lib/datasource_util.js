@@ -58,8 +58,8 @@ export const updateAllData = (dataSource) => {
   Object.keys(allTabData).reduce((p,n) => {
     return p.concat(allTabData[n])
   }, []).filter(t => t.data && !t.isInit).forEach(t => {
-    const typeName = allType.filter(all => t.type === all.type)[0]?.name;
-    const oldData = tempData[typeName].filter(e => e.id === t.data.id)[0] || t.data;
+    const typeName = allType.find(all => t.type === all.type)?.name;
+    const oldData = tempData[typeName].find(e => e.id === t.data.id) || t.data;
     if (!t.data.defKey && t.type !== 'diagram') {
       message = FormatMessage.string({
         id: 'defKeyValidateMessage',
@@ -179,6 +179,7 @@ export const updateAllData = (dataSource) => {
               pickFields.push('children');
             } else if(c.shape === 'table') {
               pickFields.push('size');
+              pickFields.push('autoSize');
             }
             if (d.relationType === 'entity') {
               pickFields.push('ports');
@@ -200,7 +201,7 @@ export const updateAllData = (dataSource) => {
         tempData = {
           ...tempData,
           [type.name]: _.get(tempData, type.name, []).map((d) => {
-            const currentData = tabsAllData[type.type].filter(t => t.id === d.id)[0];
+            const currentData = tabsAllData[type.type].find(t => t.id === d.id);
             if (currentData) {
               if (type.type === 'diagram') {
                 return pickCell(d, currentData);
@@ -229,7 +230,7 @@ export const updateAllData = (dataSource) => {
         }
       }
     });
-    const homeCover = (tabsAllData.diagram || []).filter(d => d.id === 'home-cover')[0];
+    const homeCover = (tabsAllData.diagram || []).find(d => d.id === 'home-cover');
     if(homeCover) {
       tempData = {
         ...tempData,
@@ -1084,8 +1085,12 @@ export const generatorKey = (newKey, data) => {
     return generatorKey(`${newKey}_1`, data);
   }
 }
-
+// 缓存文本宽度 减少dom计算渲染
+let textWidthCache = {};
 export  const getTextWidth = (text, font, weight = 'normal') => {
+  if(text in textWidthCache) {
+    return textWidthCache[text]
+  }
   let dom = document.getElementById('calcTextWidth');
   if (!dom) {
     dom = document.createElement('div');
@@ -1099,7 +1104,11 @@ export  const getTextWidth = (text, font, weight = 'normal') => {
     text.replace(/\r|\n|\r\n/g, '')
     : text;
   const width =  dom.getBoundingClientRect().width;
-  dom.innerText = '';
+  if(Object.keys(textWidthCache).length > 1000000) {
+    // 如果缓存数量超过百万 则清除数据 释放内存
+    textWidthCache = {}
+  }
+  textWidthCache[text] = width;
   return Math.ceil(width);
 };
 
@@ -1205,8 +1214,9 @@ export const getTitle = (data) => {
   });
 };
 
-export  const calcNodeData = ({data: preData, size, needTransform = true},
+export  const calcNodeData = ({data: preData, needTransform = true, ...rest},
                               nodeData, dataSource, groups) => {
+  const size = rest.autoSize ? null : rest.size
   // 节点源数据
   const headers = (nodeData?.headers || []).filter(h => {
     const columnOthers = (dataSource?.profile?.headers || [])
@@ -1227,8 +1237,10 @@ export  const calcNodeData = ({data: preData, size, needTransform = true},
   }
   const preFields = preData?.fields || [];
   fields.forEach((f) => {
-    const preF = preFields.filter(p => p.id === f.id)[0];
-    Object.keys(f).forEach((fName) => {
+    const preF = preFields.find(p => p.id === f.id);
+    Object.keys(f)
+        .filter(fName => headers.find(h => h.refKey === fName))
+        .forEach((fName) => {
       if (!maxWidth[fName]) {
         maxWidth[fName] = 0;
       }
@@ -1367,7 +1379,6 @@ export  const calcNodeData = ({data: preData, size, needTransform = true},
     }
     return w;
   }
-  console.log(maxWidth)
   return {
     width: realWidth,
     height: realHeight,
@@ -1381,7 +1392,7 @@ export  const calcNodeData = ({data: preData, size, needTransform = true},
 
 export const mapData2Table = (n, dataSource, updateFields, groups, commonPorts,
                               relationType, commonEntityPorts, nodeClickText) => {
-  const nodeData = dataSource?.entities?.filter(e => e.id === n.originKey)[0];
+  const nodeData = dataSource?.entities?.find(e => e.id === n.originKey);
   if (nodeData) {
     const { width, originWidth, height, fields, headers, maxWidth, ports } = calcNodeData(n, nodeData, dataSource, groups);
     return {

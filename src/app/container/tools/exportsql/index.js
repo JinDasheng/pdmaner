@@ -36,11 +36,11 @@ export default React.memo(({prefix, dataSource, templateType}) => {
   const codeTemplates = _.get(dataSource, 'profile.codeTemplates', []);
   const [visible, setVisible] = useState(false);
   const [codeData, setCodeData] = useState('');
-  const getCode = (template, select) => {
+  const getCode = (template, select, db) => {
     setVisible(true);
     postWorkerFuc('utils._getAllDataSQLByFilter', true, [
       dataSource,
-      templateType === 'dict' ? 'dictSQLTemplate' : defaultDb,
+      templateType === 'dict' ? 'dictSQLTemplate' : (db || defaultDb),
       template || templateRef.current,
       select,
     ]).then((res) => {
@@ -107,7 +107,7 @@ export default React.memo(({prefix, dataSource, templateType}) => {
       }
       tempA[type[1]].push(type[2]);
       return tempA;
-    }, {}));
+    }, {}), dataTypeSupport.applyFor);
     setMode(dataTypeSupport?.type === 'appCode' ? dataTypeSupport.applyFor : 'sql');
   };
   const _codeChange = (code) => {

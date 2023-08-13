@@ -440,7 +440,9 @@ export default class Mind {
             if (!isScroll && graph.isSelected(edge)) {
                 edgeNodeAddTool(edge, graph, id, () => {
                     this.dataChange && this.dataChange(this.graph.toJSON({diff: true}));
-                }, this.getDataSource, this.updateDataSource, this.updateLayout);
+                }, this.getDataSource, this.updateDataSource, {
+                    updateLayout: this.updateLayout,
+                });
             }
         }
     }
@@ -449,7 +451,9 @@ export default class Mind {
             if (!isScroll && graph.isSelected(node)) {
                 edgeNodeAddTool(node, graph, id, () => {
                     this.dataChange && this.dataChange(this.graph.toJSON({diff: true}));
-                }, this.getDataSource, this.updateDataSource, this.updateLayout);
+                }, this.getDataSource, this.updateDataSource, {
+                    updateLayout: this.updateLayout,
+                });
             }
         }
     };
@@ -460,7 +464,9 @@ export default class Mind {
             } else {
                 edgeNodeAddTool(cell, graph, id, () => {
                     this.dataChange && this.dataChange(this.graph.toJSON({diff: true}));
-                }, this.getDataSource, this.updateDataSource, this.updateLayout);
+                }, this.getDataSource, this.updateDataSource, {
+                    updateLayout: this.updateLayout,
+                });
             }
         }
     };
@@ -468,7 +474,9 @@ export default class Mind {
         if (this.isMindCell(cell) && graph.isSelected(cell)) {
             edgeNodeAddTool(cell, graph, id, () => {
                 this.dataChange && this.dataChange(this.graph.toJSON({diff: true}));
-            }, this.getDataSource, this.updateDataSource, this.updateLayout);
+            }, this.getDataSource, this.updateDataSource, {
+                updateLayout: this.updateLayout,
+            });
         }
     };
     nodeResized = (node) => {

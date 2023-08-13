@@ -8,6 +8,585 @@ import {separator} from '../../profile';
 import {firstUp} from './string';
 import './Math';
 
+export const demoGroup = [{defKey: "DEFAULT_GROUP", defName: "默认分组"}];
+export const demoTable = {
+    entity: {
+        "defKey": "SIMS_STUDENT",
+        "defName": "学生",
+        "comment": "",
+        "env": {
+            "base": {"nameSpace":"cn.chiner.domain","codeRoot":"SimsStudent"},
+            "template":{
+                "JAVA": {
+                    "content":{
+                        "suffix":"demo/entity/{{=it.codeRoot}}Entity.java"
+                    }
+                }
+            },
+            "custom":{"xpath":"xxx"}},
+        "properties": {
+            "partitioned by": "(pt_d string)",
+            "row format delimited": "",
+            "fields terminated by": "','",
+            "collection items terminated by": "'-'"
+        },
+        "nameTemplate": "{defKey}[{defName}]",
+        "fields": [
+            {
+                "defKey": "COLLEGE_ID",
+                "defName": "所在学院ID",
+                "comment": "",
+                "len": 32,
+                "scale": "",
+                "primaryKey": false,
+                "notNull": true,
+                "autoIncrement": false,
+                "defaultValue": "",
+                "hideInGraph": false,
+                "domain": "IdOrKey",
+                "type": "String",
+                "dbType": "VARCHAR"
+            },
+            {
+                "defKey": "CLASS_ID",
+                "defName": "所在班级ID",
+                "comment": "",
+                "len": 32,
+                "scale": "",
+                "primaryKey": false,
+                "notNull": true,
+                "autoIncrement": false,
+                "defaultValue": "",
+                "hideInGraph": false,
+                "domain": "IdOrKey",
+                "type": "String",
+                "dbType": "VARCHAR"
+            },
+            {
+                "defKey": "STUDENT_ID",
+                "defName": "学生ID",
+                "comment": "",
+                "len": 32,
+                "scale": "",
+                "primaryKey": true,
+                "notNull": true,
+                "autoIncrement": false,
+                "defaultValue": "",
+                "hideInGraph": false,
+                "domain": "IdOrKey",
+                "type": "String",
+                "dbType": "VARCHAR"
+            },
+            {
+                "defKey": "STUDENT_NAME",
+                "defName": "学生姓名",
+                "comment": "",
+                "len": 90,
+                "scale": "",
+                "primaryKey": false,
+                "notNull": false,
+                "autoIncrement": false,
+                "defaultValue": "",
+                "hideInGraph": false,
+                "domain": "Name",
+                "type": "String",
+                "dbType": "VARCHAR"
+            },
+            {
+                "defKey": "ENG_NAME",
+                "defName": "英文名",
+                "comment": "",
+                "len": 90,
+                "scale": "",
+                "primaryKey": false,
+                "notNull": false,
+                "autoIncrement": false,
+                "defaultValue": "",
+                "hideInGraph": false,
+                "domain": "Name",
+                "type": "String",
+                "dbType": "VARCHAR"
+            },
+            {
+                "defKey": "ID_CARD_NO",
+                "defName": "身份证号",
+                "comment": "",
+                "len": "60",
+                "scale": "",
+                "primaryKey": false,
+                "notNull": false,
+                "autoIncrement": false,
+                "defaultValue": "",
+                "hideInGraph": false,
+                "domain": "DefaultString",
+                "type": "String",
+                "dbType": "VARCHAR"
+            },
+            {
+                "defKey": "MOBILE_PHONE",
+                "defName": "手机号",
+                "comment": "",
+                "len": "60",
+                "scale": "",
+                "primaryKey": false,
+                "notNull": false,
+                "autoIncrement": false,
+                "defaultValue": "",
+                "hideInGraph": false,
+                "domain": "DefaultString",
+                "type": "String",
+                "dbType": "VARCHAR"
+            },
+            {
+                "defKey": "GENDER",
+                "defName": "性别",
+                "comment": "",
+                "len": "32",
+                "scale": "",
+                "primaryKey": false,
+                "notNull": false,
+                "autoIncrement": false,
+                "defaultValue": "'M'",
+                "hideInGraph": false,
+                "domain": "Dict",
+                "refDict": "Gender",
+                "refDictData": {
+                    "defKey": "Gender",
+                    "defName": "性别",
+                    "intro": "",
+                    "items": [
+                        {
+                            "defKey": "M",
+                            "defName": "男",
+                            "intro": "",
+                            "parentKey": "",
+                            "enabled": true,
+                            "attr1": "",
+                            "attr2": "",
+                            "attr3": "",
+                            "sort": "1"
+                        },
+                        {
+                            "defKey": "F",
+                            "defName": "女",
+                            "intro": "",
+                            "parentKey": "",
+                            "enabled": true,
+                            "attr1": "",
+                            "attr2": "",
+                            "attr3": "",
+                            "sort": "2"
+                        },
+                        {
+                            "defKey": "U",
+                            "defName": "未知",
+                            "intro": "",
+                            "parentKey": "",
+                            "enabled": true,
+                            "attr1": "",
+                            "attr2": "",
+                            "attr3": "",
+                            "sort": "3"
+                        }
+                    ]
+                },
+                "type": "String",
+                "dbType": "VARCHAR"
+            },
+            {
+                "defKey": "MONTHLY_SALARY",
+                "defName": "月薪",
+                "comment": "",
+                "len": 24,
+                "scale": 6,
+                "primaryKey": false,
+                "notNull": false,
+                "autoIncrement": false,
+                "defaultValue": "",
+                "hideInGraph": false,
+                "domain": "Money",
+                "type": "Double",
+                "dbType": "DECIMAL"
+            },
+            {
+                "defKey": "BIRTH",
+                "defName": "出生日期",
+                "comment": "",
+                "len": "",
+                "scale": "",
+                "primaryKey": false,
+                "notNull": false,
+                "autoIncrement": false,
+                "defaultValue": "",
+                "hideInGraph": false,
+                "domain": "DateTime",
+                "type": "Date",
+                "dbType": "DATETIME"
+            },
+            {
+                "defKey": "AVATAR",
+                "defName": "头像",
+                "comment": "",
+                "len": "",
+                "scale": "",
+                "primaryKey": false,
+                "notNull": false,
+                "autoIncrement": false,
+                "defaultValue": "",
+                "hideInGraph": false,
+                "domain": "Int",
+                "type": "Integer",
+                "dbType": "INT"
+            },
+            {
+                "defKey": "HEIGHT",
+                "defName": "身高",
+                "comment": "",
+                "len": "",
+                "scale": "",
+                "primaryKey": false,
+                "notNull": false,
+                "autoIncrement": false,
+                "defaultValue": "",
+                "hideInGraph": false,
+                "domain": "Int",
+                "type": "Integer",
+                "dbType": "INT"
+            },
+            {
+                "defKey": "WEIGHT",
+                "defName": "体重",
+                "comment": "",
+                "len": "",
+                "scale": "",
+                "primaryKey": false,
+                "notNull": false,
+                "autoIncrement": false,
+                "defaultValue": "",
+                "hideInGraph": false,
+                "domain": "Int",
+                "type": "Integer",
+                "dbType": "INT"
+            },
+            {
+                "defKey": "NATION",
+                "defName": "名族",
+                "comment": "",
+                "len": "32",
+                "scale": "",
+                "primaryKey": false,
+                "notNull": false,
+                "autoIncrement": false,
+                "defaultValue": "'01'",
+                "hideInGraph": false,
+                "domain": "Dict",
+                "refDict": "GBNation",
+                "type": "String",
+                "dbType": "VARCHAR"
+            },
+            {
+                "defKey": "POLITICAL",
+                "defName": "政治面貌",
+                "comment": "",
+                "len": "32",
+                "scale": "",
+                "primaryKey": false,
+                "notNull": false,
+                "autoIncrement": false,
+                "defaultValue": "",
+                "hideInGraph": false,
+                "domain": "Dict",
+                "refDict": "Political",
+                "type": "String",
+                "dbType": "VARCHAR"
+            },
+            {
+                "defKey": "MARITAL",
+                "defName": "婚姻状况",
+                "comment": "",
+                "len": "32",
+                "scale": "",
+                "primaryKey": false,
+                "notNull": false,
+                "autoIncrement": false,
+                "defaultValue": "'UNMARRIED'",
+                "hideInGraph": true,
+                "domain": "Dict",
+                "refDict": "Marital",
+                "type": "String",
+                "dbType": "VARCHAR"
+            },
+            {
+                "defKey": "DOMICILE_PLACE_PROVINCE",
+                "defName": "籍贯（省）",
+                "comment": "",
+                "len": "60",
+                "scale": "",
+                "primaryKey": false,
+                "notNull": false,
+                "autoIncrement": false,
+                "defaultValue": "",
+                "hideInGraph": true,
+                "domain": "DefaultString",
+                "type": "String",
+                "dbType": "VARCHAR"
+            },
+            {
+                "defKey": "DOMICILE_PLACE_CITY",
+                "defName": "籍贯（市）",
+                "comment": "",
+                "len": "60",
+                "scale": "",
+                "primaryKey": false,
+                "notNull": false,
+                "autoIncrement": false,
+                "defaultValue": "",
+                "hideInGraph": true,
+                "domain": "DefaultString",
+                "type": "String",
+                "dbType": "VARCHAR"
+            },
+            {
+                "defKey": "DOMICILE_PLACE_ADDRESS",
+                "defName": "户籍地址",
+                "comment": "",
+                "len": "60",
+                "scale": "",
+                "primaryKey": false,
+                "notNull": false,
+                "autoIncrement": false,
+                "defaultValue": "",
+                "hideInGraph": true,
+                "domain": "DefaultString",
+                "type": "String",
+                "dbType": "VARCHAR"
+            },
+            {
+                "defKey": "HOBBY",
+                "defName": "爱好",
+                "comment": "",
+                "len": "60",
+                "scale": "",
+                "primaryKey": false,
+                "notNull": false,
+                "autoIncrement": false,
+                "defaultValue": "",
+                "hideInGraph": true,
+                "domain": "DefaultString",
+                "type": "String",
+                "dbType": "VARCHAR"
+            },
+            {
+                "defKey": "INTRO",
+                "defName": "简要介绍",
+                "comment": "",
+                "len": "900",
+                "scale": "",
+                "primaryKey": false,
+                "notNull": false,
+                "autoIncrement": false,
+                "defaultValue": "",
+                "hideInGraph": true,
+                "domain": "DescText",
+                "type": "String",
+                "dbType": "VARCHAR"
+            },
+            {
+                "defKey": "PRESENT_ADDRESS",
+                "defName": "居住地址",
+                "comment": "",
+                "len": "60",
+                "scale": "",
+                "primaryKey": false,
+                "notNull": false,
+                "autoIncrement": false,
+                "defaultValue": "",
+                "hideInGraph": true,
+                "domain": "DefaultString",
+                "type": "String",
+                "dbType": "VARCHAR"
+            },
+            {
+                "defKey": "EMAIL",
+                "defName": "电子邮件",
+                "comment": "",
+                "len": "60",
+                "scale": "",
+                "primaryKey": false,
+                "notNull": false,
+                "autoIncrement": false,
+                "defaultValue": "",
+                "hideInGraph": true,
+                "domain": "DefaultString",
+                "type": "String",
+                "dbType": "VARCHAR"
+            },
+            {
+                "defKey": "ENTRY_DATE",
+                "defName": "入学日期",
+                "comment": "",
+                "len": "",
+                "scale": "",
+                "primaryKey": false,
+                "notNull": false,
+                "autoIncrement": false,
+                "defaultValue": "",
+                "hideInGraph": true,
+                "domain": "DateTime",
+                "type": "Date",
+                "dbType": "DATETIME"
+            },
+            {
+                "defKey": "STATUS",
+                "defName": "状态",
+                "comment": "",
+                "len": "32",
+                "scale": "",
+                "primaryKey": false,
+                "notNull": false,
+                "autoIncrement": false,
+                "defaultValue": "'Normal'",
+                "hideInGraph": true,
+                "domain": "Dict",
+                "refDict": "StudentStatus",
+                "type": "String",
+                "dbType": "VARCHAR"
+            },
+            {
+                "defKey": "TENANT_ID",
+                "defName": "租户号",
+                "comment": "",
+                "len": 32,
+                "scale": "",
+                "primaryKey": false,
+                "notNull": false,
+                "autoIncrement": false,
+                "defaultValue": "",
+                "hideInGraph": true,
+                "domain": "IdOrKey",
+                "type": "String",
+                "dbType": "VARCHAR"
+            },
+            {
+                "defKey": "REVISION",
+                "defName": "乐观锁",
+                "comment": "",
+                "domain": "Int",
+                "len": "",
+                "scale": "",
+                "primaryKey": false,
+                "notNull": false,
+                "autoIncrement": false,
+                "defaultValue": "",
+                "hideInGraph": true,
+                "type": "String",
+                "dbType": "VARCHAR"
+            },
+            {
+                "defKey": "CREATED_BY",
+                "defName": "创建人",
+                "comment": "",
+                "domain": "IdOrKey",
+                "len": 32,
+                "scale": "",
+                "primaryKey": false,
+                "notNull": false,
+                "autoIncrement": false,
+                "defaultValue": "",
+                "hideInGraph": true,
+                "type": "String",
+                "dbType": "VARCHAR"
+            },
+            {
+                "defKey": "CREATED_TIME",
+                "defName": "创建时间",
+                "comment": "",
+                "domain": "DateTime",
+                "len": "",
+                "scale": "",
+                "primaryKey": false,
+                "notNull": false,
+                "autoIncrement": false,
+                "defaultValue": "",
+                "hideInGraph": true,
+                "type": "Integer",
+                "dbType": "INT"
+            },
+            {
+                "defKey": "UPDATED_BY",
+                "defName": "更新人",
+                "comment": "",
+                "domain": "IdOrKey",
+                "len": 32,
+                "scale": "",
+                "primaryKey": false,
+                "notNull": false,
+                "autoIncrement": false,
+                "defaultValue": "",
+                "hideInGraph": true,
+                "type": "String",
+                "dbType": "VARCHAR"
+            },
+            {
+                "defKey": "UPDATED_TIME",
+                "defName": "更新时间",
+                "comment": "",
+                "domain": "DateTime",
+                "len": "",
+                "scale": "",
+                "primaryKey": false,
+                "notNull": false,
+                "autoIncrement": false,
+                "defaultValue": "",
+                "hideInGraph": true,
+                "type": "Date",
+                "dbType": "DATETIME"
+            }
+        ],
+        "correlations": [
+            {
+                "myField": "CLASS_ID",
+                "refEntity": "SIMS_CLASS",
+                "refField": "CLASS_ID",
+                "myRows": "n",
+                "refRows": "1",
+                "innerType": ""
+            }
+        ],
+        "indexes": [
+            {
+                "defKey": "idx_smis_student_01",
+                "defName": null,
+                "unique": false,
+                "comment": "",
+                "fields": [
+                    {
+                        "fieldDefKey": "STUDENT_NAME",
+                        "ascOrDesc": "A"
+                    },
+                    {
+                        "fieldDefKey": "ENG_NAME",
+                        "ascOrDesc": "A"
+                    }
+                ]
+            },
+            {
+                "defKey": "idx_smis_student_cert",
+                "defName": null,
+                "unique": false,
+                "comment": "",
+                "fields": [
+                    {
+                        "fieldDefKey": "ID_CARD_NO",
+                        "ascOrDesc": "A"
+                    }
+                ]
+            }
+        ],
+        "refEntities": ["SIMS_STUDENT"],
+    },
+    group: demoGroup,
+};
 export const _getDefaultTemplate = (db, template, dataSource, lang = 'zh') => {
     const dataType = dataSource.profile?.dataTypeSupports?.filter(d => d.id === db)[0];
     if (dataType) {
@@ -487,7 +1066,7 @@ export const _mergeDataSource = (oldDataSource, newDataSource, selectEntity, ign
             defKey,
             fields: (d.fields || []).map(f => {
                 if (f.refEntity) {
-                    const currentEntityId = tempEntities.filter(e => e.old === f.refEntity)[0]?.id;
+                    const currentEntityId = tempEntities.find(e => e.old === f.refEntity)?.id;
                     return {
                         ...f,
                         refEntity: currentEntityId || f.refEntity
@@ -506,21 +1085,18 @@ export const _mergeDataSource = (oldDataSource, newDataSource, selectEntity, ign
             refField: fId,
         }
         const newData = type === 'entity' ? newEntities : [];
-        const refEntityDataIndex = newData.findIndex(e => e.id === eId);
-        if (refEntityDataIndex > -1) {
+        // 数据来源至新表 需要更新新表的ID和字段的ID
+        const refEntityData =  newData.find(e => e.id === eId); // 新表
+        if (refEntityData) {
             // 数据来源至新表 需要更新新表的ID和字段的ID
-            const refEntityData = newData[refEntityDataIndex]; // 新表
             const currentData = type === 'entity' ? isUpdateEntity : [];
             // 查找改表是否存在变更
-            const refEntityIndex = currentData.findIndex(e => e.defKey === refEntityData.defKey);
-            if (refEntityIndex > -1) {
-                const refEntity = currentData[refEntityIndex]; // 获取新的表数据
-                const refFieldKeyIndex = (refEntityData.fields || []).findIndex(f => f.id === fId);
+            const refEntity = currentData.find(e => e.defKey === refEntityData.defKey); // 获取新的表数据
+            if (refEntity) {
                 // 获取旧的字段
-                const refFieldKey = (refEntityData.fields || [])[refFieldKeyIndex]?.defKey;
-                const refFieldIndex = (refEntity.fields || []).findIndex(f => f.defKey === refFieldKey);
+                const refFieldKey = (refEntityData.fields || []).find(f => f.id === fId)?.defKey;
                 // 获取新的字段
-                const refField = (refEntity.fields || [])[refFieldIndex]?.id;
+                const refField = (refEntity.fields || []).find(f => f.defKey === refFieldKey)?.id;
                 if (refField) {
                     tempData = {
                         id: refEntity.id,
@@ -552,7 +1128,7 @@ export const _mergeDataSource = (oldDataSource, newDataSource, selectEntity, ign
                     if (c.shape === 'table') {
                         return {
                             ...c,
-                            originKey: tempEntities.filter(r => r.old === c.originKey)[0]?.id || c.originKey,
+                            originKey: tempEntities.find(r => r.old === c.originKey)?.id || c.originKey,
                         };
                     } else if(c.shape === 'erdRelation') {
                         const getPort = ({cell, port}) => {
@@ -586,7 +1162,7 @@ export const _mergeDataSource = (oldDataSource, newDataSource, selectEntity, ign
     const tempViewGroups = _mergeData(viewGroups, newViewGroups, true, false).map(g => {
         const currentGroupEntities = newEntities.filter(e => e.group === g.id || e.group === g.old)
             .map((newE) => {
-                const data = tempEntities.filter(e => e.old === newE.id)[0]
+                const data = tempEntities.find(e => e.old === newE.id)
                 if (data) {
                     return data.id;
                 }
@@ -635,20 +1211,17 @@ export const _mergeDataSource = (oldDataSource, newDataSource, selectEntity, ign
                 return tempField;
             }
             const newData = type === 'entity' ? newEntities : newViews;
-            const currentIndex = newData.findIndex(e => e.id === d.old);
-            const currentOldData = newData[currentIndex];
+            const currentOldData = newData.find(e => e.id === d.old);
             const getCurrentFieldId = (fId) => {
                 // 寻找新合并进来的数据 根据当前的字段名寻找新的字段ID
                 if(currentOldData) {
-                    const fieldIndex = (currentOldData.fields || [])
-                        .findIndex(field => field.id === fId);
-                    const fieldDef = currentOldData[fieldIndex]?.defKey;
+                    const fieldDef = (currentOldData.fields || [])
+                        .find(field => field.id === fId)?.defKey;
                     if (fieldDef) {
-                        const currentFieldIndex = (d.fields || [])
-                            .findIndex(field => field.defKey === fieldDef);
-                        return d.fields[currentFieldIndex]?.id;
+                        return (d.fields || [])
+                            .find(field => field.defKey === fieldDef)?.id || fId;
                     }
-                    return null;
+                    return fId;
                 }
                 return fId;
             }

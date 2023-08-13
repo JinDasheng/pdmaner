@@ -1,4 +1,4 @@
-import React, { forwardRef } from 'react';
+import React, {forwardRef} from 'react';
 import { Graph } from '@antv/x6';
 import '@antv/x6-react-shape';
 import {calcColor} from '../util';
@@ -34,6 +34,7 @@ const Table = forwardRef(({node}, ref) => {
     }}
   >
     <div
+      className='chiner-ellipsis'
       style={{
         background: node.getProp('fillColor') || '#DDE5FF',
         WebkitTextFillColor: node.getProp('fontColor') || 'rgba(0,0,0,.65)',
@@ -45,7 +46,9 @@ const Table = forwardRef(({node}, ref) => {
         borderBottom: '1px solid #DFE3EB',
         height: '27px',
         boxSizing: 'border-box',
-        overflowY: 'hidden',
+        whiteSpace: 'nowrap',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
       }}
     >
       {`${getTitle(data)}${store?.data.count > 0 ? `:${store?.data.count}` : ''}`}
@@ -67,6 +70,7 @@ const Table = forwardRef(({node}, ref) => {
                 [{refKey: 'primaryKey'}].concat(data.headers
                     .filter(h => h.refKey !== 'primaryKey')).map((h) => {
                 return <span
+                  className='chiner-ellipsis'
                   style={{
                     boxSizing: 'border-box',
                     width: data.maxWidth[h.refKey],

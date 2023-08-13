@@ -29,7 +29,7 @@ export default React.memo(({data: { isLeaf, sourceEntity,
         const calcSearchValue = (value = '') => {
             const reg = new RegExp((searchValue || '').replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'ig');
             const str = `<span class=${currentPrefix}-compare-list-container-content-list-item-search>$&</span>`;
-            const finalData = `<span>${value.replace(reg, str)}</span>`;
+            const finalData = `<span>${(value || '').replace(reg, str)}</span>`;
             // eslint-disable-next-line react/no-danger,react/no-danger-with-children
             return <span dangerouslySetInnerHTML={{ __html: finalData }}
             >{}</span>;

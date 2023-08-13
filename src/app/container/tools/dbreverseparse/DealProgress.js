@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef, useMemo} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {Progressbar, NumberInput, Modal, Terminal, FormatMessage, Icon, Button, Tooltip} from 'components';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import { FixedSizeList as List } from 'react-window';
@@ -79,11 +79,27 @@ export default React.memo(({prefix, dataSource, config, selectedTable,
                 notNull: !!f.notNull,
               })),
             };
-          }).map(t => ({
-            ...t,
-            id: Math.uuid(),
-            fields: (t.fields || []).map(f => ({...f, id: Math.uuid()})),
-          })));
+          }).map((t) => {
+            const fields = (t.fields || []).map(f => ({...f, id: Math.uuid()}));
+            return {
+              ...t,
+              id: Math.uuid(),
+              fields,
+              indexes: (t.indexes || []).map(i => ({
+                ...i,
+                id: Math.uuid(),
+                fields: (i.fields || []).map((f) => {
+                  return {
+                    ...f,
+                    fieldDefKey: fields.find(field => field.defKey.toLocaleLowerCase() ===
+                                f.fieldDefKey.toLocaleLowerCase())?.id
+                        || f.fieldDefKey,
+                    id: Math.uuid(),
+                  };
+                }),
+              })),
+            };
+          }));
         }
       });
     });

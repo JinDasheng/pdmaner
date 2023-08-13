@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, {useCallback, useEffect, useRef} from 'react';
 
 import { Table } from 'components';
 
@@ -17,7 +17,13 @@ export default React.memo(({data, dataSource, update, FieldsExtraOpt,customerHea
       hasDestory && hasDestory();
     };
   }, []);
+  const search = useCallback((f, value) => {
+    const reg = new RegExp((value || '')
+        .replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'i');
+    return reg.test(f.defName) || reg.test(f.defKey);
+  }, []);
   return <Table
+    search={search}
     needHideInGraph={false}
     openConfig={openConfig}
     isEntity={type === 'entity'}

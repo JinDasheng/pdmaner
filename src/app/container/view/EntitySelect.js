@@ -7,9 +7,11 @@ export default React.memo(({prefix, dataSource, data, onChange}) => {
   useEffect(() => {
     const entities = dataSource?.entities || [];
     const tempRefEntities =
-      data?.refEntities?.filter(ref => entities.findIndex(e => e.id === ref) > -1) || [];
+        entities.filter(e => data?.refEntities?.includes(e.id)).map(e => e.id) || [];
     updateEntityRefs(tempRefEntities);
-    onChange && onChange(tempRefEntities);
+    if(tempRefEntities.length !== (data?.refEntities || []).length) {
+      onChange && onChange(tempRefEntities);
+    }
   }, [dataSource?.entities?.length]);
   const message = FormatMessage.string({
     id: 'view.selectEntityMessage',

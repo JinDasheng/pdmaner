@@ -1091,7 +1091,7 @@ const Index = React.memo(({getUserData, mode, isChildWindow,
           children: (restProps.dataSource?.profile?.dataTypeSupports || [])
               .filter((d) =>  {
                 const codeTemplate = (restProps.dataSource?.profile?.codeTemplates || [])
-                    .filter(c => c.applyFor === d.id)[0];
+                    .find(c => c.applyFor === d.id);
                 return codeTemplate?.type !== 'appCode';
               })
               .map(d => ({...d, type: 'dataType'})),
@@ -1148,7 +1148,7 @@ const Index = React.memo(({getUserData, mode, isChildWindow,
       return (restProps.dataSource?.profile?.dataTypeSupports || [])
           .map((d) => {
             const template = (restProps.dataSource?.profile?.codeTemplates || [])
-                .filter(c => c.applyFor === d.id)[0];
+                .find(c => c.applyFor === d.id);
             if (template && template.type === 'appCode') {
               return {...d, type: 'appCode'};
             }
@@ -1462,8 +1462,8 @@ const Index = React.memo(({getUserData, mode, isChildWindow,
     return '';
   };
   const domainGetName = (m) => {
-    const dataTypeSupports = _.get(restProps, 'dataSource.profile.dataTypeSupports', []);
-    const defaultDb = _.get(restProps, 'dataSource.profile.default.db', dataTypeSupports[0]?.id);
+    const dataTypeSupports = _.get(dataSourceRef.current, 'profile.dataTypeSupports', []);
+    const defaultDb = _.get(dataSourceRef.current, 'profile.default.db', dataTypeSupports[0]?.id);
     if (defaultDb === m.id) {
       return `${m.defName || m.defKey}(${FormatMessage.string({id: 'project.default'})})`;
     }

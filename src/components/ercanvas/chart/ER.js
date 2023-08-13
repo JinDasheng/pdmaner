@@ -533,6 +533,7 @@ export default class ER {
                         ports: c.ports,
                         data: c.getProp('data'),
                         size: c.size(),
+                        autoSize: c.getProp('autoSize'),
                     },
                     dataSource,
                     this.updateFields,
@@ -567,7 +568,6 @@ export default class ER {
                     .entities.find(e => e.defKey === c.data.copyDefKey) : {}),
                 ..._.pick(c.data, ['id', 'defKey']),
                 ...initData,
-                serialId: null,
             }))),
             viewGroups: (dataSource.viewGroups || []).map((g) => {
                 if ((g.refDiagrams || []).includes(this.tabKey.split(separator)[0])) {
@@ -761,7 +761,9 @@ export default class ER {
             if (!isScroll && graph.isSelected(edge)) {
                 edgeNodeAddTool(edge, graph, id, () => {
                     this.dataChange && this.dataChange(this.graph.toJSON({diff: true}));
-                }, this.getDataSource, this.updateDataSource);
+                }, this.getDataSource, this.updateDataSource, {
+                    relationType: this.relationType,
+                });
             }
         }
 
@@ -1146,7 +1148,9 @@ export default class ER {
             if (!isScroll && graph.isSelected(node)) {
                 edgeNodeAddTool(node, graph, id, () => {
                     this.dataChange && this.dataChange(this.graph.toJSON({diff: true}));
-                }, this.getDataSource, this.updateDataSource);
+                }, this.getDataSource, this.updateDataSource, {
+                    relationType: this.relationType,
+                });
             }
         }
     };
@@ -1236,7 +1240,9 @@ export default class ER {
         if (this.isErCell(cell)) {
             edgeNodeAddTool(cell, graph, id, () => {
                 this.dataChange && this.dataChange(this.graph.toJSON({diff: true}));
-            }, this.getDataSource, this.updateDataSource);
+            }, this.getDataSource, this.updateDataSource, {
+                relationType: this.relationType,
+            });
         }
     };
     onScroll = () => {
@@ -1246,14 +1252,18 @@ export default class ER {
         if (this.isErCell(cell) && graph.isSelected(cell)) {
             edgeNodeAddTool(cell, graph, id, () => {
                 this.dataChange && this.dataChange(this.graph.toJSON({diff: true}));
-            }, this.getDataSource, this.updateDataSource);
+            }, this.getDataSource, this.updateDataSource, {
+                relationType: this.relationType,
+            });
         }
     };
     edgeMoved = (cell, graph, id) => {
         if (this.isErCell(cell) && graph.isSelected(cell)) {
             edgeNodeAddTool(cell, graph, id, () => {
                 this.dataChange && this.dataChange(this.graph.toJSON({diff: true}));
-            }, this.getDataSource, this.updateDataSource);
+            }, this.getDataSource, this.updateDataSource, {
+                relationType: this.relationType,
+            });
         }
     }
     nodeMouseOver = (node, e) => {

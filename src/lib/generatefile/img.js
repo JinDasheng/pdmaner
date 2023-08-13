@@ -2,7 +2,7 @@ import {Graph} from '@antv/x6';
 import _ from 'lodash/object';
 import { elementToSVG } from 'dom-to-svg'
 
-import { calcCellData } from '../datasource_util';
+import { calcCellData, getTextWidth } from '../datasource_util';
 import { saveTempImages } from '../middle';
 
 
@@ -179,8 +179,9 @@ export const imgAll = (dataSource, callBack, useBase, imageType) => {
   });
 }
 
-
-export const html2svg = (data, dom) => {
+let lengthValueCache = {};
+export const html2svg = (data = [], dom) => {
+  console.log(lengthValueCache);
   // vertices
   const cells = data.reduce((p, n) => {
     if(n.position) {
@@ -188,9 +189,39 @@ export const html2svg = (data, dom) => {
     }
     return p.concat((n.vertices || []).map(v => ({position: v})))
   }, []);
+  const checkLength = (e, text, length, width) => {
+    const tempText = text.slice(0, length);
+    if(tempText.length > 0) {
+      e.innerText = `${tempText}...`;
+      if(e.scrollWidth > width) {
+        checkLength(e, text, length - 1, width);
+      }
+    } else {
+      e.innerText = '...';
+    }
+  }
   //替换foreignObject
   dom.querySelectorAll('foreignObject').forEach(f => {
     const parent = f.parentElement;
+    const ellipsis = f.querySelectorAll('.chiner-ellipsis');
+    ellipsis.forEach(e => {
+    const width = e.getBoundingClientRect().width
+      if(e.scrollWidth > width) {
+        const text = e.innerText;
+        // 由于生成的svg无法实现文本超宽省略，因此需要手动计算文本超宽增加省略
+        const name = `${text}${width}`;
+        if(lengthValueCache[name]) {
+          e.innerText = lengthValueCache[name];
+        } else {
+          checkLength(e, text, text.length, width);
+          if(Object.keys(lengthValueCache).length > 1000000) {
+            // 如果缓存数量超过百万 则清除数据 释放内存
+            lengthValueCache = {}
+          }
+          lengthValueCache[name] = e.innerText;
+        }
+      }
+    })
     const svgDom = elementToSVG(f).children[0];
     const clearId = (d) => {
       d.setAttribute('id', Math.uuid());

@@ -8,7 +8,7 @@ import LabelEditor from '../LabelEditor';
 import LinkEditor from '../LinkEditor';
 import { prefix } from '../../../../profile';
 import Svg from './svg';
-import {getPresetColors} from '../../../lib/datasource_util';
+import {calcNodeData, getPresetColors} from '../../../lib/datasource_util';
 
 const ToolItem = ToolsView.ToolItem;
 
@@ -509,6 +509,10 @@ const NodeTooltipContent = ({onUpdate, node, id, position, getDataSource, movePo
   const [isLock, setIsLock] = useState(() => {
     return node.getProp('isLock');
   });
+
+  const [isAutoSize, setAutoSize] = useState(() => {
+    return node.getProp('autoSize');
+  });
   // lock
   const _onUpdate = (t, value, complete) => {
     if (t === 'lock') {
@@ -519,6 +523,8 @@ const NodeTooltipContent = ({onUpdate, node, id, position, getDataSource, movePo
       setFillColor(value.hex);
     } else if (t === 'layout') {
       setLayout(value);
+    } else if(t === 'autoSize') {
+      setAutoSize(value);
     }
     onUpdate(t, value, complete);
   };
@@ -595,6 +601,13 @@ const NodeTooltipContent = ({onUpdate, node, id, position, getDataSource, movePo
               style={{background: fillColor}} />
           </Tooltip>
         </div></OverDown>]}
+    {!isLock && node.shape === 'table' && <div
+      style={{background: isAutoSize ? '#DDE5FF' : '', marginRight: 2}}
+      onClick={() => _onUpdate('autoSize', !isAutoSize)}>
+      <Tooltip offsetTop={10} placement='top' force title={FormatMessage.string({id: 'canvas.node.autoSize'})}>
+        <Icon type='fa-expand'/>
+      </Tooltip>
+    </div>}
     {!isLock && node.shape !== 'table' && [<div key='line' className={`${prefix}-edge-tooltip-content-line`}/>,
       <div key='link' onClick={() => _onUpdate('link')}>
         <Tooltip offsetTop={10} placement='top' force title={FormatMessage.string({id: 'canvas.node.link'})}>
@@ -602,7 +615,7 @@ const NodeTooltipContent = ({onUpdate, node, id, position, getDataSource, movePo
         </Tooltip>
       </div>]}
     { !parent &&
-        [node.shape === 'table' && <div key='line' className={`${prefix}-edge-tooltip-content-line`}/>,
+        [node.shape === 'table' && !isLock && <div key='line' className={`${prefix}-edge-tooltip-content-line`}/>,
           <Tooltip key='lock' clickClose offsetTop={1} placement='top' force title={FormatMessage.string({id: `canvas.${isLock ? 'unLock' : 'lock'}`})}>
             <div onClick={() => _onUpdate('lock', !isLock)}><Icon type={`fa-${isLock ? 'lock' : 'unlock'}`}/></div>
           </Tooltip>]
@@ -613,7 +626,7 @@ const NodeTooltipContent = ({onUpdate, node, id, position, getDataSource, movePo
 let preNode;
 
 export const edgeNodeAddTool = (edge, graph, id, dataChange, getDataSource, updateDataSource,
-                                updateLayout) => {
+                                {updateLayout, relationType}) => {
   if (preNode !== edge) {
     preNode = edge;
     const cellTooltip = document.getElementById(`${id}-cellTooltip`);
@@ -708,6 +721,37 @@ export const edgeNodeAddTool = (edge, graph, id, dataChange, getDataSource, upda
             if (!v) {
               graph.select(edge);
               calcLeft();
+            }
+          } else if(t === 'autoSize') {
+            if (edge.getProp('autoSize') === undefined) {
+              edge.setProp('autoSize', '', { ignoreHistory : true});
+            }
+            edge.setProp('autoSize', v);
+            const size = edge.size();
+            const data = edge.getProp('data');
+            const prePorts = edge.getProp('ports');
+            const preSize = data.preSize;
+            const updateCell = (cellSize) => {
+              const result =
+                  calcNodeData({
+                        data: data, size: cellSize, needTransform: false},
+                      data, getDataSource(), prePorts.groups);
+              edge.size(result.width, result.height);
+              if(relationType !== 'entity') {
+                edge.setProp('ports', result.ports);
+              }
+              edge.setData({maxWidth: result.maxWidth});
+              graph.unselect(edge);
+            };
+            if(v) {
+              updateCell(null);
+              // 缓存上一次变化的大小
+              edge.setData({preSize: {
+                  width: size.width,
+                  height: size.height,
+                }});
+            } else if(preSize) {
+              updateCell(preSize);
             }
           } else if (t === 'label' || t === 'note') {
             let modal = null;

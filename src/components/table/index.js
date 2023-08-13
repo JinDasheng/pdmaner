@@ -1180,66 +1180,70 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort, sea
   };
   return (
     <div className={`${currentPrefix}-table-container ${className || ''}`}>
-      {
-          !reading && <span className={`${currentPrefix}-table-opt-container`}><span className={`${currentPrefix}-table-opt`} ref={optRef}>
-            <span className={`${currentPrefix}-table-opt-normal`}>
-              <Component.IconTitle disable={selectedFields.length === 0} title={Component.FormatMessage.string({id: 'tableEdit.moveStart'})} type='icon-zhiding' onClick={() => moveFields('up', 'start')}/>
-              <Component.IconTitle disable={selectedFields.length === 0} title={Component.FormatMessage.string({id: 'tableEdit.moveUp'})} type='icon-shangyi' onClick={() => moveFields('up')}/>
-              <Component.IconTitle disable={selectedFields.length === 0} title={Component.FormatMessage.string({id: 'tableEdit.moveDown'})} type='icon-xiayi' onClick={() => moveFields('down')}/>
-              <Component.IconTitle disable={selectedFields.length === 0} title={Component.FormatMessage.string({id: 'tableEdit.moveEnd'})} type='icon-zhidi' onClick={() => moveFields('down', 'end')}/>
-              <Component.DropButton menuClick={menuClick} dropDownMenus={dropDownMenus} position='top'>
-                <Component.IconTitle title={Component.FormatMessage.string({id: 'tableEdit.addField'})} type='fa-plus' onClick={addFieldOpt}/>
-              </Component.DropButton>
-              <Component.IconTitle style={{opacity: selectedFields.length === 0 ? 0.48 : 1}} disable={selectedFields.length === 0} title={Component.FormatMessage.string({id: 'tableEdit.deleteField'})} type='fa-minus' onClick={deleteField}/>
-            </span>
-            <span className={`${currentPrefix}-table-opt-header`}>
-              {
+      <div className={`${currentPrefix}-table-container-tools`}>
+        {
+            !reading && <span className={`${currentPrefix}-table-opt-container`}><span className={`${currentPrefix}-table-opt`} ref={optRef}>
+              <span className={`${currentPrefix}-table-opt-normal`}>
+                <Component.IconTitle disable={selectedFields.length === 0} title={Component.FormatMessage.string({id: 'tableEdit.moveStart'})} type='icon-zhiding' onClick={() => moveFields('up', 'start')}/>
+                <Component.IconTitle disable={selectedFields.length === 0} title={Component.FormatMessage.string({id: 'tableEdit.moveUp'})} type='icon-shangyi' onClick={() => moveFields('up')}/>
+                <Component.IconTitle disable={selectedFields.length === 0} title={Component.FormatMessage.string({id: 'tableEdit.moveDown'})} type='icon-xiayi' onClick={() => moveFields('down')}/>
+                <Component.IconTitle disable={selectedFields.length === 0} title={Component.FormatMessage.string({id: 'tableEdit.moveEnd'})} type='icon-zhidi' onClick={() => moveFields('down', 'end')}/>
+                <Component.DropButton menuClick={menuClick} dropDownMenus={dropDownMenus} position='top'>
+                  <Component.IconTitle title={Component.FormatMessage.string({id: 'tableEdit.addField'})} type='fa-plus' onClick={addFieldOpt}/>
+                </Component.DropButton>
+                <Component.IconTitle style={{opacity: selectedFields.length === 0 ? 0.48 : 1}} disable={selectedFields.length === 0} title={Component.FormatMessage.string({id: 'tableEdit.deleteField'})} type='fa-minus' onClick={deleteField}/>
+              </span>
+              <span className={`${currentPrefix}-table-opt-header`}>
+                {
                   !disableHeaderSort && isView && <>
                     <Component.IconTitle disable={selectedColumns.length === 0} title={Component.FormatMessage.string({id: 'tableEdit.moveFieldLeft'})} type='fa-arrow-left' onClick={() => moveHeader('left')}/>
                     <Component.IconTitle disable={selectedColumns.length === 0} title={Component.FormatMessage.string({id: 'tableEdit.moveFieldRight'})} type='fa-arrow-right' onClick={() => moveHeader('right')}/>
                   </>
               }
-              <Component.IconTitle disable={selectedColumns.length === 0} title={Component.FormatMessage.string({id: 'tableEdit.exchangeCode'})} type='fa-exchange' onClick={exchangeHeader}/>
-            </span>
-            {
-              otherOpt && <span className={`${currentPrefix}-table-opt-other`}>
-                {!isView && <Component.IconTitle disable={selectedFields.length === 0} title={Component.FormatMessage.string({id: 'tableEdit.showSelectedFields'})} type='fa-eye' onClick={() => updateFieldsHideInGraph(false)}/>}
-                {!isView && <Component.IconTitle disable={selectedFields.length === 0} title={Component.FormatMessage.string({id: 'tableEdit.hiddenSelectedFields'})} type='fa-eye-slash' onClick={() => updateFieldsHideInGraph(true)}/>}
-                {!disableAddStandard && <Component.IconTitle disable={selectedFields.length === 0} title={Component.FormatMessage.string({id: 'tableEdit.addStandardFields'})} type='icon-ruku' onClick={addStandardFields}/>}
-                {!disableHeaderReset && <Component.IconTitle title={Component.FormatMessage.string({id: 'tableEdit.resetHeaders'})} type='fa-sort-amount-desc' onClick={resetTableHeaders}/>}
-                <Component.IconTitle disable={selectedFields.length === 0} title={Component.FormatMessage.string({id: 'tableEdit.note'})} type='fa-tags' onClick={updateNote}/>
+                <Component.IconTitle disable={selectedColumns.length === 0} title={Component.FormatMessage.string({id: 'tableEdit.exchangeCode'})} type='fa-exchange' onClick={exchangeHeader}/>
               </span>
-            }
-            {ExtraOpt && <span className={`${currentPrefix}-table-opt-extra`}><ExtraOpt
-              prefix={currentPrefix}
-              dataSource={dataSource}
-              getRestData={getRestData}
-              data={{fields, headers: tempHeaders}}
-              onChange={importFields}
-            />
-            </span>}
-            <span className={`${currentPrefix}-table-opt-info`}>
-              <Component.Tooltip title={<OptHelp/>} force placement='topLeft'>
-                <Component.Icon type='icon-xinxi'/>
-              </Component.Tooltip>
+              {
+                  otherOpt && <span className={`${currentPrefix}-table-opt-other`}>
+                    {!isView && <Component.IconTitle disable={selectedFields.length === 0} title={Component.FormatMessage.string({id: 'tableEdit.showSelectedFields'})} type='fa-eye' onClick={() => updateFieldsHideInGraph(false)}/>}
+                    {!isView && <Component.IconTitle disable={selectedFields.length === 0} title={Component.FormatMessage.string({id: 'tableEdit.hiddenSelectedFields'})} type='fa-eye-slash' onClick={() => updateFieldsHideInGraph(true)}/>}
+                    {!disableAddStandard && <Component.IconTitle disable={selectedFields.length === 0} title={Component.FormatMessage.string({id: 'tableEdit.addStandardFields'})} type='icon-ruku' onClick={addStandardFields}/>}
+                    {!disableHeaderReset && <Component.IconTitle title={Component.FormatMessage.string({id: 'tableEdit.resetHeaders'})} type='fa-sort-amount-desc' onClick={resetTableHeaders}/>}
+                    <Component.IconTitle disable={selectedFields.length === 0} title={Component.FormatMessage.string({id: 'tableEdit.note'})} type='fa-tags' onClick={updateNote}/>
+                  </span>
+              }
+              {ExtraOpt && <span className={`${currentPrefix}-table-opt-extra`}><ExtraOpt
+                prefix={currentPrefix}
+                dataSource={dataSource}
+                getRestData={getRestData}
+                data={{fields, headers: tempHeaders}}
+                onChange={importFields}
+              />
+              </span>}
+              <span className={`${currentPrefix}-table-opt-info`}>
+                <Component.Tooltip title={<OptHelp/>} force placement='topLeft'>
+                  <Component.Icon type='icon-xinxi'/>
+                </Component.Tooltip>
+              </span>
+              {
+                  isEntity && <div className={`${currentPrefix}-table-opt-config`}>
+                    <div>
+                      <span>
+                        {Component.FormatMessage.string({id: 'tableEdit.database'})}
+                      </span>
+                      <span onClick={jumpDb}>{dbData.defKey}</span>
+                    </div>
+                  </div>
+              }
             </span>
-            {
-              search && <div className={`${currentPrefix}-table-opt-search`}>
-                <Component.SearchInput onChange={onFilterChange}/>
-              </div>
-            }
-            <div className={`${currentPrefix}-table-opt-config`}>
-              <div>
-                <span>
-                  {Component.FormatMessage.string({id: 'tableEdit.database'})}
-                </span>
-                <span onClick={jumpDb}>{dbData.defKey}</span>
-              </div>
-            </div>
-          </span>
-            {!isView && <span className={`${currentPrefix}-table-opt-setting`} onClick={jumpEdit}>{Component.FormatMessage.string({id: 'tableEdit.columnSetting'})}</span>}
-          </span>
+              {isEntity && <span className={`${currentPrefix}-table-opt-setting`} onClick={jumpEdit}>{Component.FormatMessage.string({id: 'tableEdit.columnSetting'})}</span>}
+            </span>
         }
+        {
+            search && <div className={`${currentPrefix}-table-opt-search`}>
+              <Component.SearchInput placeholder={Component.FormatMessage.string({id: 'tableEdit.search'})} onChange={onFilterChange}/>
+            </div>
+        }
+      </div>
       {
         virtual && filterFields.length > 100 ? <Component.VirtualList
           onScroll={onScroll}
