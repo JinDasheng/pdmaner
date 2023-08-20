@@ -960,6 +960,7 @@ export default {
             result: '一共解析到{size}个标准字段，其中{repeat}个已经存在',
             remove: '移除',
             repeatMessage: '选择该数据表将会覆盖系统中原有数据表',
+            repeatStandMessage: '选择该标准字段将会覆盖系统中原有标准字段',
             search: '代码/显示名称',
             empty: '暂无数据，请点击左侧选择',
             disable: '关系图中使用的数据表为必选数据表',

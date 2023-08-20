@@ -332,7 +332,8 @@ export default React.memo(forwardRef(({prefix, style, dataSource, config, empty,
                         setChanges((pre) => {
                             return pre.filter((p) => {
                                 return !selectedMetaDataLowKeys
-                                    .includes(p.data.baseInfo?.defKey?.toLocaleLowerCase());
+                                    .includes((p.data.baseInfo || p.data)
+                                        ?.defKey?.toLocaleLowerCase());
                             }).concat(newChanges);
                         });
                     }).finally(() => {
@@ -416,17 +417,33 @@ export default React.memo(forwardRef(({prefix, style, dataSource, config, empty,
                 if(successResult.length > 0) {
                     tempMetaData = successResult.map((d) => {
                         const currentMetaIndex = metaData.findIndex(m => m.defKey === d.defKey);
+                        const fields = (d.fields || []).map((f) => {
+                            return {
+                                ...f,
+                                id: Math.uuid(),
+                                defName: f?.defName?.split(';')[0] || '',
+                                comment: f.comment || f?.defName?.split(';')[1] || '',
+                            };
+                        });
                         return {
                             ...d,
                             defName: metaData[currentMetaIndex]?.defName || '',
                             comment: metaData[currentMetaIndex]?.comment || '',
-                            fields: (d.fields || []).map((f) => {
-                                return {
-                                    ...f,
-                                    defName: f?.defName?.split(';')[0] || '',
-                                    comment: f.comment || f?.defName?.split(';')[1] || '',
-                                };
-                            }),
+                            fields: fields,
+                            indexes: (d.indexes || []).map(i => ({
+                                ...i,
+                                id: Math.uuid(),
+                                fields: (i.fields || []).map((f) => {
+                                    return {
+                                        ...f,
+                                        fieldDefKey: fields
+                                                .find(field => field.defKey.toLocaleLowerCase() ===
+                                                    f.fieldDefKey.toLocaleLowerCase())?.id
+                                            || f.fieldDefKey,
+                                        id: Math.uuid(),
+                                    };
+                                }),
+                            })),
                         };
                     });
                     // 合并详细数据
@@ -509,7 +526,7 @@ export default React.memo(forwardRef(({prefix, style, dataSource, config, empty,
                         ...f,
                         primaryKey: !!f.primaryKey,
                         notNull: !!f.notNull,
-                        id: Math.uuid(),
+                        id: f.id || Math.uuid(),
                     };
                 }),
             }], isCustomerMeta ? null : meta, isCustomerMeta ? metaDataSource : null);

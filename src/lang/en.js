@@ -960,6 +960,7 @@ components: {
         result: 'a total of {size} standard fields have been parsed, of which {repeat} already exists',
         remove: 'remove',
         repeatMessage: 'Selecting this data table will override the existing data table in the system',
+        repeatStandMessage: 'Selecting this standard fields will override the existing standard fields in the system',
         search: 'code/name',
         empty: 'No data, please click on the left to select',
         disable: 'The data table used in the diagram is required',

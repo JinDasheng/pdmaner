@@ -8,8 +8,8 @@ import Right from './Right';
 import {unRepeated} from '../../lib/array_util';
 
 export default React.memo(forwardRef(({allowClear = false, notAllowEmpty = true,
-                                        data, groups, prefix, formatResult, arrayData,
-                                        defaultSelected = []}, ref) => {
+                                        data, groups, prefix, formatResult, arrayData, repeatTitle,
+                                        defaultSelected = [], originGroups = []}, ref) => {
   const tempSelected = unRepeated(defaultSelected);
   const searchDataRef = useRef([]);
   const currentPrefix = getPrefix(prefix);
@@ -19,16 +19,26 @@ export default React.memo(forwardRef(({allowClear = false, notAllowEmpty = true,
             .filter(d => groups.findIndex(g => g.id === d.id) < 0)
             .map(g => ({...g, fields: []})));
   },[groups]);
-  const newData = useMemo(() => data.reduce((a, b) => {
-    return a.concat(b.fields.map(f => ({...f, group: b.id})));
-  }, []), [data]);
   const currentData = arrayData || groups.reduce((a, b) => a.concat(b.fields), [groups]);
+  const findPreGroup = (p) => {
+    const id = currentData.find(c => c.defKey === p.defKey)?.id;
+    if(id) {
+      return originGroups.find(g => (g.fields || g.refEntities || [])
+          .includes(id))?.id || '';
+    }
+    return '';
+  };
+  const newData = useMemo(() => data.reduce((a, b) => {
+    const aKeys = a.map(f => f.id);
+    return a.concat(b.fields
+        .filter(f => !aKeys.includes(f.id)).map(f => ({...f, group: b.id || findPreGroup(f)})));
+  }, []), [data]);
   const newDataKeys = useMemo(() => newData.map(n => n.id), [newData]);
+  const newDataDefKeys = useMemo(() => newData.map(n => n.defKey), [newData]);
   const repeatData = useMemo(() => currentData.map(f => f.defKey)
-      .filter(f => newData.map(n => n.defKey).includes(f)), [data, groups]);
+      .filter(f => newDataDefKeys.includes(f)), [data, groups]);
   const [checked, setChecked] = useState([...tempSelected]);
   const [type, setType] = useState('normal');
-  const groupDataRef = useRef({});
   const getType = (d) => {
     if(d.every(s => checked.includes(s.id))) {
       return 'all';
@@ -80,20 +90,14 @@ export default React.memo(forwardRef(({allowClear = false, notAllowEmpty = true,
   };
   const _onGroupChange = (e, id) => {
     const ids = [].concat(id);
-    ids.forEach((i) => {
-      groupDataRef.current[i] = e.target.value;
-    });
     importDataRef.current = importDataRef.current.map((f) => {
-      if (f.id === id) {
+      if (ids.includes(f.id)) {
         return {
           ...f,
           group: e.target.value,
         };
       }
-      return {
-        ...f,
-        group: groupDataRef.current[f.id],
-      };
+      return f;
     });
   };
   const onRemove = (keys) => {
@@ -124,6 +128,7 @@ export default React.memo(forwardRef(({allowClear = false, notAllowEmpty = true,
         header={<span className={`${currentPrefix}-listselect-opt-${type}`} onClick={() => _iconClick(type)}>
           {}
         </span>}
+        repeatTitle={repeatTitle}
         defaultSelected={tempSelected}
         prefix={currentPrefix}
         checked={checked}

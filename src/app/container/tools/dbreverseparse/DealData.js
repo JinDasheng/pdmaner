@@ -51,6 +51,7 @@ export default React.memo(forwardRef(({getData, dataSource, prefix}, ref) => {
       data={data}
       arrayData={entities}
       groups={viewGroups}
+      originGroups={dataSource.viewGroups || []}
     />
   </div>;
 }));

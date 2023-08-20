@@ -37,7 +37,8 @@ export default React.memo(({data: { isLeaf, sourceEntity,
         const getStatus = () => {
             if(changes.findIndex(c => (c.data.defKey ||
                     c.data.baseInfo?.defKey)?.toLocaleLowerCase()
-                === dataKey) > -1) {
+                === dataKey) > -1 && (isCustomerMeta ? true :
+                (metaFieldsIndex > -1 || metaFieldsData || sourceEntity?.defKey))) {
                 return [<span className={`${currentPrefix}-compare-list-container-content-list-item-diff`}>
                   <span>
                     <Icon type='fa-times-circle-o'/>

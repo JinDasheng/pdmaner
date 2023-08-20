@@ -21,10 +21,12 @@ export default React.memo(forwardRef(({data, groups, prefix}, ref) => {
   };
   return <div className={`${prefix}-list-select`}>
     <ListGroupSelect
+      repeatTitle={FormatMessage.string({id: 'components.listSelect.repeatStandMessage'})}
       formatResult={formatResult}
       data={data}
       groups={groups}
       ref={listGroupSelectRef}
+      originGroups={groups}
     />
   </div>;
 }));

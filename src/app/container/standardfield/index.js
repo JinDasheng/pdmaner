@@ -12,7 +12,7 @@ import {
   Button,
   Download,
   FormatMessage,
-  Icon, IconTitle,
+  Icon, IconTitle, Message,
   Modal,
   openModal,
   SearchInput,
@@ -220,7 +220,6 @@ export default forwardRef(({prefix, dataSource, updateDataSource, activeKey}, re
       try {
         const dataObj = JSON.parse(data).map(d => ({
           ...d,
-          id: Math.uuid(),
           fields: (d.fields || []).map(f => reset({...f, id: Math.uuid()}, dataSource, ['defKey', 'id'])),
         }));
         let modal;
@@ -230,6 +229,7 @@ export default forwardRef(({prefix, dataSource, updateDataSource, activeKey}, re
             standardFields: listSelectRef.current.getStandardFields(),
           });
           modal.close();
+          Message.success({title: FormatMessage.string({id: 'optSuccess'})});
         };
         const onClose = () => {
           modal.close();
@@ -241,7 +241,7 @@ export default forwardRef(({prefix, dataSource, updateDataSource, activeKey}, re
           data={dataObj}
           groups={standardFields}
         />, {
-          bodyStyle: {width: '60%'},
+          bodyStyle: {width: '70%'},
           title: <FormatMessage id='standardFields.importStandardFieldsLib'/>,
           buttons: [
             <Button key='ok' onClick={onOk} type='primary'>
