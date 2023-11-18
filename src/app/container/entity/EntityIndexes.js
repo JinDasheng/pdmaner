@@ -23,9 +23,9 @@ export default React.memo(({ prefix, data, dataChange }) => {
   };
   const currentPrefix = getPrefix(prefix);
   const headers = [
-    { refKey: 'defKey', value: FormatMessage.string({id: 'tableHeaders.indexesName'})},
-    { refKey: 'unique', value: FormatMessage.string({id: 'tableHeaders.indexIsUnique'})},
-    { refKey: 'comment', value: FormatMessage.string({id: 'tableHeaders.indexComment'})}];
+    { refKey: 'defKey', value: FormatMessage.string({id: 'tableHeaders.indexesName'}), width: 'auto'},
+    { refKey: 'unique', value: FormatMessage.string({id: 'tableHeaders.indexIsUnique'}), width: 'auto'},
+    { refKey: 'comment', value: FormatMessage.string({id: 'tableHeaders.indexComment'}), width: 'auto'}];
   const stateData = useRef(data?.indexes || []);
   const tableDataGroupChange = (groupData) => {
     stateData.current = groupData.map((g) => {
@@ -184,6 +184,7 @@ export default React.memo(({ prefix, data, dataChange }) => {
   return <div className={`${currentPrefix}-entity-indexes`}>
     <Table
       {...commonProps}
+      autoWidth
       virtual={false}
       tableDataChange={tableDataGroupChange}
       hiddenHeader={false}

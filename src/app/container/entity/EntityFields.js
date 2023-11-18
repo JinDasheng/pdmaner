@@ -5,7 +5,7 @@ import { Table } from 'components';
 export default React.memo(({data, dataSource, update, FieldsExtraOpt,customerHeaders,
                              dataChange, offsetHeight, updateDataSource, ready, freeze, param,
                              hasRender, hasDestory, getDataSource, openDict, defaultGroups,
-                             getRestData, type, openConfig}) => {
+                             getRestData, type, openConfig, searchRef}) => {
   const tableRef = useRef(null);
   useEffect(() => {
     hasRender && hasRender({
@@ -23,6 +23,7 @@ export default React.memo(({data, dataSource, update, FieldsExtraOpt,customerHea
     return reg.test(f.defName) || reg.test(f.defKey);
   }, []);
   return <Table
+    searchRef={searchRef}
     search={search}
     needHideInGraph={false}
     openConfig={openConfig}

@@ -24,6 +24,7 @@ export default React.memo(({prefix, data, dataSource, BaseExtraCom, customerHead
   const [size, setSize] = useState({width: 0});
   const resizeDomRef = useRef(null);
   const tableRef = useRef(null);
+  const extraRef = useRef(null);
   useEffect(() => {
     addDomResize(resizeDomRef.current, id, () => {
       setSize({
@@ -133,6 +134,9 @@ export default React.memo(({prefix, data, dataSource, BaseExtraCom, customerHead
   const groupChange = (keys) => {
     setCheckValues(keys);
     dataChange(keys, 'group');
+  };
+  const searchRef = () => {
+    return extraRef.current;
   };
   return <div
     className={`${currentPrefix}-entity-base`}
@@ -249,11 +253,13 @@ export default React.memo(({prefix, data, dataSource, BaseExtraCom, customerHead
             <span>{FormatMessage.string({id: 'tableBase.fields'})}</span>
           </span>
           }
+        extra={<span className={`${currentPrefix}-entity-base-search`} ref={extraRef}/>}
       >
         <div
           style={{width: size.width, height: '100%'}}
         >
           <EntityFields
+            searchRef={searchRef}
             openConfig={openConfig}
             type={type}
             getRestData={getRestData}

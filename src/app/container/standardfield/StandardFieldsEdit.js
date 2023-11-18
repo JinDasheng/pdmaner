@@ -43,9 +43,10 @@ export default React.memo(({prefix, dataChange, dataSource, twinkle, updateDataS
   };
   const tableDataGroupChange = (groupData) => {
     newDataRef.current = groupData.map((g) => {
+      const currentGroup = (newDataRef.current || []).find(c => c.id === g.id) || {};
       return {
-        ..._.omit(g, ['children']),
-        fields: g.children ? g.fields || [] : [],
+        ...currentGroup,
+        ..._.pick(g, ['defKey', 'defName', 'id']),
       };
     });
     dataChange && dataChange(newDataRef.current, []);
@@ -124,6 +125,7 @@ export default React.memo(({prefix, dataChange, dataSource, twinkle, updateDataS
     <Table
       {...commonProps}
       //updateDataSource={updateDataSource}
+      autoWidth
       virtual={false}
       getDataSource={getDataSource}
       otherOpt={false}

@@ -974,14 +974,17 @@ export const getCopyRealData = (dataSource, data) => {
         return {
           ...f,
           id: Math.uuid(),
-          otherData: _.pick(transform(f, dataSource, db), ['domainData', 'refDictData', 'uiHintData', 'type']),
+          otherData: {
+            ..._.pick(transform(f, dataSource, db), ['domainData', 'refDictData', 'uiHintData', 'type']),
+            id: f.id,
+          },
         }
       })
     }
   })
 }
 
-export const putCopyRealData = (dataSource, data) => {
+export const putCopyRealData = (dataSource, data, needOldId) => {
   if (!dataSource) {
     return data;
   }
@@ -991,7 +994,7 @@ export const putCopyRealData = (dataSource, data) => {
   const getDataId = (currentData, copyData, id) => {
     if (!currentData.some(c => c.id === id)) {
       if(copyData) {
-        return currentData.filter(c => (c.defKey === copyData.defKey) || (c.defName === copyData.defName))[0]?.id;
+        return currentData.find(c => (c.defKey === copyData.defKey) || (c.defName === copyData.defName))?.id;
       }
       return null;
     }
@@ -1001,15 +1004,17 @@ export const putCopyRealData = (dataSource, data) => {
     ..._.omit(data, ['nameTemplate']),
     type: data.type || 'P',
     id: Math.uuid(),
-    sysProps: {
-      nameTemplate: data?.nameTemplate || data?.sysProps?.nameTemplate,
-    },
+      sysProps: {
+          nameTemplate: data?.nameTemplate || data?.sysProps?.nameTemplate,
+      },
+    ...(needOldId ? {oldId: data.id} : {}),
     indexes: (data.indexes || []).map(i => ({...i, id: Math.uuid()})),
     fields: (data.fields || []).map(f => {
       const domain = getDataId(dataSource.domains || [], f.otherData?.domainData, f.domain);
       return {
         ..._.omit(f, ['otherData']),
         id: Math.uuid(),
+        ...(needOldId ? {oldId: f.otherData?.id || f.id} : {}),
         type: (domain ? null : f.otherData?.type) || f.type,
         len: domain ? '' : f.len,
         scale: domain ? '' : f.scale,
@@ -1183,15 +1188,42 @@ const injectEntities = (dataSource, entities, data) => {
   // 不存在的表新增
   const newEntity = [];
   entities.forEach(e => {
-    const current = currentEntities.filter(c => c.defKey === e.defKey)[0];
+    const current = currentEntities.find(c => c.defKey === e.defKey);
     if (current) {
-      if (current.id !== e.id) {
-        sameEntity.push({oldId: e.id, newId: current.id})
-      }
+      sameEntity.push({oldId: e.oldId, newId: current.id})
     } else {
       newEntity.push(e);
     }
   });
+  const updateEntity = sameEntity.concat(newEntity).filter(e => e.oldId);
+  const findNewId = (id) => {
+    const currentChange = updateEntity.find(e => e.oldId === id);
+    if(currentChange) {
+      return currentChange.newId || currentChange.id;
+    }
+    return id;
+  }
+  const findOriginKey = (id, cells) => {
+    return cells.find(c => c.id === id)?.originKey;
+  }
+  const findNewFieldId = (entityId, filedId) => {
+    if(filedId && entityId) {
+      const fieldIdArray = filedId.split(separator);
+      const preEntity = entities.find(e => e.oldId === entityId);
+      const preField = (preEntity.fields || []).find(f => f.oldId === fieldIdArray[0]);
+      const currentEntity = sameEntity.find(s => s.oldId === entityId);
+      if(currentEntity) {
+        const currentEntityData = currentEntities.find(e => e.id === currentEntity.newId);
+        if(currentEntityData) {
+          const id = (currentEntityData.fields || []).find(f => f.defKey === preField?.defKey)?.id;
+          return id ? filedId.replace(preField.oldId, id) : null;
+        }
+        return null;
+      }
+      return preField ? filedId.replace(preField.oldId, preField.id) : null;
+    }
+    return null;
+  }
   return {
     data: data.map(d => {
       return {
@@ -1200,21 +1232,47 @@ const injectEntities = (dataSource, entities, data) => {
           ...d.canvasData,
           cells: (d.canvasData.cells || []).map(c => {
             if (c.shape === 'table' && c.originKey) {
-              const currentChange = sameEntity.filter(e => e.oldId === c.originKey)[0];
-              if (currentChange) {
+              return {
+                ...c,
+                originKey: findNewId(c.originKey),
+              };
+            } else if(c.shape === 'erdRelation') {
+              const cells = (d.canvasData.cells || [])
+                  .filter(c => c.shape === 'table' && c.originKey);
+              const sourceOriginKey = findOriginKey(c.source.cell, cells);
+              const targetOriginKey = findOriginKey(c.target.cell, cells);
+              const newSourcePort = findNewFieldId(sourceOriginKey, c.source.port);
+              const newTargetPort = findNewFieldId(targetOriginKey, c.target.port);
+              if(newSourcePort && newTargetPort) {
                 return {
                   ...c,
-                  originKey: currentChange.newId,
-                };
+                  source: {
+                    ...c.source,
+                    port: newSourcePort
+                  },
+                  target: {
+                    ...c.target,
+                    port: newTargetPort
+                  },
+                }
               }
-              return c;
+              return null;
             }
             return c;
-          })
+          }).filter(c => !!c)
         }
       };
     }),
-    newEntity,
+    newEntity: newEntity.map(e => {
+      return {
+        ..._.omit(e, ['oldId']),
+        fields: (e.fields || []).map(f => {
+          return {
+            ..._.omit(f, ['oldId']),
+          }
+        })
+      }
+    }),
     sameEntity
   }
 }
@@ -1294,8 +1352,8 @@ const pasteOpt = (dataSource, menu, updateDataSource) => {
         Message.warring({title: FormatMessage.string({id: 'pasteWarring'})});
       } else {
         let injectData;
-        if (dataType === 'diagrams' && data.otherData) {
-          injectData = injectEntities(dataSource, data.otherData.map(d => putCopyRealData(dataSource, d)), realData);
+        if (config.mainKey === 'diagrams' && data.otherData) {
+          injectData = injectEntities(dataSource, data.otherData.map(d => putCopyRealData(dataSource, d, true)), realData);
           realData = injectData.data;
         }
         const mainKeys = config.mainKey.split('.');

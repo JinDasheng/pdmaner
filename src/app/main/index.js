@@ -209,6 +209,15 @@ const Index = React.memo(({getUserData, mode, isChildWindow,
       key,
     });
   };
+  const updateNavEmptyHide = (t) => {
+    restProps.update({
+      ...dataSourceRef.current,
+      profile: {
+        ...dataSourceRef.current.profile,
+        navEmptyHide: t,
+      },
+    });
+  };
   const _groupMenuChange = () => {
     (currentMenu.current || menuModelRef.current)?.restSelected?.();
     updateGroupType(groupTypeRef.current === 'modalAll' ?  'modalGroup' : 'modalAll');
@@ -355,13 +364,13 @@ const Index = React.memo(({getUserData, mode, isChildWindow,
       save={restProps.save}
       projectInfo={projectInfoRef.current}
       dataSource={dataSourceRef.current}
-      onOk={(t) => {
+      onOk={(t, filterDataSource) => {
       selectWordFile(dataSourceRef.current, t)
           .then(([dir, template]) => {
             genImg(false, [], 'png').then((imgDir) => {
               //console.log(template, imgDir);
               restProps.openLoading(FormatMessage.string({id: 'toolbar.exportWordStep2'}));
-              connectDB(dataSourceRef.current, configRef.current, {
+              connectDB(filterDataSource || dataSourceRef.current, configRef.current, {
                 sinerFile: projectInfo,
                 docxTpl: template,
                 imgDir: imgDir,
@@ -589,6 +598,19 @@ const Index = React.memo(({getUserData, mode, isChildWindow,
           id: Math.uuid(),
           fields,
           oldId: t.id,
+          indexes: (t.indexes || []).map(i => ({
+            ...i,
+            id: Math.uuid(),
+            fields: (i.fields || []).map((f) => {
+              return {
+                ...f,
+                fieldDefKey: fields.find(field => field.defKey.toLocaleLowerCase() ===
+                        f.fieldDefKey.toLocaleLowerCase())?.id
+                    || f.fieldDefKey,
+                id: Math.uuid(),
+              };
+            }),
+          })),
         };
       });
       const viewGroups = result.body?.groupTopics?.map((g) => {
@@ -684,11 +706,12 @@ const Index = React.memo(({getUserData, mode, isChildWindow,
       restProps.openLoading();
       connectDB(dataSourceRef.current, configRef.current, {
         [type === 'PD' ? 'pdmFile' : 'ddlFile']: data.path,
-      }, type === 'PD' ? 'ParsePDMFile' : 'ParseDDLToTableImpl', (result) => {
+      }, type === 'PD' ? 'ParsePDMFile' : 'DDLParseImpl', (result) => {
         dealParseFile(result, type === 'PD' ? 'importPowerDesigner' : 'importDDL');
       });
     }, (file) => {
-      const result = type === 'PD' ? (file.name.endsWith('.pdm') || file.name.endsWith('.PDM')) : file.name.endsWith('.sql');
+      const result = type === 'PD' ? (file.name.endsWith('.pdm') || file.name.endsWith('.PDM')) :
+          (file.name.endsWith('.sql') || file.name.endsWith('.txt') || file.name.endsWith('.ddl'));
       if (!result) {
         Modal.error({
           title: FormatMessage.string({id: 'optFail'}),
@@ -1107,6 +1130,7 @@ const Index = React.memo(({getUserData, mode, isChildWindow,
     restProps.dataSource?.profile?.codeTemplates,
     restProps.dataSource?.profile?.default?.db,
     config.lang, menuType]);
+  const navEmptyHide = !!restProps.dataSource?.profile?.navEmptyHide;
   const simpleMenu = useMemo(() => [
     {
       id: 'entities',
@@ -1197,10 +1221,10 @@ const Index = React.memo(({getUserData, mode, isChildWindow,
           return child;
         }).filter(r => !!r),
       };
-    }),
-  })), [simpleMenu, restProps.dataSource?.viewGroups]);
+    }).filter(c => (navEmptyHide ? c?.children?.length > 0 : true)),
+  })), [simpleMenu, navEmptyHide, restProps.dataSource?.viewGroups]);
   const menus = {
-    modalAll: simpleMenu,
+    modalAll: simpleMenu.filter(s => (navEmptyHide ? s?.children?.length > 0 : true)),
     modalGroup: groupMenu,
   };
   const tabDataChange = (data, t) => {
@@ -1862,7 +1886,7 @@ const Index = React.memo(({getUserData, mode, isChildWindow,
                 <span className={`${currentPrefix}-home-menu-header-title`}>
                   <FormatMessage id='moduleList'/>
                 </span>
-                <span onClick={_groupMenuChange} className={`${currentPrefix}-home-menu-header-opt`}>
+                <span className={`${currentPrefix}-home-menu-header-opt`}>
                   {activeKey && <div className={`${currentPrefix}-home-menu-header-opt-position`} onClick={onLocation}>
                     <Tooltip
                       title={<div
@@ -1876,7 +1900,23 @@ const Index = React.memo(({getUserData, mode, isChildWindow,
                       <Icon type='fa-crosshairs'/>
                     </Tooltip>
                   </div>}
-                  <span>
+                  <div
+                    className={`${currentPrefix}-home-menu-header-opt-position`}
+                    onClick={() => updateNavEmptyHide(!navEmptyHide)}
+                  >
+                    <Tooltip
+                      title={<div
+                        className={`${currentPrefix}-home-menu-header-opt-title`}
+                        >
+                        <FormatMessage id='navEmptyHide'/>
+                      </div>}
+                      force
+                      placement='top'
+                    >
+                      <Icon type={`fa-eye${navEmptyHide ? '-slash' : ''}`}/>
+                    </Tooltip>
+                  </div>
+                  <span onClick={_groupMenuChange}>
                     <FormatMessage id='showGroup'/>
                   </span>
                   <span>

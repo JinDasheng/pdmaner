@@ -170,7 +170,7 @@ export default forwardRef(({prefix, dataSource, updateDataSource, activeKey}, re
     const onCancel = () => {
       modal.close();
     };
-    const dataChange = (data, fields) => {
+    const dataChange = (data, fields = []) => {
       changeFields.push(...fields);
       tempData = data;
     };

@@ -42,6 +42,18 @@ export default React.memo(({children, trigger, prefix, menus, disable,
   if (!menus || menus.length === 0) {
     return children;
   }
+  const renderMenu = (m) => {
+    return <div
+      draggable={m.draggable}
+      style={m.style}
+      key={m.name}
+      className={`${currentPrefix}-dropdown-item ${currentPrefix}-dropdown-item-${m.disable ? 'disable' : 'normal'}`}
+      onDragStart={e => onMenuClick(m, e)}
+      onClick={e => onMenuClick(m, e)}
+    >
+      {m.icon}{m.name}
+    </div>;
+  };
   return <>
     {React.cloneElement(children, {
       [`on${firstUp(trigger)}`]: showMenu,
@@ -60,16 +72,16 @@ export default React.memo(({children, trigger, prefix, menus, disable,
             }
             return m;
           }).map((m) => {
-            return <div
-              draggable={m.draggable}
-              style={m.style}
-              key={m.name}
-              className={`${currentPrefix}-dropdown-item ${currentPrefix}-dropdown-item-${m.disable ? 'disable' : 'normal'}`}
-              onDragStart={e => onMenuClick(m, e)}
-              onClick={e => onMenuClick(m, e)}
-            >
-              {m.icon}{m.name}
-            </div>;
+            if(m.children){
+              return [<div
+                style={m.style}
+                key={m.name}
+                className={`${currentPrefix}-dropdown-item-group`}
+              >
+                {m.icon}{m.name}
+              </div>, m.children.map(c => renderMenu(c))];
+            }
+            return renderMenu(m);
           })
         }
       </div>, document.body) : null

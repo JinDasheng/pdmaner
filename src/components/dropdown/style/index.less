@@ -14,13 +14,18 @@
     display: flex;
     flex-direction: row;
     align-items: center;
+    &-group {
+      font-size: 12px;
+      padding: 5px 10px;
+      color: @third-font-color;
+    }
     &-disable {
       color: @third-font-color;
       &:hover {
         cursor: not-allowed !important;
       }
     }
-    padding: 5px 10px;
+    padding: 5px 10px 5px 20px;
     &:hover {
       cursor: pointer;
       color: @primary-color;

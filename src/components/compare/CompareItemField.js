@@ -55,7 +55,10 @@ export default React.memo(({parent: { sourceEntity, key, metaFieldsData }, metaD
     const metaField = metaTempField ?
         {
             ...metaTempField,
-            ...transform(metaTempField, customerDataSource, isCustomerMeta ? pDb : cDb),
+            ...transform(metaTempField, {
+                ...dataSource,
+                ...customerDataSource,
+            }, isCustomerMeta ? pDb : cDb),
         } : {};
     const change = changes.find((c) => {
         const defKey = (c.data?.defKey || c.data?.baseInfo?.defKey)?.toLocaleLowerCase();
