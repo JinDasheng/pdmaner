@@ -661,13 +661,11 @@ export const _transform = (f, dataSource, code, type = 'id', codeType = 'dbDDL',
     }
     // 转换引用数据表  如果是视图
     if (entities && f.refEntity) {
-        const entityIndex = entities.findIndex(e => e[type] === f.refEntity);
-        if (entityIndex > -1) {
-            const entity = entities[entityIndex];
-            const fieldIndex = (entity.fields || []).filter(fie => f.refEntityField === fie[type])[0];
+        const entity = entities.find(e => e[type] === f.refEntity);
+        if (entity) {
+            const field = (entity.fields || []).find(fie => f.refEntityField === fie[type]);
             temp.refEntity = entity.defKey || '';
-            if(fieldIndex > -1) {
-                const field = entity.fields[fieldIndex];
+            if(field) {
                 temp.refEntityField = field?.defKey || '';
             }
         }
@@ -728,7 +726,7 @@ export const _getEmptyMessage = (name, dataSource, code) => {
 };
 export const _getTemplateString = (template, templateData, isDemo, dataSource , code) => {
     const underline = (str, upper) => {
-        const ret = str.replace(/([A-Z])/g,"_$1");
+        const ret = str?.replace(/([A-Z])/g,"_$1") || '';
         if(upper){
             return ret.toUpperCase();
         }else{
@@ -736,10 +734,10 @@ export const _getTemplateString = (template, templateData, isDemo, dataSource , 
         }
     };
     const upperCase = (str) => {
-        return str.toLocaleUpperCase();
+        return str?.toLocaleUpperCase() || '';
     };
     const lowerCase = (str) => {
-        return str.toLocaleLowerCase();
+        return str?.toLocaleLowerCase() || '';
     };
     const join = (...args) => {
         if(args.length<=2)return args[0];
@@ -1492,13 +1490,16 @@ export const _getAllDataSQLByFilter = (data, code, filterTemplate, filterDefKey)
                     }),
                     correlations: (e.correlations || []).map(c => {
                         const refEntityData = entities.find(r => r.id === c.refEntity);
-                        return {
-                            ...c,
-                            myField: (e.fields || []).find(field => field.id === c.myField)?.defKey,
-                            refEntity: refEntityData?.defKey,
-                            refField: (refEntityData.fields || []).find(field => field.id === c.refField)?.defKey,
+                        if(refEntityData) {
+                            return {
+                                ...c,
+                                myField: (e.fields || []).find(field => field.id === c.myField)?.defKey,
+                                refEntity: refEntityData?.defKey,
+                                refField: (refEntityData.fields || []).find(field => field.id === c.refField)?.defKey,
+                            }
                         }
-                    })
+                        return null
+                    }).filter(e => !!e)
                 };
                 if (name === 'view') {
                     childData.refEntities = dataSource?.entities
@@ -1532,6 +1533,7 @@ export const _getAllDataSQLByFilter = (data, code, filterTemplate, filterDefKey)
             return tempData;
         }).join('');
     } catch (e) {
+        console.log(e);
         sqlString = JSON.stringify(e.message);
     }
     // const DDLToggleCase = dataSource?.profile?.DDLToggleCase || '';

@@ -49,7 +49,7 @@ export default React.memo(({prefix, dataSource, dataChange, config, onClose, onO
     let modal;
     const onCloseModal = () => {
       modal && modal.close();
-      onClose && onClose();
+      //onClose && onClose();
     };
     const selectedTable = dealDataRef.current.getData()
         .reduce((a, b) => a.concat(b.fields.map(f => ({...f, group: b.id}))), []);

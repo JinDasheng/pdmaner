@@ -349,7 +349,7 @@ const Menu = React.memo(forwardRef(({contextMenus = [], onContextMenu, fieldName
         parentKey: parents[0],
       }]);
       updateExpandMenu(parents);
-      setJumpKey({id: menuKey});
+      setJumpKey({id: `${menuKey}${separator}${parents[0] || ''}`});
     }
   };
   const jumpPosition = (d, key, type) => {
@@ -365,7 +365,7 @@ const Menu = React.memo(forwardRef(({contextMenus = [], onContextMenu, fieldName
           parentKey: group?.id,
           type: d.type === 'refViews' ? 'view' : 'entity',
         }]);
-        setJumpKey({id: d.id});
+        setJumpKey({id: `${d.id}${separator}${group?.id || key}`});
         updateExpandMenu(parents);break;
       case 'dicts':
         parent = 'dicts';
@@ -375,7 +375,7 @@ const Menu = React.memo(forwardRef(({contextMenus = [], onContextMenu, fieldName
           parentKey: group?.id,
           type: 'dict',
         }]);
-        setJumpKey({id: d.id});
+        setJumpKey({id: `${d.id}${separator}${group?.id || key}`});
         updateExpandMenu(parents);break;
       default: break;
     }
@@ -449,20 +449,22 @@ const Menu = React.memo(forwardRef(({contextMenus = [], onContextMenu, fieldName
       }
     }
   }, [jumpKey]);
-  const getMenuData = (menu, nestingLevel, parentMenus, pI) => ({
-    data: {
-      id: `${menu[defKey]}${separator}${parentMenus[0]?.[defKey] || ''}`,
-      parentMenus,
-      menu,
-      pI,
+  const getMenuData = (menu, nestingLevel, parentMenus, pI) => {
+    return ({
+      data: {
+        id: `${menu[defKey]}${separator}${parentMenus[0]?.[defKey] || ''}`,
+        parentMenus,
+        menu,
+        pI,
+        nestingLevel,
+        isOpenByDefault: expandMenu.includes(menu[defKey]),
+        selected: selectedMenu,
+        insertKey: insert,
+      },
       nestingLevel,
-      isOpenByDefault: expandMenu.includes(menu[defKey]),
-      selected: selectedMenu,
-      insertKey: insert,
-    },
-    nestingLevel,
-    menu,
-  });
+      menu,
+    });
+  };
   function* treeWalker() {
     for (let i = 0; i < menus.length; i += 1) {
       yield getMenuData(menus[i], 0, [], i);

@@ -8,6 +8,7 @@ import React, {
   useCallback,
   useContext,
 } from 'react';
+import ReactDOM from 'react-dom';
 import * as _ from 'lodash/object';
 import * as Component from 'components';
 
@@ -16,7 +17,7 @@ import {
   validateFields,
   emptyField,
   getColumnWidth,
-  generatorKey, transformFieldType,
+  generatorKey, transformFieldType, parseExcel,
 } from '../../lib/datasource_util';
 import { moveArrayPositionByArray } from '../../lib/array_util';
 import { addBodyEvent, removeBodyEvent } from '../../lib/listener';
@@ -40,9 +41,9 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort, sea
                                className, expand, otherOpt = true, disableHeaderReset,
                                updateDataSource, disableAddStandard, ready, twinkle, getDataSource,
                                disableDragRow = true, freeze = false, reading = false,
-                               fixHeader = true, openDict, defaultGroups,
-                               openConfig, isEntity, needHideInGraph, virtual = true},
-                                     refInstance) => {
+                               fixHeader = true, openDict, defaultGroups, searchRef,
+                               openConfig, isEntity, needHideInGraph, virtual = true, autoWidth},
+                               refInstance) => {
   const { lang } = useContext(ConfigContent);
   const { valueContext, valueSearch } = useContext(TableContent);
   const inputRef = useRef({});
@@ -560,36 +561,41 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort, sea
           e.preventDefault();
           e.stopPropagation();
           Paste((value) => {
+            let pasteFields = [];
             try {
-              let pasteFields = JSON.parse(value);
-              if (validate) {
-                // 获取父组件的校验
-                pasteFields = validate(pasteFields.map(f => _.omit(f, ['id', 'otherData'])));
-              } else {
-                // 使用默认的校验
-                pasteFields = validateFields(putCopyRealData(dataSource,
-                    {fields: pasteFields}).fields || []);
-              }
-              // 过滤重复字段
-              const fieldKeys = fields.map(f => f.defKey);
-              const finalFields = pasteFields.map((f) => {
-                const key = generatorKey(f.defKey, fieldKeys);
-                fieldKeys.push(key);
-                return {
-                  ...f,
-                  id: Math.uuid(),
-                  defKey: key,
-                };
-              });
-              Component.Message.success({
-                title: Component.FormatMessage.string({id: 'pasteSuccess'}),
-              });
-              addField(null, finalFields);
+              pasteFields = JSON.parse(value);
             } catch (error) {
-              Component.Message.error({
-                title: Component.FormatMessage.string({id: 'tableValidate.invalidJsonData'}),
-              });
+              // 判断是否来自excel粘贴
+              // eslint-disable-next-line no-use-before-define
+              pasteFields = parseExcel(value, finalTempHeaders);
+              // Component.Message.error({
+              //   title: Component.FormatMessage.string({id: 'tableValidate.invalidJsonData'}),
+              // });
             }
+            if (validate) {
+              // 获取父组件的校验
+              pasteFields = validate(pasteFields.map(f => _.omit(f, ['id', 'otherData'])));
+            } else {
+              // 使用默认的校验
+              pasteFields = validateFields(putCopyRealData(dataSource,
+                  {fields: pasteFields}).fields || []);
+            }
+            // 过滤重复字段
+            const fieldKeys = fields
+                .map(f => (f.defKey || '').toLocaleLowerCase());
+            const finalFields = pasteFields.map((f) => {
+              const key = generatorKey((f.defKey || '').toLocaleLowerCase(), fieldKeys);
+              fieldKeys.push(key.toLocaleLowerCase());
+              return {
+                ...f,
+                id: Math.uuid(),
+                defKey: key,
+              };
+            });
+            Component.Message.success({
+              title: Component.FormatMessage.string({id: 'pasteSuccess'}),
+            });
+            addField(null, finalFields);
           });
           current && current.focus({
             preventScroll: true,
@@ -1093,7 +1099,7 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort, sea
             key={h?.refKey}
             style={{
                 cursor: 'pointer',
-                width: columnWidth[h?.refKey],
+                width: autoWidth ? 'auto' : columnWidth[h?.refKey],
                 zIndex: h?.freeze ? 100 : 99,
                 top: fixHeader ? 0 : 'unset',
                 ...freezeStyle,
@@ -1178,6 +1184,20 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort, sea
       </TableContent.Provider>
     </table>;
   };
+  const renderSearch = () => {
+    if(search) {
+      return <div className={`${currentPrefix}-table-opt-search`}>
+        <Component.SearchInput placeholder={Component.FormatMessage.string({id: 'tableEdit.search'})} onChange={onFilterChange}/>
+      </div>;
+    }
+    return null;
+  };
+  useEffect(() => {
+    const Search = renderSearch();
+    if(Search && searchRef) {
+      ReactDOM.render(Search, searchRef());
+    }
+  }, []);
   return (
     <div className={`${currentPrefix}-table-container ${className || ''}`}>
       <div className={`${currentPrefix}-table-container-tools`}>
@@ -1239,9 +1259,7 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort, sea
             </span>
         }
         {
-            search && <div className={`${currentPrefix}-table-opt-search`}>
-              <Component.SearchInput placeholder={Component.FormatMessage.string({id: 'tableEdit.search'})} onChange={onFilterChange}/>
-            </div>
+            search && !searchRef && renderSearch()
         }
       </div>
       {

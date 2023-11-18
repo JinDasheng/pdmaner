@@ -4,7 +4,7 @@ import './style/index.less';
 import {getPrefix} from '../../lib/prefixUtil';
 
 const Input = React.memo(forwardRef(({ prefix ,defaultValue, suffix, placeholder, readOnly,
-                                       onClick, type = 'text', accept, onKeyDown, maxLength, disable,
+                                       onClick, type = 'text', trim, accept, onKeyDown, maxLength, disable,
                                        ...restProps }, ref) => {
   const [stateValue, setDefaultValue]  = useState(defaultValue);
   const composition = useRef(false);
@@ -26,7 +26,9 @@ const Input = React.memo(forwardRef(({ prefix ,defaultValue, suffix, placeholder
   }
   const _onBlur = (e) => {
     const { onBlur, onChange } = restProps;
-    e.target.value = e.target.value.trim();
+    const blurValue = e.target.value;
+    // 去除空格
+    e.target.value = trim ? blurValue.replace(/\s/g, '') : blurValue.trim();
     onBlur && onBlur(e);
     if (e.target.value !== tempValue) {
       onChange && onChange(e);

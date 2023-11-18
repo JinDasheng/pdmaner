@@ -64,7 +64,7 @@ export const updateAllData = (dataSource) => {
       message = FormatMessage.string({
         id: 'defKeyValidateMessage',
         data: {
-          name: `${FormatMessage.string({id: `menus.${t.type}`})}[${oldData?.defName || oldData?.defKey}]`,
+          name: `${FormatMessage.string({id: `menus.${t.type}`})}[${oldData?.defName || oldData?.defKey || t.data?.defName || t.data.id}]`,
         }});
     }
     if (t.type === 'entity' || t.type === 'view') {
@@ -137,14 +137,6 @@ export const updateAllData = (dataSource) => {
         comment: data?.comment || '',
         canvasData: {
           cells: allNodes.map(c => {
-            if (c.shape === 'erdRelation') {
-              if (filterEdge(allNodes, c)) {
-                return c;
-              }
-              return null;
-            }
-            return c;
-          }).filter(c => !!c).map(c => {
             const otherData = {};
             const pickFields = [
               'id',
@@ -400,7 +392,7 @@ export const getDemoDbConnect = () => {
     gaussdb: {
       defKey: FormatMessage.string({id: 'dbConnect.demoDbConnect.gaussdb_defKey'}),
       driverClass: 'org.postgresql.Driver',
-      url: FormatMessage.string({id: 'dbConnect.demoDbConnect.guassdb'}),
+      url: FormatMessage.string({id: 'dbConnect.demoDbConnect.gaussdb'}),
     },
     kingbase: {
       defKey: FormatMessage.string({id: 'dbConnect.demoDbConnect.kingbase_defKey'}),
@@ -1108,8 +1100,9 @@ export  const getTextWidth = (text, font, weight = 'normal') => {
     // 如果缓存数量超过百万 则清除数据 释放内存
     textWidthCache = {}
   }
-  textWidthCache[text] = width;
-  return Math.ceil(width);
+  const realWidth = Math.ceil(width);
+  textWidthCache[text] = realWidth;
+  return realWidth;
 };
 
 export const reset = (f, dataSource, [key, id]) => {
@@ -2301,4 +2294,37 @@ export const getUnGroup = (dataSource, defKey) => {
     id: '__ungroup',
     defKey: defKey || '__ungroup',
   }
+}
+
+export const parseExcel = (str, headers) => {
+  const numberName = ['len', 'scale']
+  const booleanName = ['primaryKey', 'notNull', 'autoIncrement', 'hideInGraph']
+  const checkValue = (value, name) => {
+    if(booleanName.includes(name)) {
+      return value === true || value === '√' || value === 'true';
+    } else if(numberName.includes(value)) {
+      const numberValue = parseInt(value);
+      if (isNaN(numberValue)) {
+        return ''
+      }
+      return numberValue;
+    }
+    return value;
+  }
+  const resultArray = (str || '')
+      .replace(/\r\n(\r\n)*( )*(\r\n)*\r\n/g,"\r\n")
+      .split('\r\n')
+      .map(r => (r || '').split('\t'));
+  return resultArray.map(r => {
+    return r.reduce((p, n, i) => {
+      const refKey = headers[i]?.refKey;
+      if(refKey) {
+        return {
+          ...p,
+          [refKey]: checkValue(n, refKey),
+        }
+      }
+      return p;
+    }, {})
+  });
 }

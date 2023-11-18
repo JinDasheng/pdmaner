@@ -305,6 +305,7 @@ export default React.memo(({f, name, remarkChange, onKeyDown, currentPrefix,
     </Component.Select>;
   }
   return <Component.Input
+    trim={name === 'defKey'}
     onKeyDown={onKeyDown}
     ref={cell}
     value={f[name]}

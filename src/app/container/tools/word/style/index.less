@@ -2,12 +2,20 @@
 
 .@{prefix}-export-word {
   padding: 10px;
+  &-entity-select {
+    height: 60vh;
+    overflow: auto;
+    padding: 5px;
+  }
   &-export {
     display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: center;
     &-button {
+      & + & {
+        margin-left: 20px;
+      }
       cursor: pointer;
       background: @primary-color;
       color: @four-font-color;

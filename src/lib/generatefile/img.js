@@ -26,6 +26,9 @@ export const svg2png = (svgData) => {
       document.body.removeChild(img);
       resolve(canvas);
     }
+    img.onerror = function (err){
+      reject(err)
+    }
     document.body.appendChild(img);
   })
 }
@@ -136,7 +139,7 @@ export const imgAll = (dataSource, callBack, useBase, imageType) => {
         zIndex: 3,
       };
       await new Promise((resolve, reject) => {
-        img(d.canvasData.cells, d.relationType, dataSource, true, {
+        img(d.canvasData?.cells || [], d.relationType, dataSource, true, {
           in: {
             ...hiddenPort,
           },
@@ -148,14 +151,14 @@ export const imgAll = (dataSource, callBack, useBase, imageType) => {
           },
         }).then((dom) => {
           if (imageType === 'svg') {
-            const baseData = html2svg(d.canvasData.cells, dom);
+            const baseData = html2svg(d.canvasData?.cells || [], dom);
             document.body.removeChild(dom.parentElement.parentElement);
             result.push({fileName: d.id, data: useBase ? `data:image/svg+xml;base64,${window.btoa(unescape(encodeURIComponent(baseData)))}` : baseData});
             console.log(d.defName || d.defKey);
             callBack && callBack();
             resolve();
           } else {
-            svg2png(html2svg(d.canvasData.cells, dom)).then((canvas) => {
+            svg2png(html2svg(d.canvasData?.cells || [], dom)).then((canvas) => {
               document.body.removeChild(dom.parentElement.parentElement);
               const baseData = canvas.toDataURL('image/png');
               const dataBuffer = Buffer.from(baseData.replace(/^data:image\/\w+;base64,/, ""), 'base64');
@@ -250,6 +253,6 @@ export const html2svg = (data = [], dom) => {
   viewport.setAttribute('transform', `matrix(1,0,0,1,${-minX + 25},${-minY + 10})`);
   const rect = viewport.getBoundingClientRect();
   return `<svg width="${rect.width + 20}px" height="${rect.height + 20}px" viewBox="0 0 ${rect.width + 20} ${rect.height + 20}" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-          ${svg.innerHTML.replaceAll('size="1px">', 'size="1px"/>')}</svg>`;
+          ${svg.innerHTML.replaceAll('size="1px">', 'size="1px"/>').replaceAll('&nbsp;', ' ')}</svg>`;
 }
 
