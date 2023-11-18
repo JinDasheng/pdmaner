@@ -362,6 +362,7 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
       });
       graph.on('cell:added', () => {
         dataChange && dataChange(graph.toJSON({diff: true}));
+        console.log(graph.toJSON({diff: true}));
       });
       graph.on('cell:click', ({cell, e}) => {
         eR.cellClick(cell, graph, id);
@@ -507,8 +508,8 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
     graph.history.on('change', () => {
       toolBarRef.current.historyChange(graph.history);
     });
-    const startDrag = (e, key) => {
-      eR.startDrag(e, key, dataSourceRef.current);
+    const startDrag = (e, key, type) => {
+      eR.startDrag(e, key, dataSourceRef.current, type);
     };
     const startRemarkDrag = (e, type) => {
       eR.startRemarkDrag(e, type);
@@ -604,6 +605,7 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
     dataSource.dicts,
     dataSource.uiHint,
     dataSource.entities,
+    dataSource.logicEntities,
     dataSource?.profile?.default?.db,
   ]);
   useEffect(() => {

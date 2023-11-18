@@ -5,6 +5,7 @@ import { Button, openModal, Modal, Message, FormatMessage } from 'components';
 
 import { Copy, Paste } from './event_tool';
 import NewEntity from '../app/container/entity/NewEntity';
+import NewLogicEntity from '../app/container/logicentity/NewLogicEntity';
 import NewView from '../app/container/view/NewViewStep';
 import NewRelation from '../app/container/relation/NewRelation';
 import NewDict from '../app/container/dict/NewDict';
@@ -35,8 +36,7 @@ import {
   transformFieldType,
   resetHeader,
   transform,
-  calcUnGroupDefKey,
-  getUnGroup,
+  getUnGroup, getDefaultLogicSys, getLogicHeaders, getFieldBaseType,
 } from './datasource_util';
 // 专门处理左侧菜单 右键菜单数据
 import { separator } from '../../profile';
@@ -99,6 +99,8 @@ const menusType = {
   groups: ['add', 'edit', 'clear', 'delete'],
   entities: normalOpt.concat('all'),
   entity: normalOpt.concat('move', 'all', 'notes'),
+  logicEntities: normalOpt.concat('all'),
+  logicEntity: normalOpt.concat('move', 'all', 'notes'),
   views: normalOpt.concat('all'),
   view: normalOpt.concat('move', 'all', 'notes'),
   diagrams: normalOpt.concat('png', 'svg'),
@@ -165,6 +167,8 @@ export const getMenus = (key, type, selectedMenu, parentKey, groupType) => {
     if (type.endsWith('s') && (m === 'add') && (type !== 'groups')) {
       if (type === 'entities'){
         tempType = 'entity';
+      } else if (type === 'logicEntities'){
+        tempType = 'logicEntity';
       } else {
         tempType = tempType.substring(0, tempType.length - 1);
       }
@@ -230,11 +234,11 @@ const notesOpt = (dataSource, menu, updateDataSource) => {
   const otherMenus = menu.otherMenus || [];
   let drawer;
   let changeData;
-  let notes = otherMenus.filter(m => m.type === 'entity' || m.type === 'view')
+  let notes = otherMenus.filter(m => m.type === 'entity' || m.type === 'logicEntity' || m.type === 'view')
       .map(o => {
-        const names = o.type === 'entity' ? 'entities' : 'views';
+        const names = o.type === 'entity' ? 'entities' : (o.type === 'view' ? 'views' : 'logicEntities');
         return {
-          ...dataSource[names].filter(d => d.id === o.key)[0],
+          ...dataSource[names].find(d => d.id === o.key),
           type: o.type,
         };
       })
@@ -260,6 +264,7 @@ const notesOpt = (dataSource, menu, updateDataSource) => {
         ...dataSource,
         entities: updateNotes(dataSource.entities || [], 'entity'),
         views: updateNotes(dataSource.views || [], 'view'),
+        logicEntities: updateNotes(dataSource.logicEntities || [], 'logicEntity'),
       })
     }
     drawer && drawer.close();
@@ -323,7 +328,16 @@ const resetOpt = (dataSource, menu, updateDataSource) => {
 
 const editAllOpt = (dataSource, m, updateDataSource) => {
   const name = allType.filter(t => t.type === m.dataType)[0]?.name || m.dataType;
-  const refName = name === 'entities' ? 'refEntities' : 'refViews';
+  let refName = '';
+  if(name === 'dicts') {
+    refName = 'refDicts';
+  } else if(name === 'entities') {
+    refName = 'refEntities';
+  } else if(name === 'views') {
+    refName = 'refViews';
+  } else if(name === 'logicEntities') {
+    refName = 'refLogicEntities';
+  }
   let modal;
   let tempDataSource;
   const dataChange = (data) => {
@@ -441,13 +455,29 @@ const addOpt = (dataSource, menu, updateDataSource, oldData = {}, title, custome
   let modal = null;
   const data = {group: (parentKey && [parentKey]) || [], ...oldData};
   const dataChange = (value, name) => {
-    data[name] = value;
+    _.set(data, name, value);
   };
   const commonRequire = ['defKey'];
   const commonPick = ['defKey', 'defName'];
   const commonProps = { dataSource, dataChange };
   const commonAllKeys = (dataSource?.entities || []).concat(dataSource?.views || []).map(d => d.defKey);
   const modalComponent = {
+    logicEntities: {
+      uniqueKey: '',
+      uniqueKeyNamePath: '',
+      refName: 'refLogicEntities',
+      empty: {
+        ...getEmptyEntity([], {}),
+        sysProps: getDefaultLogicSys(),
+        headers: getLogicHeaders(),
+        type: 'L'
+      },
+      dataPick:'all',
+      component: NewLogicEntity,
+      title: FormatMessage.string({id: 'menus.add.newLogicEntity'}),
+      allKeys: (dataSource?.logicEntities || []).map(d => `${d.defKey || ''}${d.defName || ''}`),
+      require: [],
+    },
     entities: {
       uniqueKey: 'defKey',
       uniqueKeyNamePath: 'tableBase.defKey',
@@ -456,6 +486,7 @@ const addOpt = (dataSource, menu, updateDataSource, oldData = {}, title, custome
         ...getEmptyEntity([],
             _.get(dataSource, 'profile.default.entityInitProperties', {})),
         headers: resetHeader(dataSource, {}),
+        type: 'P'
       },
       dataPick: commonPick.concat('fields'),
       component: NewEntity,
@@ -570,6 +601,8 @@ const addOpt = (dataSource, menu, updateDataSource, oldData = {}, title, custome
   };
   const getRealType = () => {
     switch (dataType) {
+      case 'logicEntities':
+      case 'logicEntity': return 'logicEntities';
       case 'entities':
       case 'entity': return 'entities';
       case 'views':
@@ -591,23 +624,31 @@ const addOpt = (dataSource, menu, updateDataSource, oldData = {}, title, custome
   const realType = getRealType();
   const modalData = modalComponent[realType];
   const onOK = () => {
-    const result = validate(modalData.require, data);
+    const result = realType === 'logicEntities' ? !(!data.defKey && !data.defName) : validate(modalData.require, data);
     if (!result) {
       Modal.error({
         title: FormatMessage.string({id: 'optFail'}),
-        message: FormatMessage.string({id: 'formValidateMessage'})
+        message: realType === 'logicEntities' ? FormatMessage.string({id: 'logicEntity.validate'}) : FormatMessage.string({id: 'formValidateMessage'})
       });
     } else {
       if (customerDealData) {
         // 自定义处理数据
         customerDealData(data, modal);
       } else {
-        const ignoreCase = realType === 'entities' || 'views';
+        const ignoreCase = realType === 'entities' || realType === 'views' || realType === 'logicEntities';
         const allKeys = ignoreCase ? modalData.allKeys.map(k => k.toLocaleLowerCase()) : modalData.allKeys;
-        if (allKeys.includes(ignoreCase ? data[modalData.uniqueKey]?.toLocaleLowerCase() : data[modalData.uniqueKey])) {
+        let check = false;
+        if(realType === 'logicEntities') {
+          check = allKeys.includes(`${data.defKey || ''}${data.defName || ''}`?.toLocaleLowerCase())
+        } else {
+          check = allKeys.includes(ignoreCase ? data[modalData.uniqueKey]?.toLocaleLowerCase() : data[modalData.uniqueKey])
+        }
+        if (check) {
           Modal.error({
             title: FormatMessage.string({id: 'optFail'}),
-            message: FormatMessage.string({
+            message: realType === 'logicEntities' ? FormatMessage.string({
+              id: 'logicEntity.logicEntityUniquenessCheck',
+            }) : FormatMessage.string({
               id: 'entityAndViewUniquenessCheck',
               data: {
                 key: FormatMessage.string({id: `${modalData.uniqueKeyNamePath}`})
@@ -700,7 +741,7 @@ const addOpt = (dataSource, menu, updateDataSource, oldData = {}, title, custome
   modal = openModal(
     <Com {...commonProps} data={data} onOK={onOK} onCancel={onCancel}/>,
     {
-      bodyStyle: realType === 'dataTypeSupports' ? {width: '80%'} : {},
+      bodyStyle: (realType === 'dataTypeSupports' || realType === 'logicEntities') ? {width: '80%'} : {},
       title: title || modalData.title,
       buttons,
       focusFirst: realType !== 'views',
@@ -944,6 +985,9 @@ export const putCopyRealData = (dataSource, data) => {
   if (!dataSource) {
     return data;
   }
+  const mappings = dataSource.dataTypeMapping?.mappings || [];
+  const db = _.get(dataSource, 'profile.default.db',
+      _.get(dataSource, 'profile.dataTypeSupports[0].id'));
   const getDataId = (currentData, copyData, id) => {
     if (!currentData.some(c => c.id === id)) {
       if(copyData) {
@@ -954,8 +998,12 @@ export const putCopyRealData = (dataSource, data) => {
     return id;
   };
   return {
-    ...data,
+    ..._.omit(data, ['nameTemplate']),
+    type: data.type || 'P',
     id: Math.uuid(),
+    sysProps: {
+      nameTemplate: data?.nameTemplate || data?.sysProps?.nameTemplate,
+    },
     indexes: (data.indexes || []).map(i => ({...i, id: Math.uuid()})),
     fields: (data.fields || []).map(f => {
       const domain = getDataId(dataSource.domains || [], f.otherData?.domainData, f.domain);
@@ -968,6 +1016,7 @@ export const putCopyRealData = (dataSource, data) => {
         domain: domain || null,
         refDict: getDataId(dataSource.dicts || [], f.otherData?.refDictData, f.refDict),
         uiHint: getDataId(dataSource.profile?.uiHint || [], f.otherData?.uiHintData, f.uiHint),
+        baseType: getFieldBaseType(f, dataSource.domains || [], mappings, db)
       }
     })
   }
@@ -978,6 +1027,7 @@ const copyOpt = (dataSource, menu, type = 'copy', cb) => {
   let tempTypeData = [];
   const checkData = [
     ['entity', 'entities'],
+    ['logicEntity', 'logicEntities'],
     ['view', 'views'],
     ['diagram', 'diagrams'],
     ['dict', 'dicts']
@@ -1062,6 +1112,16 @@ const getOptConfig = (dataType, dataSource) => {
     },
     viewRefs: 'refEntities',
   };
+  const logicEntityConfig = {
+    type: ['logicEntities', 'logicEntity'],
+    mainKey: 'logicEntities',
+    key: 'id',
+    emptyData: {
+      ...getEmptyEntity(),
+      headers: resetHeader(dataSource, {})
+    },
+    viewRefs: 'refLogicEntities',
+  };
   const viewConfig = {
     type: ['views', 'view'],
     mainKey: 'views',
@@ -1108,7 +1168,8 @@ const getOptConfig = (dataType, dataSource) => {
     dictConfig,
     domianConfig,
     mappingConfig,
-    dataTypeSupportConfig
+    dataTypeSupportConfig,
+    logicEntityConfig
   };
   return Object.keys(optConfigMap)
     .filter(config => optConfigMap[config].type.includes(dataType))
@@ -1167,7 +1228,23 @@ const pasteOpt = (dataSource, menu, updateDataSource) => {
       const config = getOptConfig(dataType, dataSource);
       const validate = (dataType === 'mapping' || dataType === 'dataType' || dataType === 'appCode')
         ? validateItemInclude : validateItem;
-      const newData = (data?.data || []).filter(e => validate(e, config.emptyData));
+      // 兼容未调整的属性 使其校验通过
+      let emptyData = config.emptyData;
+      if(config.mainKey === 'entities' || config.mainKey === 'views') {
+        emptyData = {
+          ...emptyData,
+          nameTemplate: '',
+          type: ''
+        };
+      }
+      const newData = (data?.data || [])
+          .filter(e => validate(e, emptyData)).filter(e => {
+            if(config.mainKey === 'logicEntities') {
+              return e.type === 'L'
+            } else if(config.mainKey === 'entities') {
+              return e.type !== 'L'
+            }
+          });
       const newDataKeys = newData.map(e => e[config.key]);
       const oldData = _.get(dataSource, config.mainKey, []).filter((e) => {
         if (data?.type === 'cut') {
@@ -1423,6 +1500,7 @@ const moveOpt = (dataSource, menu, updateDataSource) => {
       case 'view': return 'refViews';
       case 'diagram': return 'refDiagrams';
       case 'dict': return 'refDicts';
+      case 'logicEntity': return 'refLogicEntities';
     }
   };
   const refName = getRefName(dataType);

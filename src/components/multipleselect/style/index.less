@@ -163,8 +163,27 @@
     display: flex;
     flex-direction: row;
     align-items: center;
-    padding: 5px;
     justify-content: space-between;
+    white-space: nowrap;
+    &:hover {
+      background: @second-primary-color;
+      color: @background-color;
+      i {
+        color: @background-color;
+      }
+    }
+    & > span {
+      padding: 5px;
+      &:hover {
+        background: @second-primary-color;
+        color: @background-color;
+        i {
+          color: @background-color;
+        }
+      }
+      display: inline-block;
+      flex-grow: 1;
+    }
     &-check {
       i {
         display: inline-block;
@@ -176,13 +195,6 @@
       i {
         display: none;
         float: right;
-      }
-    }
-    &:hover {
-      background: @second-primary-color;
-      color: @background-color;
-      i {
-        color: @background-color;
       }
     }
   }

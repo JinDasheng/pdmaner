@@ -10,7 +10,7 @@ import {getPrefix} from '../../lib/prefixUtil';
 
 const MultipleSelect = React.memo(({prefix, children, dropdownRender, allowClear = true,
                                      defaultCheckValues, showNotMatch = false, className,
-                                     onChange, simple = false, disable,
+                                     onChange, simple = false, disable, searchType = 'focus',
                                      ...restProps}) => {
   const inputRef = useRef(null);
   const optionsRef = useRef(null);
@@ -54,6 +54,13 @@ const MultipleSelect = React.memo(({prefix, children, dropdownRender, allowClear
     updateSearch(target.value);
     if (showNotMatch) {
       onChange && onChange([target.value]);
+    }
+    if(searchType === 'value') {
+      if(target.value) {
+        setVisible(true);
+      } else {
+        setVisible(false);
+      }
     }
   };
   const valueChange = (value, e) => {
@@ -121,16 +128,21 @@ const MultipleSelect = React.memo(({prefix, children, dropdownRender, allowClear
   const selectClick = (e) => {
     const { current } = inputRef;
     current && current.focus();
-    setVisible(true);
+    if(searchType === 'focus') {
+      setVisible(true);
+    }
     if (!simple && (e.target !== current) && !showNotMatch) {
       inputRef.current.style.width = '4px';
       updateSearch('');
     }
   };
   const onFocus = () => {
-    setVisible(true);
+    if(searchType === 'focus') {
+      setVisible(true);
+    }
   };
   const onKeyDown = (e) => {
+    console.log(e.keyCode);
     if (e.keyCode === 9) {
       setVisible(false);
     }
@@ -202,7 +214,7 @@ const MultipleSelect = React.memo(({prefix, children, dropdownRender, allowClear
         {restProps.placeholder || ''}
       </span>
       {
-        !disable && <span className={`${currentPrefix}-multiple-select-data-input-icon`}>
+        !disable && searchType !== 'value' && <span className={`${currentPrefix}-multiple-select-data-input-icon`}>
           <Icon type='fa-angle-down'/>
         </span>
       }

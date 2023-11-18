@@ -81,6 +81,18 @@ export default React.memo(forwardRef(({currentPrefix, close, iconClick, openModa
           draggable
           className={`${currentPrefix}-head-db`}
           hoverTitle={activeTab?.type !== 'diagram' ? FormatMessage.string({id: 'toolbar.relationEnableTitle'}) : ''}
+          title={FormatMessage.string({id: 'toolbar.emptyLogic'})}
+          icon='fa-columns'
+          disable={activeTab?.type !== 'diagram'}
+            //style={{cursor: 'move'}}
+          onClick={iconClick}
+          groupKey='logic'
+            //onMouseDown={e => iconClick(e, 'empty')}
+        />
+        <GroupIcon
+          draggable
+          className={`${currentPrefix}-head-db`}
+          hoverTitle={activeTab?.type !== 'diagram' ? FormatMessage.string({id: 'toolbar.relationEnableTitle'}) : ''}
           title={FormatMessage.string({id: 'toolbar.group'})}
           icon='fa-object-group'
                //style={{cursor: 'move'}}

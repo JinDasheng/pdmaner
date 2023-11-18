@@ -13,7 +13,8 @@ import {getPrefix} from '../../lib/prefixUtil';
 
 const Tooltip = React.memo(forwardRef(({prefix, children, offsetLeft = 0, offsetTop = 0,
                                          title, visible = true, className = '', mouseEnterDelay = 0,
-                                         force, placement = 'bottom', conversion = 1, clickClose, propagation}, ref) => {
+                                         force, placement = 'bottom', conversion = 1, clickClose, propagation,
+                                         compareName = ['clientWidth', 'scrollWidth']}, ref) => {
   const currentPrefix = getPrefix(prefix);
   const containerRef = useRef(null);
   const parentRef = useRef(null);
@@ -30,7 +31,7 @@ const Tooltip = React.memo(forwardRef(({prefix, children, offsetLeft = 0, offset
   const _onMouseOver = (e) => {
     const currentTarget = e.currentTarget;
     overStatusRef.current = setTimeout(() => {
-      if ((currentTarget.clientWidth < currentTarget.scrollWidth || force)
+      if ((currentTarget[compareName[0]] < currentTarget[compareName[1]] || force)
           && visible && title) {
         if (statusRef.current) {
           clearTimeout(statusRef.current);
