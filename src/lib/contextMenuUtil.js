@@ -16,6 +16,7 @@ import Domain from '../app/container/domain';
 import Preview from '../app/container/database';
 import AppCode from '../app/container/appcode';
 import Quickedit from '../app/container/tools/quickedit';
+import Extract from '../app/container/tools/extract';
 import {
   getEmptyEntity,
   getEmptyView,
@@ -90,6 +91,10 @@ const opt = [{
   {
     key: 'svg',
     icon: 'fa-file-image-o'
+  },
+  {
+    key: 'extract',
+    icon: 'fa-retweet'
   }]; // 所有菜单操作的的KEY;
 
 const normalOpt = ['add', 'copy', 'cut', 'paste', 'delete'];
@@ -98,9 +103,9 @@ const domainChildNormalOpt = ['add', 'copy', 'paste', 'delete'];
 const menusType = {
   groups: ['add', 'edit', 'clear', 'delete'],
   entities: normalOpt.concat('all'),
-  entity: normalOpt.concat('move', 'all', 'notes'),
+  entity: normalOpt.concat('move', 'all', 'notes', 'extract'),
   logicEntities: normalOpt.concat('all'),
-  logicEntity: normalOpt.concat('move', 'all', 'notes'),
+  logicEntity: normalOpt.concat('move', 'all', 'notes', 'extract'),
   views: normalOpt.concat('all'),
   view: normalOpt.concat('move', 'all', 'notes'),
   diagrams: normalOpt.concat('png', 'svg'),
@@ -120,9 +125,16 @@ export const getMenu = (m, key, type, selectedMenu, groupType, parentKey, tempTy
   const getName = () => {
     const base = FormatMessage.string({id: `menus.opt.${m}`});
     if (type === 'appCode' || type === 'dataType' || type === 'mapping'
-        || type === 'domain' || type === 'groups' || type === 'entity' || type === 'view') {
+        || type === 'domain' || type === 'groups' || type === 'entity' || type === 'view'
+        || type === 'logicEntity') {
       if (m === 'edit' && (type === 'appCode' || type === 'dataType')) {
         return FormatMessage.string({id: 'menus.opt.rename'})
+      } else if(m === 'extract') {
+        if(type === 'entity') {
+          return base + FormatMessage.string({id: 'menus.logicEntity'});
+        } else {
+          return base + FormatMessage.string({id: 'menus.entity'});
+        }
       }
       return base;
     } else if (m === 'move' || m === 'all' || m === 'reset') {
@@ -195,9 +207,116 @@ export const dealMenuClick = (dataSource, menu, updateDataSource, tabClose, call
     case 'notes': notesOpt(dataSource, menu, updateDataSource); break;
     case 'png':
     case 'svg': imgOpt(dataSource, menu, genImg, key); break;
+    case 'extract':extractOpt(dataSource, menu, updateDataSource); break;
     default:break;
   }
 };
+
+const extractOpt = (dataSource, menu, updateDataSource) => {
+  let modal = null;
+  const name = menu.dataType === 'entity' ? 'entities' : 'logicEntities';
+  const allName = menu.dataType === 'entity' ? 'logicEntities' : 'entities';
+  const currentData = (dataSource[name] || []).find(e => e.id === menu.dataKey) || {};
+  const allData = dataSource[allName] || [];
+  let parentKey = '';
+  if(menu.parentKey !== 'logicEntities' && menu.parentKey !== 'entities') {
+    parentKey = menu.parentKey;
+  }
+  // 组装新数据
+  let extractData = {
+    ..._.pick(currentData, ['defKey', 'defName', 'comment', 'env', 'notes', 'properties']),
+    id: Math.uuid(),
+    type: menu.dataType === 'entity' ? 'L' : 'P',
+    headers: menu.dataType === 'entity' ? getLogicHeaders() : resetHeader(dataSource, {}),
+    fields: (currentData.fields || []).map(f => ({...f, id: Math.uuid()})),
+    indexes: [],
+    correlations: [],
+    sysProps: menu.dataType === 'entity' ? getDefaultLogicSys() : {
+      nameTemplate: '{defKey}[{defName}]',
+    }
+  }
+  // 判断是否存在
+  const validateRepeat = () => {
+    const calcData = (data, key) => {
+      return data.some(d => d.defKey === key);
+    }
+    let isRepeat;
+    if(extractData.type === 'L') {
+      isRepeat = calcData(allData.map(d => ({defKey: `${d.defKey || ''}${d.defName || ''}`})),
+          `${extractData.defKey || ''}${extractData.defName || ''}`);
+    } else {
+      isRepeat = calcData(allData,extractData.defKey);
+    }
+    return isRepeat;
+  }
+  const updateData = () => {
+    updateDataSource({
+      ...dataSource,
+      viewGroups: parentKey ? dataSource.viewGroups?.map(v => {
+        const refName = extractData.type === 'P' ? 'refEntities' : 'refLogicEntities';
+        return {
+          ...v,
+          [refName]: v[refName].concat(extractData.id)
+        }
+      }) : dataSource.viewGroups,
+      [allName]: allData.concat(extractData)
+    })
+    Message.success({title: FormatMessage.string({id: 'optSuccess'})});
+  }
+  if(validateRepeat()) {
+    Modal.confirm({
+      title: FormatMessage.string({id: 'extractConfirmTitle'}),
+      message: FormatMessage.string({id: allName === 'entities' ? 'extractConfirmEntity' : 'extractConfirmLogicEntity'}),
+      onOk:() => {
+        const dataChange = (e, name) => {
+          extractData[name] = e.target.value;
+        }
+        const onOK = () => {
+          // 校验不能为空
+          if(allName === 'logicEntities' ? (!extractData.defKey && !extractData.defName) : !extractData.defKey) {
+            Modal.error({
+              title: FormatMessage.string({id: 'optFail'}),
+              message: allName === 'logicEntities' ? FormatMessage.string({id: 'logicEntity.validate'}) : FormatMessage.string({id: 'tableValidate.entityUniquenessCheck'})
+            });
+          } else if(validateRepeat()) {
+            // 校验不能重复
+            Modal.error({
+              title: FormatMessage.string({id: 'optFail'}),
+              message: allName === 'logicEntities' ? FormatMessage.string({
+                id: 'logicEntity.logicEntityUniquenessCheck',
+              }) : FormatMessage.string({
+                id: 'entityAndViewUniquenessCheck',
+                data: {
+                  key: FormatMessage.string({id: 'tableBase.defKey'})
+                }
+              })});
+          } else {
+            updateData();
+            modal?.close();
+          }
+        }
+        const onCancel = () => {
+          modal?.close();
+        }
+        modal = openModal(<Extract data={extractData} dataChange={dataChange}/>, {
+          bodyStyle: {width: '80%'},
+          title: FormatMessage.string({id: allName === 'entities' ? 'extractUpdateEntity' : 'extractUpdateLogicEntity'}),
+          buttons: [<Button key='onOK' onClick={onOK} type='primary'>
+            <FormatMessage id='button.ok'/>
+          </Button>,
+            <Button key='onCancel' onClick={onCancel}>
+              <FormatMessage id='button.cancel'/>
+            </Button>],
+          onEnter: () => {
+            onOK();
+          }
+        });
+      },
+    })
+  } else {
+    updateData();
+  }
+}
 
 const imgOpt = (dataSource, menu, genImg, imageType) => {
   const type = menu.dataType;
