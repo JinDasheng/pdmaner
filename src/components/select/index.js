@@ -6,7 +6,7 @@ import './style/index.less';
 
 
 const Select = React.memo(({prefix, children = [], style, disable,
-                             showNotMatch = false, className,
+                             showNotMatch = false, className, searchType,
                              defaultValue, onChange, notAllowEmpty, ...restProps}) => {
   const [state, updateState] = useState([defaultValue]);
   const emptyChild = (notAllowEmpty || showNotMatch) ? '' :
@@ -34,6 +34,7 @@ const Select = React.memo(({prefix, children = [], style, disable,
     onChange={values => _onChange(values)}
     checkValue={tempValue}
     simple
+    searchType={searchType}
     showNotMatch={showNotMatch}
     disable={disable}
     className={className}

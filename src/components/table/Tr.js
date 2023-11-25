@@ -8,7 +8,7 @@ export default React.memo(({f, i, expand, onMouseOver, tempHeaders, calcPosition
                              updateTableDataByName, comBlur, cellRef, onKeyDown, freeze,
                              reading, getDataSource, updateDataSource, cellClick, setDict,
                              hiddenFields, selectedColumns, openDict, defaultGroups, dicts,
-                             getFieldProps, domains, mapping, uiHint, isView,
+                             getFieldProps, domains, mapping, uiHint, isView, allFieldOptions,
                              needHideInGraph = true}) => {
   const otherStyle = freeze ? { position: 'sticky', left: 0, zIndex: 2 } : {position: 'relative'};
   let type = 'fa-eye';
@@ -84,6 +84,7 @@ export default React.memo(({f, i, expand, onMouseOver, tempHeaders, calcPosition
               onClick={() => cellClick(h?.refKey, f)}
             >
               <Cell
+                allFieldOptions={allFieldOptions}
                 domains={domains}
                 mapping={mapping}
                 getFieldProps={getFieldProps}
@@ -123,7 +124,7 @@ export default React.memo(({f, i, expand, onMouseOver, tempHeaders, calcPosition
   </tr>,
 ];
 }, (pre, next) => {
-  const simpleProps = ['f', 'i', 'expand', 'tempHeaders', 'getClass', 'entities',
+  const simpleProps = ['f', 'i', 'expand', 'tempHeaders', 'getClass', 'entities', 'allFieldOptions',
     'selectedColumns', 'defaultGroups', 'getFieldProps', 'domains', 'mapping', 'dicts', 'uiHint'];
   const calcArray = (oldData, newData) => {
     return (oldData === newData)

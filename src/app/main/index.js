@@ -73,6 +73,7 @@ import { imgAll } from '../../lib/generatefile/img';
 import {compareVersion} from '../../lib/update';
 import {notify} from '../../lib/subscribe';
 import {READING} from '../../lib/variable';
+import LogicEntity from '../container/logicentity';
 
 const TabItem = Tab.TabItem;
 
@@ -543,6 +544,7 @@ const Index = React.memo(({getUserData, mode, isChildWindow,
           });
         }
       } catch (err) {
+        console.log(err);
         Modal.error({
           title: FormatMessage.string({id: 'optFail'}),
           message: err.message,
@@ -943,9 +945,9 @@ const Index = React.memo(({getUserData, mode, isChildWindow,
       ],
     });
   };
-  const createEmptyTable = (e, key) => {
+  const createEmptyTable = (e, key, type) => {
     const cavRef = getCurrentCav();
-    cavRef?.startDrag(e, key);
+    cavRef?.startDrag(e, key, type);
     return cavRef;
   };
   const createTopicNode = (e) => {
@@ -1139,6 +1141,14 @@ const Index = React.memo(({getUserData, mode, isChildWindow,
       children: (restProps.dataSource?.entities || []).map(e => ({...e, type: 'entity'})),
     },
     {
+      id: 'logicEntities',
+      defKey: 'logicEntities',
+      type: 'logicEntities',
+      icon: 'fa-columns',
+      defName: FormatMessage.string({id: 'project.logicEntities'}),
+      children: (restProps.dataSource?.logicEntities || []).map(e => ({...e, type: 'logicEntity'})),
+    },
+    {
       id: 'views',
       defKey: 'views',
       type: 'views',
@@ -1163,6 +1173,7 @@ const Index = React.memo(({getUserData, mode, isChildWindow,
       children: (restProps.dataSource?.dicts || []).map(d => ({...d, type: 'dict'})),
     },
   ], [restProps.dataSource?.entities,
+      restProps.dataSource?.logicEntities,
     restProps.dataSource?.views,
     restProps.dataSource?.diagrams,
     restProps.dataSource?.dicts,
@@ -1187,7 +1198,7 @@ const Index = React.memo(({getUserData, mode, isChildWindow,
     config.lang]);
   const defaultGroupMenu =
       getUnGroup(restProps.dataSource, FormatMessage.string({id: 'exportSql.defaultGroup'}));
-  const useDefaultGroupMenu = ['refDiagrams', 'refDicts', 'refEntities', 'refViews']
+  const useDefaultGroupMenu = ['refDiagrams', 'refDicts', 'refEntities', 'refViews', 'refLogicEntities']
       .some(key => defaultGroupMenu[key].length > 0);
   const groupMenu = useMemo(() => restProps.dataSource?.viewGroups
       ?.concat(useDefaultGroupMenu ? defaultGroupMenu : [])?.map(v => ({
@@ -1408,9 +1419,10 @@ const Index = React.memo(({getUserData, mode, isChildWindow,
     const type = t.type;
     const key = t.menuKey;
     let group = [];
-    if (type === 'entity' || type === 'view'  || type === 'diagram' || type === 'dict') {
+    if (type === 'entity' || type === 'logicEntity' || type === 'view'  || type === 'diagram' || type === 'dict') {
       // 需要计算分组信息
-      const tempType = type === 'entity' ? 'entities' : `${type}s`;
+      // eslint-disable-next-line no-nested-ternary
+      const tempType = type === 'entity' ? 'entities' : (type === 'logicEntity' ? 'logicEntities' : `${type}s`);
       const groupRefKey = [`ref${firstUp(tempType)}`];
       group = restProps?.dataSource?.viewGroups?.filter(v => v[groupRefKey]?.includes(key)) || [];
     }
@@ -1434,6 +1446,25 @@ const Index = React.memo(({getUserData, mode, isChildWindow,
           group={group}
           tabDataChange={data => tabDataChange(data, t)}
           />);
+    } else if (type === 'logicEntity') {
+      return (
+        <LogicEntity
+          saveUserData={restProps.saveUserData}
+          getConfig={getConfig}
+          type={type}
+          getDataSource={getDataSource}
+          hasRender={instance => hasRender(t.tabKey, instance)}
+          hasDestory={() => hasDestroy(t.tabKey)}
+          param={t.param}
+          tabKey={t.tabKey}
+          common={common}
+          updateDataSource={restProps?.update}
+          dataSource={restProps?.dataSource}
+          openDict={_onMenuClick}
+          entity={key}
+          group={group}
+          tabDataChange={data => tabDataChange(data, t)}
+        />);
     } else if (type === 'view') {
       return <View
         saveUserData={restProps.saveUserData}
@@ -1499,9 +1530,9 @@ const Index = React.memo(({getUserData, mode, isChildWindow,
     if (m.defKey !== m.defName) {
       if (m.type === 'groups'){
         return `${m.defKey}${(m.defName !== m.defKey && m.defName) ? `-${m.defName}` : ''}`;
-      } else if (m.type === 'entity' || m.type === 'view' || m.type === 'diagram' || m.type === 'dict'){
+      } else if (m.type === 'entity' || m.type === 'logicEntity' || m.type === 'view' || m.type === 'diagram' || m.type === 'dict'){
         if (m.defName) {
-          const tempDisplayMode = m.nameTemplate || '{defKey}[{defName}]';
+          const tempDisplayMode = m.sysProps?.nameTemplate || '{defKey}[{defName}]';
           return tempDisplayMode.replace(/\{(\w+)\}/g, (match, word) => {
             return m[word] || m.defKey || '';
           });
@@ -1539,7 +1570,8 @@ const Index = React.memo(({getUserData, mode, isChildWindow,
       case 'markdown': generateSimpleFile(key, dataSourceRef.current, projectInfoRef.current); break;
       case 'sql': exportSql('sql'); break;
       case 'dict': exportSql('dict'); break;
-      case 'empty': createEmptyTable(e);break;
+      case 'empty': createEmptyTable(e, null, 'entity');break;
+      case 'logic': createEmptyTable(e, null, 'logicEntity');break;
       case 'round': createNode(e, 'round');break;
       case 'circle': createCircleNode(e);break;
       case 'rect': createNode(e, 'rect');break;

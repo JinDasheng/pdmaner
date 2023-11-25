@@ -276,8 +276,8 @@ export const openDemoProject = (h, t, title, type) => {
     if (!tempH) {
       tempH = template[isDemoProject];
     }
-    const data = compareVersion('3.5.0', tempH.version.split('.'))
-      ? reduceProject(tempH, 'defKey') : tempH;
+    const data = transformationData(compareVersion('3.5.0', tempH.version.split('.'))
+      ? reduceProject(tempH, 'defKey') : tempH);
     setMemoryCache('data', data);
     dispatch(readProjectSuccess(data, '', isDemoProject, EDIT));
     dispatch(closeLoading(STATUS[1], null, '', type));

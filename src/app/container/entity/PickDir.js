@@ -28,13 +28,14 @@ export default React.memo(({dataSource, config, prefix, onSelected}) => {
           <thead>
             <tr>
               <td>{}</td>
-              <td>{FormatMessage.string({id: 'tableBase.table'})}</td>
+              <td>{FormatMessage.string({id: 'tableBase.table'})}/{FormatMessage.string({id: 'menus.logicEntity'})}</td>
               <td>{FormatMessage.string({id: 'tableBase.savePath'})}</td>
             </tr>
           </thead>
           <tbody>
             {(dataSource.entities || [])
                     .concat(dataSource.views || [])
+                    .concat(dataSource.logicEntities || [])
                     .filter(d => reg.test(d.defKey) || reg.test(d.defName))
                     .map((d, i) => {
                         return <tr onClick={() => _onSelected(d, config.path[d.id])} className={id === d.id ? `${currentPrefix}-entity-template-pickdir-selected` : ''} style={{padding: 5}} key={d.id}>
