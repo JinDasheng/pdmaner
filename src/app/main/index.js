@@ -1217,7 +1217,9 @@ const Index = React.memo(({getUserData, mode, isChildWindow,
           const cIndex = temChildren.findIndex(e => e.id === r);
           const child = temChildren[cIndex];
           // 移除已经排好序的数据 在海量的数据下优化下一次查找的次数
-          temChildren.splice(cIndex, 1);
+          if(cIndex > -1) {
+            temChildren.splice(cIndex, 1);
+          }
           return child;
         }).filter(r => !!r),
       };

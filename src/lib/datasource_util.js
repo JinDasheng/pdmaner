@@ -1306,22 +1306,34 @@ export  const calcNodeData = ({data: preData, needTransform = true, ...rest},
         .filter(c => c.refKey === h.refKey)[0] || {};
     return (!h.hideInGraph) && (columnOthers.enable !== false);
   });
-  if(nodeData.type === 'L') {
-    // 如果是逻辑模型，需要特殊处理
-    const propShowFields = (nodeData?.sysProps?.propShowFields || []).concat('P')
-    const refKeyMap = {
-      defName: 'N',
-      defKey: 'K',
-      baseType: 'T',
-      primaryKey: 'P'
+    if(nodeData.type === 'L') {
+        // 如果是逻辑模型，需要特殊处理
+        const propShowFields = (nodeData?.sysProps?.propShowFields || []).concat('P')
+        const refKeyMap = {
+            defName: 'N',
+            defKey: 'K',
+            baseType: 'T',
+            primaryKey: 'P'
+        }
+        headers = headers.filter(h => {
+            return propShowFields.includes(refKeyMap[h.refKey])
+        });
     }
-    headers = headers.filter(h => {
-      return propShowFields.includes(refKeyMap[h.refKey])
-    });
-  }
-  let fields = (nodeData?.fields || []).filter(f => !f.hideInGraph)
+    // 去除重复的字段
+    const repeat = [];
+    const filterFields = (data) => {
+        return data.filter(d => {
+            if(repeat.some(r => r.defKey === d.defKey)) {
+                return false;
+            } else {
+                repeat.push(d)
+                return true;
+            }
+        });
+    };
+  let fields = filterFields((nodeData?.fields || []).filter(f => !f.hideInGraph)
       .map(f => ({...f, ...(needTransform ? transform(f, dataSource) : {})
-        , extProps: Object.keys(f.extProps || {}).length}));
+        , extProps: Object.keys(f.extProps || {}).length})));
   const pkFields = [];
   const normalFields = [];
   // 若果是逻辑模型
@@ -1392,13 +1404,6 @@ export  const calcNodeData = ({data: preData, needTransform = true, ...rest},
         }
         return f.defKey || f.defName;
       }).join(';'), 12, width - 8) : (fields.length + 1) * 23 + 8;
-  // 去除重复的字段
-  const filterFields = (data) => {
-    const repeat = [...data];
-    return data.filter(d => {
-      return repeat.filter(r => r.defKey === d.defKey).length === 1;
-    });
-  };
   const realWidth = size ? size.width : width;
   const realHeight = size ? size.height : height;
   let sliceCount = -1;
@@ -1407,8 +1412,7 @@ export  const calcNodeData = ({data: preData, needTransform = true, ...rest},
   }
   const ports = groups ? {
     groups,
-    items: filterFields(fields)
-        .reduce((a, b, i) => {
+    items: fields.reduce((a, b, i) => {
       return a.concat([{
         group: 'in',
         args: { x: 0, y: 38 + i * 23 },

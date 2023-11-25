@@ -147,7 +147,8 @@ const Menu = React.memo(forwardRef(({contextMenus = [], onContextMenu, fieldName
         (startRef.current.index > -1) && (startRef.current.index !== i)) {
       const name = allType.concat({ type: 'dataType', name: 'profile.dataTypeSupports', defKey: 'defKey' }).filter(t => t.type === startRef.current.type)[0];
       if (name) {
-        const group = parentMenu.type === 'groups' ? parentKey : '';
+        const group = (parentMenu.type === 'groups' || parentKey === '__ungroup')
+            ? parentKey : '';
         if (group) {
           if(group !== '__ungroup') {
             update && update({
@@ -239,7 +240,7 @@ const Menu = React.memo(forwardRef(({contextMenus = [], onContextMenu, fieldName
         key={menu[defKey]}
         onContextMenu={e => _onContextMenu(e, menu[defKey], menu.type, parentKey)}
         onDragOver={e => rowOnDragOver(e, menu[defKey], parentKey)}
-        onDrop={e => rowOnDrop(e, pI, parentKey, menu)}
+        onDrop={e => rowOnDrop(e, pI, parentKey, menu, menu)}
       >
         <span
           title={pName}
