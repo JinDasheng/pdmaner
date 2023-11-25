@@ -1216,9 +1216,21 @@ export  const calcNodeData = ({data: preData, needTransform = true, ...rest},
         .filter(c => c.refKey === h.refKey)[0] || {};
     return (!h.hideInGraph) && (columnOthers.enable !== false);
   });
-  const fields = (nodeData?.fields || []).filter(f => !f.hideInGraph)
+  // 去除重复的字段
+  const repeat = [];
+  const filterFields = (data) => {
+    return data.filter(d => {
+      if(repeat.some(r => r.defKey === d.defKey)) {
+        return false;
+      } else {
+        repeat.push(d)
+        return true;
+      }
+    });
+  };
+  const fields = filterFields((nodeData?.fields || []).filter(f => !f.hideInGraph)
       .map(f => ({...f, ...(needTransform ? transform(f, dataSource) : {})
-        , extProps: Object.keys(f.extProps || {}).length}));
+        , extProps: Object.keys(f.extProps || {}).length})));
   // 计算表头的宽度
   const headerText = `${getTitle(nodeData)}${nodeData.count > 0 ? `:${nodeData.count}` : ''}(${nodeData.defName})`;
   const headerWidth = getTextWidth(headerText, 12, 'bold') + 20 + (nodeData.comment ? 16 : 0);
@@ -1263,13 +1275,6 @@ export  const calcNodeData = ({data: preData, needTransform = true, ...rest},
   }
   // 高度除了字段还包含表名 所以需要字段 +1 同时需要加上上边距
   const height = (fields.length + 1) * 23 + 8;
-  // 去除重复的字段
-  const filterFields = (data) => {
-    const repeat = [...data];
-    return data.filter(d => {
-      return repeat.filter(r => r.defKey === d.defKey).length === 1;
-    });
-  };
   const realWidth = size ? size.width : width;
   const realHeight = size ? size.height : height;
   let sliceCount = -1;
@@ -1278,8 +1283,7 @@ export  const calcNodeData = ({data: preData, needTransform = true, ...rest},
   }
   const ports = groups ? {
     groups,
-    items: filterFields(fields)
-        .reduce((a, b, i) => {
+    items: fields.reduce((a, b, i) => {
       return a.concat([{
         group: 'in',
         args: { x: 0, y: 38 + i * 23 },

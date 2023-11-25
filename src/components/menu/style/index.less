@@ -8,11 +8,14 @@
     user-select: none;
     width: 100%;
     min-width: @menu-width;
-    height: calc(~'100vh' - @offset-header);
+    height: calc(100% - 38px);
     display: flex;
     flex-direction: column;
     &-container {
       flex-grow: 1;
+      & > div > div {
+        overflow-x: scroll !important;
+      }
     }
     &-item {
       display: flex;
