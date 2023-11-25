@@ -1333,7 +1333,7 @@ export  const calcNodeData = ({data: preData, needTransform = true, ...rest},
     };
   let fields = filterFields((nodeData?.fields || []).filter(f => !f.hideInGraph)
       .map(f => ({...f, ...(needTransform ? transform(f, dataSource) : {})
-        , extProps: Object.keys(f.extProps || {}).length}))));
+        , extProps: Object.keys(f.extProps || {}).length})));
   const pkFields = [];
   const normalFields = [];
   // 若果是逻辑模型
