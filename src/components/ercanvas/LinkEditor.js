@@ -25,7 +25,7 @@ export default React.memo(({prefix, data, onChange, getDataSource}) => {
     // "modalAll"
     const modelType = dataSource.current?.profile?.modelType;
     if (modelType === 'modalAll') {
-      return ['entities', 'views', 'diagrams', 'dicts'].map((v) => {
+      return ['entities', 'logicEntities', 'views', 'diagrams', 'dicts'].map((v) => {
         return {
           key: v,
           value: FormatMessage.string({id: `project.${v === 'diagrams' ? 'diagram' : v}`}),
@@ -40,6 +40,7 @@ export default React.memo(({prefix, data, onChange, getDataSource}) => {
       refDiagrams: calcUnGroupDefKey(dataSource.current, 'diagrams'),
       refDicts: calcUnGroupDefKey(dataSource.current, 'dicts'),
       refEntities: calcUnGroupDefKey(dataSource.current,'entities'),
+      refLogicEntities: calcUnGroupDefKey(dataSource.current,'logicEntities'),
       refViews: calcUnGroupDefKey(dataSource.current,'views'),
     };
     return (dataSource.current.viewGroups || [])
@@ -50,7 +51,7 @@ export default React.memo(({prefix, data, onChange, getDataSource}) => {
           ...refData,
         })
         .filter((g) => {
-          return ['refDiagrams', 'refDicts', 'refEntities', 'refViews'].some((d) => {
+          return ['refDiagrams', 'refDicts', 'refEntities', 'refViews', 'refLogicEntities'].some((d) => {
             return g[d]?.length > 0;
           });
         })
@@ -61,6 +62,13 @@ export default React.memo(({prefix, data, onChange, getDataSource}) => {
             key: `${g.id}${separator}entities`,
             value: FormatMessage.string({id: 'project.entities'}),
             children: getData('entities').map(d => ({
+              key: `${g.id}${separator}${d.id}`,
+              value: `${d.defName}(${d.defKey})`,
+            })),
+          },{
+            key: `${g.id}${separator}logicEntities`,
+            value: FormatMessage.string({id: 'project.logicEntities'}),
+            children: getData('logicEntities').map(d => ({
               key: `${g.id}${separator}${d.id}`,
               value: `${d.defName}(${d.defKey})`,
             })),

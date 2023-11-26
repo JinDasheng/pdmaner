@@ -87,6 +87,13 @@ export default React.memo(({placeholder, prefix, dataSource,
           onClick={() => _jumpDetail(d, key)}
         ><FormatMessage id='components.searchSuggest.detail'/></a>]</>;
         break;
+      case 'logicEntities':
+        opt = <>[<a
+          onClick={() => _jumpPosition(d, key)}
+        ><FormatMessage id='components.searchSuggest.position'/></a>|<a
+          onClick={() => _jumpDetail(d, key)}
+        ><FormatMessage id='components.searchSuggest.detail'/></a>]</>;
+        break;
       case 'fields': opt = <>[<a
         onClick={() => _jumpDetail(d, key)}
       ><FormatMessage id='components.searchSuggest.detail'/></a>]</>;

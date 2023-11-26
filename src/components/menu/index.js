@@ -128,9 +128,9 @@ const Menu = React.memo(forwardRef(({contextMenus = [], onContextMenu, fieldName
         parentKey,
       };
       e.stopPropagation();
-    } else if(child.type === 'entity'){
+    } else if(child.type === 'entity' || child.type === 'logicEntity'){
       e.preventDefault();
-      dragTable && dragTable(e, key);
+      dragTable && dragTable(e, key, child.type);
     } else {
       e.preventDefault();
     }
@@ -211,6 +211,7 @@ const Menu = React.memo(forwardRef(({contextMenus = [], onContextMenu, fieldName
   const getDraggable = (m) => {
     if (sortEnable) {
       return (m.type === 'entity' ||
+          m.type === 'logicEntity' ||
           m.type === 'view' ||
           m.type === 'dict' ||
           m.type === 'mapping' ||
@@ -219,7 +220,7 @@ const Menu = React.memo(forwardRef(({contextMenus = [], onContextMenu, fieldName
           m.type === 'groups' ||
           m.type === 'dataType') && m.id !== '__ungroup';
     } else if (draggable){
-      return m.type === 'entity';
+      return m.type === 'entity' || m.type === 'logicEntity';
     }
     return false;
   };
@@ -366,8 +367,20 @@ const Menu = React.memo(forwardRef(({contextMenus = [], onContextMenu, fieldName
           parentKey: group?.id,
           type: d.type === 'refViews' ? 'view' : 'entity',
         }]);
+        updateExpandMenu(parents);
         setJumpKey({id: `${d.id}${separator}${group?.id || key}`});
-        updateExpandMenu(parents);break;
+        break;
+      case 'logicEntities':
+        parent = 'logicEntities';
+        parents = group ? [group.id, `${group.defKey}${separator}${parent}`] : [parent];
+        updateSelectedMenu([{
+          key: d.id,
+          parentKey: group?.id,
+          type: 'logicEntity',
+        }]);
+        updateExpandMenu(parents);
+        setJumpKey({id: `${d.id}${separator}${group?.id || key}`});
+        break;
       case 'dicts':
         parent = 'dicts';
         parents = group ? [group.id, `${group.defKey}${separator}${parent}`] : [parent];
@@ -376,8 +389,9 @@ const Menu = React.memo(forwardRef(({contextMenus = [], onContextMenu, fieldName
           parentKey: group?.id,
           type: 'dict',
         }]);
+        updateExpandMenu(parents);
         setJumpKey({id: `${d.id}${separator}${group?.id || key}`});
-        updateExpandMenu(parents);break;
+        break;
       default: break;
     }
   };
@@ -388,6 +402,9 @@ const Menu = React.memo(forwardRef(({contextMenus = [], onContextMenu, fieldName
     };
     switch (key){
       case 'entities':
+        positionData.id = d.id;
+        jumpPosition(positionData, key, type);break;
+      case 'logicEntities':
         positionData.id = d.id;
         jumpPosition(positionData, key, type);break;
       case 'dicts':
@@ -405,6 +422,10 @@ const Menu = React.memo(forwardRef(({contextMenus = [], onContextMenu, fieldName
       refEntities: {
         type: 'entity',
         icon: 'entity.svg',
+      },
+      refLogicEntities: {
+        type: 'logicEntity',
+        icon: 'fa-columns',
       },
       refViews: {
         type: 'view',

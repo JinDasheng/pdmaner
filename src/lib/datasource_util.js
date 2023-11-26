@@ -1,18 +1,18 @@
-import React from 'react';
 import * as _ from 'lodash/object';
 import moment from 'moment';
-import { FormatMessage } from 'components';
+import {FormatMessage} from 'components';
 import {getAllTabData, getMemoryCache, replaceDataByTabId} from './cache';
 import emptyProjectTemplate from '../lib/template/empty.json';
-import { separator } from '../../profile';
+import {separator} from '../../profile';
 import {firstUp} from './string';
 import {compareVersion} from './update';
 import demoProject from './template/教学管理系统.pdma.json';
 import {notify} from './subscribe';
-import {_transform, _getDefaultTemplate, _mergeDataSource, _mergeData} from './utils';
+import {_getDefaultTemplate, _getFieldBaseType, _mergeData, _mergeDataSource, _transform} from './utils';
 import {postWorkerFuc} from './event_tool';
 
 export const allType = [
+  { type: 'logicEntity', name: 'logicEntities', defKey: 'defKey' },
   { type: 'entity', name: 'entities', defKey: 'defKey' },
   { type: 'view', name: 'views', defKey: 'defKey' },
   { type: 'diagram', name: 'diagrams', defKey: 'defKey' },
@@ -51,6 +51,7 @@ export const updateAllData = (dataSource) => {
   // 需要校验数据表是否有重复字段
   let repeatError = [];
   let entityRepeatError = [];
+  let logicEntityRepeatError = [];
   let currentDefKey = {
     entity: [],
     view: [],
@@ -95,8 +96,23 @@ export const updateAllData = (dataSource) => {
           entityRepeatError.push(newDefKey);
         }
       }
+    } else if(t.type === 'logicEntity') {
+      const newDefKey = `${t.data?.defKey || ''}${t.data?.defName || ''}`;
+      if (dataSource.logicEntities?.findIndex(e => {
+        return (e.id !== t.data.id) && (`${e?.defKey || ''}${e?.defName || ''}`?.toLocaleLowerCase()
+            === newDefKey?.toLocaleLowerCase());
+      }) > -1) {
+        logicEntityRepeatError.push(newDefKey);
+      }
     }
   })
+  if (logicEntityRepeatError.length > 0) {
+    message += FormatMessage.string({
+      id: 'logicEntityUniqueDefKeyError',
+      data: {
+        entities: logicEntityRepeatError.join(','),
+      }}) + ';';
+  }
   if (entityRepeatError.length > 0) {
     message += FormatMessage.string({
       id: 'entityUniqueDefKeyError',
@@ -159,7 +175,8 @@ export const updateAllData = (dataSource) => {
               'attrs.line.strokeDasharray',
               'isLock',
               'note',
-              'layout'
+              'layout',
+               'type'
             ];
             if (c.shape === 'edit-node' || c.shape === 'edit-node-circle'
                 || c.shape === 'edit-node-polygon'
@@ -457,6 +474,7 @@ export const emptyField = {
   defaultValue: '',
   hideInGraph: false,
   refDict: '',
+  baseType: ''
 };
 
 export const emptyIndex = {
@@ -653,9 +671,9 @@ export const validateFields = (fields) => {
 };
 
 export const getEntityOrViewByName = (dataSource, name) => {
-  const entity = (dataSource?.entities || []).filter(e => e.id === name)[0];
+  const entity = (dataSource?.entities || []).find(e => e.id === name);
   if (!entity) {
-    return (dataSource?.views || []).filter(e => e.id === name)[0];
+    return (dataSource?.views || []).find(e => e.id === name);
   }
   return entity;
 };
@@ -768,7 +786,7 @@ export const getFullColumns = () => {
     {code: 'defaultValue', value: FormatMessage.string({id: 'tableHeaders.defaultValue'}), newCode: 'defaultValue', com: 'Input', relationNoShow: true},
     {code: 'isStandard', value: FormatMessage.string({id: 'standardFields.isStandard'}), newCode: 'isStandard',com: 'label', relationNoShow: false},
     {code: 'uiHint', value: FormatMessage.string({id: 'tableHeaders.uiHint'}), newCode: 'uiHint',com: 'Select', relationNoShow: true},
-    {code: 'extProps', value: FormatMessage.string({id: 'tableHeaders.extProps'}), newCode: 'extProps',com: 'linkButton', relationNoShow: true}
+    {code: 'extProps', value: FormatMessage.string({id: 'tableHeaders.extProps'}), newCode: 'extProps',com: 'linkButton', relationNoShow: true},
   ]; // 完整的头部信息
 };
 
@@ -776,6 +794,42 @@ export const getViewColumn = () => {
   const headers = getFullColumns();
   headers.splice(2, 0, {code: 'refEntity', value: FormatMessage.string({id: 'tableHeaders.refEntity'}), newCode: 'refEntity', com: 'label', relationNoShow: true});
   return headers;
+}
+
+export const getLogicHeaders = () => {
+  return [{
+    refKey: 'defKey',
+    newCode: 'defKey',
+    value: FormatMessage.string({id: 'logicEntity.field.defKey'}),
+    hideInGraph: false,
+  },
+    {
+      refKey: 'defName',
+      newCode: 'defName',
+      value: FormatMessage.string({id: 'logicEntity.field.defName'}),
+      hideInGraph: false,
+    },
+    {
+      refKey: 'primaryKey',
+      newCode: 'primaryKey',
+      value: FormatMessage.string({id: 'logicEntity.field.primaryKey'}),
+      hideInGraph: false,
+    },
+    {
+      refKey: 'baseType',
+      newCode: 'baseType',
+      value: FormatMessage.string({id: 'logicEntity.field.baseType'}),
+      hideInGraph: false,
+    }];
+}
+
+export const getDefaultLogicSys = () => {
+  return {
+    fieldInputSuggest: false,
+    lePropOrient: 'V',
+    propShowFields: ['N', 'K', 'T'],
+    nameTemplate: '{defKey}[{defName}]',
+  }
 }
 
 export const getEmptyEntity = (fields = [], properties = {}) => {
@@ -791,7 +845,9 @@ export const getEmptyEntity = (fields = [], properties = {}) => {
     defName: '',
     comment: '',
     properties,
-    nameTemplate: '{defKey}[{defName}]',
+    sysProps: {
+      nameTemplate: '{defKey}[{defName}]',
+    },
     notes: {},
     headers: getFullColumns()
       .map(h => ({
@@ -802,6 +858,7 @@ export const getEmptyEntity = (fields = [], properties = {}) => {
     fields,
     correlations: [],
     indexes: [],
+    type: 'P'
   };
 };
 
@@ -1060,13 +1117,17 @@ export const pdman2sino = (data, projectName) => {
   };
 };
 
-export const generatorTableKey = (defKey, dataSource) => {
-  const entities = (dataSource?.entities || []).map(e => e.defKey);
-  if (!entities.includes(defKey)) {
+export const generatorTableKey = (defKey, dataSource, name = 'entities', compare) => {
+  const allData = (dataSource?.[name] || []);
+  const defaultCompare = (key, data) => {
+    return !data.map(e => e.defKey).includes(key);
+  }
+  const currentCompare = compare || defaultCompare;
+  if (currentCompare(defKey, allData)) {
     return defKey;
   } else {
     const key = defKey.split('_');
-    return generatorTableKey(`${key.slice(0, key.length - 1).join('_')}_${parseInt(key[key.length - 1]) + 1}`, dataSource);
+    return generatorTableKey(`${key.slice(0, key.length - 1).join('_')}_${parseInt(key[key.length - 1]) + 1}`, dataSource, name, compare);
   }
 }
 
@@ -1103,6 +1164,35 @@ export  const getTextWidth = (text, font, weight = 'normal') => {
   const realWidth = Math.ceil(width);
   textWidthCache[text] = realWidth;
   return realWidth;
+};
+// 缓存文本宽度 减少dom计算渲染
+let textHeightCache = {};
+export  const getTextHeight = (text, font, width, weight = 'normal') => {
+  const textKey = `${text}${width}`;
+  if(textKey in textHeightCache) {
+    return textHeightCache[textKey]
+  }
+  let dom = document.getElementById('calcTextHeight');
+  if (!dom) {
+    dom = document.createElement('div');
+    dom.setAttribute('id', 'calcTextHeight');
+    dom.style.display = 'inline-block';
+    dom.style.fontWeight = weight;
+    dom.style.fontSize = `${font}px`;
+    dom.style.width = `${width}px`;
+    dom.style.wordBreak = 'break-all';
+    document.body.appendChild(dom);
+  }
+  dom.innerText = typeof text === 'string' ?
+      text.replace(/\r|\n|\r\n/g, '')
+      : text;
+  const height =  dom.getBoundingClientRect().height;
+  if(Object.keys(textHeightCache).length > 1000000) {
+    // 如果缓存数量超过百万 则清除数据 释放内存
+    textHeightCache = {}
+  }
+  textHeightCache[textKey] = Math.ceil(height);
+  return textHeightCache[textKey];
 };
 
 export const reset = (f, dataSource, [key, id]) => {
@@ -1201,7 +1291,7 @@ export const transformTable = (data, dataSource, code, type = 'id', codeType = '
 }
 
 export const getTitle = (data) => {
-  const tempDisplayMode = data.nameTemplate || '{defKey}[{defName}]';
+  const tempDisplayMode = data?.sysProps?.nameTemplate || '{defKey}[{defName}]';
   return tempDisplayMode.replace(/\{(\w+)\}/g, (match, word) => {
     return data[word] || data.defKey || '';
   });
@@ -1211,26 +1301,58 @@ export  const calcNodeData = ({data: preData, needTransform = true, ...rest},
                               nodeData, dataSource, groups) => {
   const size = rest.autoSize ? null : rest.size
   // 节点源数据
-  const headers = (nodeData?.headers || []).filter(h => {
+  let headers = (nodeData?.headers || []).filter(h => {
     const columnOthers = (dataSource?.profile?.headers || [])
         .filter(c => c.refKey === h.refKey)[0] || {};
     return (!h.hideInGraph) && (columnOthers.enable !== false);
   });
-  // 去除重复的字段
-  const repeat = [];
-  const filterFields = (data) => {
-    return data.filter(d => {
-      if(repeat.some(r => r.defKey === d.defKey)) {
-        return false;
-      } else {
-        repeat.push(d)
-        return true;
-      }
-    });
-  };
-  const fields = filterFields((nodeData?.fields || []).filter(f => !f.hideInGraph)
+    if(nodeData.type === 'L') {
+        // 如果是逻辑模型，需要特殊处理
+        const propShowFields = (nodeData?.sysProps?.propShowFields || []).concat('P')
+        const refKeyMap = {
+            defName: 'N',
+            defKey: 'K',
+            baseType: 'T',
+            primaryKey: 'P'
+        }
+        headers = headers.filter(h => {
+            return propShowFields.includes(refKeyMap[h.refKey])
+        });
+    }
+    // 去除重复的字段
+    const repeat = [];
+    const filterFields = (data) => {
+        return data.filter(d => {
+            if(repeat.some(r => r.defKey === d.defKey)) {
+                return false;
+            } else {
+                repeat.push(d)
+                return true;
+            }
+        });
+    };
+  let fields = filterFields((nodeData?.fields || []).filter(f => !f.hideInGraph)
       .map(f => ({...f, ...(needTransform ? transform(f, dataSource) : {})
         , extProps: Object.keys(f.extProps || {}).length})));
+  const pkFields = [];
+  const normalFields = [];
+  // 若果是逻辑模型
+  if(nodeData.type === 'L') {
+    fields.forEach(f => {
+      if(f.primaryKey) {
+        pkFields.push(f);
+      } else {
+        normalFields.push(f);
+      }
+    })
+    if(pkFields.length > 0 && normalFields.length > 0) {
+      normalFields[0] = {
+        ...normalFields[0],
+        __isFirst: true,
+      }
+    }
+    fields = pkFields.concat(normalFields);
+  }
   // 计算表头的宽度
   const headerText = `${getTitle(nodeData)}${nodeData.count > 0 ? `:${nodeData.count}` : ''}(${nodeData.defName})`;
   const headerWidth = getTextWidth(headerText, 12, 'bold') + 20 + (nodeData.comment ? 16 : 0);
@@ -1253,8 +1375,8 @@ export  const calcNodeData = ({data: preData, needTransform = true, ...rest},
         const fieldValue = (f[fName] || '').toString();
         if (preF) {
           const preFieldValue = (preF[fName] || '').toString();
-          if (preFieldValue === fieldValue && preData.originWidth) {
-            return preData.originWidth[fName] || 0;
+          if ((preFieldValue === fieldValue) && preData.originWidth?.[fName]) {
+            return preData.originWidth[fName];
           }
           return getTextWidth(fieldValue, 12);
         }
@@ -1274,7 +1396,14 @@ export  const calcNodeData = ({data: preData, needTransform = true, ...rest},
     width = headerWidth;
   }
   // 高度除了字段还包含表名 所以需要字段 +1 同时需要加上上边距
-  const height = (fields.length + 1) * 23 + 8;
+  const height = (nodeData.type === 'L' && nodeData?.sysProps?.lePropOrient === 'H') ?
+      (pkFields.length + 1) * 23 + 8 +
+      getTextHeight(normalFields.map(f => {
+        if(nodeData?.sysProps?.propShowFields?.includes('N')) {
+          return f.defName || f.defKey;
+        }
+        return f.defKey || f.defName;
+      }).join(';'), 12, width - 8) : (fields.length + 1) * 23 + 8;
   const realWidth = size ? size.width : width;
   const realHeight = size ? size.height : height;
   let sliceCount = -1;
@@ -1389,7 +1518,8 @@ export  const calcNodeData = ({data: preData, needTransform = true, ...rest},
 
 export const mapData2Table = (n, dataSource, updateFields, groups, commonPorts,
                               relationType, commonEntityPorts, nodeClickText) => {
-  const nodeData = dataSource?.entities?.find(e => e.id === n.originKey);
+  const isEntity = n.type !== 'L';
+  const nodeData = dataSource?.[isEntity ? 'entities' : 'logicEntities']?.find(e => e.id === n.originKey);
   if (nodeData) {
     const { width, originWidth, height, fields, headers, maxWidth, ports } = calcNodeData(n, nodeData, dataSource, groups);
     return {
@@ -1398,7 +1528,7 @@ export const mapData2Table = (n, dataSource, updateFields, groups, commonPorts,
         width,
         height,
       },
-      ports: relationType === 'entity' ? (n.ports || commonEntityPorts) : ports,
+      ports: (relationType === 'entity' || !isEntity) ? (n.ports || commonEntityPorts) : ports,
       updateFields,
       nodeClickText,
       data: {
@@ -1481,11 +1611,16 @@ const getHeaders = (d, type) => {
 export const updateHeaders = (d, type, useGroup) => {
   return _.omit({
     ...d,
-    nameTemplate: d.nameTemplate || getEmptyEntity().nameTemplate,
+    sysProps: {
+      nameTemplate: d.sysProps?.nameTemplate || getEmptyEntity().sysProps?.nameTemplate
+    },
     headers: getHeaders(d, type),
   }, ['rowNo'].concat(useGroup ? [] : 'group'));
 }
 
+export const getFieldBaseType = (...args) => {
+  return _getFieldBaseType(...args);
+}
 
 export const transformationData = (oldDataSource) => {
   // 某些场景下需要对原始项目进行兼容 统一在此处进行转换操作
@@ -1714,6 +1849,64 @@ export const transformationData = (oldDataSource) => {
       entities: (tempDataSource.entities || []).map(e => resetField(e)),
     }
   }
+  if (compareVersion('4.7.0', oldDataSource.version.split('.'))) {
+    const mappings = oldDataSource.dataTypeMapping?.mappings || [];
+    const domains = oldDataSource.domains || [];
+    const db = _.get(oldDataSource, 'profile.default.db',
+        _.get(oldDataSource, 'profile.dataTypeSupports[0].id'));
+    // 调整nameTemplate位置
+    tempDataSource = {
+      ...tempDataSource,
+      profile: {
+        ...tempDataSource?.profile,
+        default: {
+          ...tempDataSource?.profile?.default,
+          entityInitFields: (tempDataSource?.profile?.default?.entityInitFields || []).map(f => {
+            return {
+              ...f,
+              baseType: getFieldBaseType(f, domains, mappings, db)
+            }
+          })
+        }
+      },
+      standardFields: (tempDataSource.standardFields || []).map(s => {
+        return {
+          ...s,
+          fields: (s.fields || []).map(f => {
+            return {
+              ...f,
+              baseType: getFieldBaseType(f, domains, mappings, db)
+            }
+          })
+        }
+      }),
+      entities: (tempDataSource.entities || []).map(e => ({
+        ..._.omit(e, ['nameTemplate']),
+        type: 'P',
+        fields: e.fields.map(f => {
+          return {
+            ...f,
+            baseType: getFieldBaseType(f, domains, mappings, db)
+          }
+        }),
+        sysProps: {
+          nameTemplate: e.nameTemplate
+        },
+      })),
+      views: (tempDataSource.views || []).map(v => ({
+        ..._.omit(v, ['nameTemplate']),
+        fields: v.fields.map(f => {
+          return {
+            ...f,
+            baseType: getFieldBaseType(f, domains, mappings, db)
+          }
+        }),
+        sysProps: {
+          nameTemplate: v.nameTemplate
+        },
+      }))
+    }
+  }
     return tempDataSource;
 };
 
@@ -1931,13 +2124,14 @@ export const reduceProject = (emptyProject, type) => {
       }): []).map(e => e.id),
     };
   });
+  const db = (dataTypeSupports || []).filter(d => d[type] === emptyProject.profile?.default?.db)[0]?.id || ''
   return {
     ...emptyProject,
     profile: {
       ...emptyProject.profile,
       default: {
         ...emptyProject.profile?.default,
-        db: (dataTypeSupports || []).filter(d => d[type] === emptyProject.profile?.default?.db)[0]?.id || '',
+        db,
         entityInitFields: emptyProject.profile
           ?.default?.entityInitFields?.map(f => {
             return calcField(f, entities, dicts, domains, uiHint, type);
@@ -1950,14 +2144,31 @@ export const reduceProject = (emptyProject, type) => {
     dicts: dicts.map(d => _.omit(d, 'old')),
     entities: entities.map(d => {
       return {
-        ..._.omit(d, 'old'),
-        fields: (d.fields || []).map(f => ({..._.omit(f, 'old')}))
+        ..._.omit(d, ['old', 'nameTemplate']),
+        type: d.type || 'P',
+        sysProps: {
+          nameTemplate: d.nameTemplate
+        },
+        fields: (d.fields || []).map(f => {
+          return {
+            ..._.omit(f, 'old'),
+            baseType: getFieldBaseType(f, domains, mappings, db)
+          }
+        })
       };
     }),
     views: views.map(v => {
       return {
-        ..._.omit(v, 'old'),
-        fields: (v.fields || []).map(f => ({..._.omit(f, 'old')}))
+        ..._.omit(v, ['old', 'nameTemplate']),
+        sysProps: {
+          nameTemplate: v.nameTemplate
+        },
+        fields: (v.fields || []).map(f => {
+          return {
+            ..._.omit(f, 'old'),
+            baseType: getFieldBaseType(f, domains, mappings, db)
+          }
+        })
       };
     }),
     dataTypeMapping: {
@@ -2295,6 +2506,7 @@ export const getUnGroup = (dataSource, defKey) => {
     refDicts: calcUnGroupDefKey(dataSource || {}, 'dicts'),
     refEntities: calcUnGroupDefKey(dataSource || {}, 'entities'),
     refViews: calcUnGroupDefKey(dataSource || {}, 'views'),
+    refLogicEntities: calcUnGroupDefKey(dataSource || {}, 'logicEntities'),
     id: '__ungroup',
     defKey: defKey || '__ungroup',
   }

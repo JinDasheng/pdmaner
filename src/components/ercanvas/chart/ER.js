@@ -14,13 +14,14 @@ import {
     calcCellData,
     calcNodeData,
     generatorTableKey,
-    getEmptyEntity,
+    getEmptyEntity, getLogicHeaders,
     mapData2Table,
     resetHeader,
 } from '../../../lib/datasource_util';
 import {separator} from '../../../../profile';
 import {getCache, getDataByTabId} from '../../../lib/cache';
 import Entity from '../../../app/container/entity';
+import LogicEntity from '../../../app/container/logicentity';
 import { edgeNodeAddTool} from '../components/tool';
 import {openUrl} from '../../../lib/json2code_util';
 
@@ -244,16 +245,17 @@ export default class ER {
     isErCell = (cell) => {
         return this.filterErCell(cell).length > 0;
     }
-    updateFields = (originKey, fields) => {
-        if (!this.validateTableStatus(`${originKey}${separator}entity`)) {
+    updateFields = (originKey, fields, isLogic = false) => {
+        if (!this.validateTableStatus(`${originKey}${separator}${isLogic ? 'logicEntity' : 'entity'}`)) {
             const getKey = (f) => {
                 return `${f.defKey}${f.defName}`;
             };
             const result = {};
             const currentDataSource = this.getDataSource();
+            const names = isLogic ? 'logicEntities' : 'entities';
             const newDataSource = {
                 ...currentDataSource,
-                entities: currentDataSource.entities.map((e) => {
+                [names]: currentDataSource[names].map((e) => {
                     if (e.id === originKey) {
                         const success = fields
                             .filter(f => (e.fields || [])
@@ -374,21 +376,22 @@ export default class ER {
     getEntityInitProperties = (dataSource) => {
         return _.get(dataSource, 'profile.default.entityInitProperties', {});
     };
-    startDrag = (e, key, dataSource) => {
+    startDrag = (e, key, dataSource, type) => {
+        const isEntity = type === 'entity';
         let empty;
         let count = 0;
         if (!key) {
             empty = {
                 ...getEmptyEntity(),
-                headers: resetHeader(dataSource, {}),
+                headers: isEntity ? resetHeader(dataSource, {}) : getLogicHeaders(),
                 count: 0,
-                defKey: generatorTableKey('TABLE_1', dataSource),
-                defName: '数据表',
-                fields: this.getEntityInitFields(dataSource),
+                defKey: generatorTableKey(isEntity ? 'TABLE_1' : 'LOGIC_1', dataSource, isEntity ? 'entities' : 'logicEntities'),
+                defName: isEntity ? FormatMessage.string({id: 'tableEdit.data'}) : FormatMessage.string({id: 'menus.logicEntity'}),
+                fields: isEntity ? this.getEntityInitFields(dataSource) : [],
                 properties: this.getEntityInitProperties(dataSource),
             };
         } else {
-            const dataSourceEntity = dataSource?.entities
+            const dataSourceEntity = dataSource?.[isEntity ? 'entities' : 'logicEntities']
                 ?.find(entity => entity.id === key);
             empty = {
                 ...dataSourceEntity,
@@ -406,11 +409,12 @@ export default class ER {
                 height,
             },
             shape: 'table',
-            ports: this.relationType === 'entity' ? this.commonEntityPorts : ports,
+            ports: (this.relationType === 'entity' || !isEntity) ? this.commonEntityPorts : ports,
             originKey: empty.id,
             count,
             updateFields: this.updateFields,
             nodeClickText: this.nodeTextClick,
+            type: isEntity ? 'P' : 'L',
             data: {
                 ...empty,
                 fields,
@@ -482,12 +486,14 @@ export default class ER {
             } else {
                 const iconMap = {
                     entities: 'fa-table',
+                    logicEntities: 'fa-columns',
                     views: 'icon-shitu',
                     diagrams: 'icon-guanxitu',
                     dicts: 'icon-shujuzidian',
                 };
                 const keyMap = {
                     entities: 'entity',
+                    logicEntities: 'logicEntity',
                     views: 'view',
                     diagrams: 'diagram',
                     dicts: 'dict',
@@ -534,6 +540,7 @@ export default class ER {
                         data: c.getProp('data'),
                         size: c.size(),
                         autoSize: c.getProp('autoSize'),
+                        type: c.getProp('type'),
                     },
                     dataSource,
                     this.updateFields,
@@ -551,21 +558,21 @@ export default class ER {
             });
         });
     }
-    addEntityData = (cell, type, dataSource) => {
+    addEntityData = (cell, type, dataSource, names, refNames) => {
         const cells = [].concat(cell);
         let initData = {};
         if (type === 'create') {
             initData = {
-                headers: resetHeader(dataSource, {}),
-                fields: this.getEntityInitFields(dataSource),
+                headers: names === 'entities' ? resetHeader(dataSource, {}) : getLogicHeaders(),
+                fields: names === 'entities' ? this.getEntityInitFields(dataSource) : [],
                 properties: this.getEntityInitProperties(dataSource),
+                type: names === 'entities' ? 'P' : 'L',
             };
         }
         return {
             ...dataSource,
-            entities: dataSource.entities.concat(cells.map(c => ({
-                ...(c.data ? dataSource
-                    .entities.find(e => e.defKey === c.data.copyDefKey) : {}),
+            [names]: (dataSource[names] || []).concat(cells.map(c => ({
+                ...(c.data ? dataSource[names].find(e => e.defKey === c.data.copyDefKey) : {}),
                 ..._.pick(c.data, ['id', 'defKey']),
                 ...initData,
             }))),
@@ -573,7 +580,7 @@ export default class ER {
                 if ((g.refDiagrams || []).includes(this.tabKey.split(separator)[0])) {
                     return {
                         ...g,
-                        refEntities: (g.refEntities || []).concat(cells.map(c => c.data.id)),
+                        [refNames]: (g[refNames] || []).concat(cells.map(c => c.data.id)),
                     };
                 }
                 return g;
@@ -614,39 +621,54 @@ export default class ER {
                         }, { ignoreHistory : true});
                     }
                 });
-                const copyEntities = cells
-                    .filter(c => c.shape === 'table').map((c) => {
+                const logicEntities = [];
+                const entities = [];
+                cells
+                    .filter(c => c.shape === 'table').forEach((c) => {
+                        const isEntity = c.getProp('type') !== 'L';
+                        const names = isEntity ? 'entities' : 'logicEntities';
                         const copyDefKey = c.getData().defKey || '';
+                        const copyDefName = c.getData().defName || '';
                         const tempKey = /_(\d)+$/.test(copyDefKey) ? copyDefKey : `${copyDefKey}_1`;
                         const newKey = generatorTableKey(tempKey, {
-                            entities: (dataSource.entities || []).concat(keys),
+                            [names]: (dataSource[names] || []).concat(keys),
+                        }, names, isEntity ? null : (key, data) => {
+                            return !data.map(d => `${d.defKey || ''}${d.defName || ''}`).includes(`${key || ''}${copyDefName}`);
                         });
                         const entityId = Math.uuid();
-                        keys.push({defKey: newKey});
+                        keys.push({defKey: newKey, defName: copyDefName});
                         c.setProp('originKey', entityId, {ignoreHistory : true});
                         // eslint-disable-next-line max-len
                         c.setData({defKey: newKey, copyDefKey}, {ignoreHistory : true, relation: true});
                         c.setData({id: entityId}, {ignoreHistory : true, relation: true});
-                        return {
+                        const data = {
                             data: c.data,
                         };
+                        if(isEntity) {
+                            entities.push(data);
+                        } else {
+                            logicEntities.push(data);
+                       }
                     });
-                this.updateDataSource && this.updateDataSource(this.addEntityData(copyEntities, 'copy', dataSource));
+                let tempDataSource = this.addEntityData(logicEntities, 'copy', dataSource, 'logicEntities', 'refLogicEntities');
+                this.updateDataSource && this.updateDataSource(this.addEntityData(entities, 'copy', tempDataSource, 'entities', 'refEntities'));
             });
         }
     }
     nodeDbClick = (e, cell, dataSource) => {
         if (this.isErCell(cell)) {
             if (cell.shape === 'table') {
+                const isEntity = cell.getProp('type') !== 'L';
+                const refNames = isEntity ? 'refEntities' : 'refLogicEntities';
                 const cellData = cell.getData();
                 const key = cell.getProp('originKey');
-                const group = dataSource?.viewGroups?.find(v => v.refEntities?.some(r => r ===
-                    key))?.id || '';
-                const entityTabKey = `${key + separator}entity`;
+                const group = dataSource?.viewGroups?.filter(v => v[refNames]?.some(r => r ===
+                    key));
+                const entityTabKey = `${key + separator}${isEntity ? 'entity' : 'logicEntity'}`;
                 if (!this.validateTableStatus(entityTabKey)) {
                     let drawer;
                     const tab = {
-                        type: 'entity',
+                        type: isEntity ? 'entity' : 'logicEntity',
                         tabKey: entityTabKey,
                     };
                     const onOK = () => {
@@ -682,7 +704,8 @@ export default class ER {
                         this.openDict && this.openDict(...args);
                         drawer.close();
                     };
-                    drawer = openDrawer(<Entity
+                    const Com = isEntity ? Entity : LogicEntity;
+                    drawer = openDrawer(<Com
                       changeTab={this.changeTab}
                       openTab={this.openTab}
                       closeTab={this.closeTab}
@@ -694,6 +717,7 @@ export default class ER {
                       dataSource={dataSource}
                       entity={key}
                       group={group}
+                      type={tab.type}
                       tabDataChange={entityChange}
                       changes={this.changes}
                     />, {
@@ -1127,9 +1151,12 @@ export default class ER {
     nodeAdded = (cell, options, dataSource) => {
         if (this.isErCell(cell)) {
             if (cell.shape === 'table') {
-                if ((dataSource.entities || [])
+                const isEntity = cell.getProp('type') !== 'L';
+                const names = isEntity ? 'entities' : 'logicEntities';
+                const refNames = isEntity ? 'refEntities' : 'refLogicEntities';
+                if ((dataSource[names] || [])
                     .findIndex(e => cell.data.id === e.id) < 0){
-                    this.updateDataSource && this.updateDataSource(this.addEntityData(cell, 'create', dataSource));
+                    this.updateDataSource && this.updateDataSource(this.addEntityData(cell, 'create', dataSource, names, refNames));
                 }
             }
             if (options.undo && cell.isNode()) {
