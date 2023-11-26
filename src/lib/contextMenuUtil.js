@@ -1156,7 +1156,7 @@ const injectEntities = (dataSource, entities, data) => {
     if(filedId && entityId) {
       const fieldIdArray = filedId.split(separator);
       const preEntity = entities.find(e => e.oldId === entityId);
-      const preField = (preEntity.fields || []).find(f => f.oldId === fieldIdArray[0]);
+      const preField = (preEntity?.fields || []).find(f => f.oldId === fieldIdArray[0]);
       const currentEntity = sameEntity.find(s => s.oldId === entityId);
       if(currentEntity) {
         const currentEntityData = currentEntities.find(e => e.id === currentEntity.newId);
