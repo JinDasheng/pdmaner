@@ -1445,6 +1445,7 @@ const pasteOpt = (dataSource, menu, updateDataSource) => {
             } else if(config.mainKey === 'entities') {
               return e.type !== 'L'
             }
+            return true;
           });
       const newDataKeys = newData.map(e => e[config.key]);
       const oldData = _.get(dataSource, config.mainKey, []).filter((e) => {

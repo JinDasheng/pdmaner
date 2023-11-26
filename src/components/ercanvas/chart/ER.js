@@ -409,7 +409,7 @@ export default class ER {
                 height,
             },
             shape: 'table',
-            ports: (this.relationType === 'entity' || type === 'L') ? this.commonEntityPorts : ports,
+            ports: (this.relationType === 'entity' || !isEntity) ? this.commonEntityPorts : ports,
             originKey: empty.id,
             count,
             updateFields: this.updateFields,
