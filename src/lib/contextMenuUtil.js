@@ -133,7 +133,7 @@ export const getMenu = (m, key, type, selectedMenu, groupType, parentKey, tempTy
         if(type === 'entity') {
           return base + FormatMessage.string({id: 'menus.logicEntity'});
         } else {
-          return base + FormatMessage.string({id: 'menus.entity'});
+          return FormatMessage.string({id: 'menus.extractEntity'});
         }
       }
       return base;
@@ -191,7 +191,7 @@ export const getMenus = (key, type, selectedMenu, parentKey, groupType) => {
   });
 };
 
-export const dealMenuClick = (dataSource, menu, updateDataSource, tabClose, callback, genImg) => {
+export const dealMenuClick = (dataSource, menu, updateDataSource, tabClose, callback, genImg, jumpDetail) => {
   const { key } = menu;
   switch (key) {
     case 'add': addOpt(dataSource, menu, updateDataSource, {}, null, null, callback); break;
@@ -207,12 +207,12 @@ export const dealMenuClick = (dataSource, menu, updateDataSource, tabClose, call
     case 'notes': notesOpt(dataSource, menu, updateDataSource); break;
     case 'png':
     case 'svg': imgOpt(dataSource, menu, genImg, key); break;
-    case 'extract':extractOpt(dataSource, menu, updateDataSource); break;
+    case 'extract':extractOpt(dataSource, menu, updateDataSource, jumpDetail); break;
     default:break;
   }
 };
 
-const extractOpt = (dataSource, menu, updateDataSource) => {
+const extractOpt = (dataSource, menu, updateDataSource, jumpDetail) => {
   let modal = null;
   const name = menu.dataType === 'entity' ? 'entities' : 'logicEntities';
   const allName = menu.dataType === 'entity' ? 'logicEntities' : 'entities';
@@ -250,18 +250,28 @@ const extractOpt = (dataSource, menu, updateDataSource) => {
     return isRepeat;
   }
   const updateData = () => {
+    let currentGroup = null;
+    const refName = extractData.type === 'P' ? 'refEntities' : 'refLogicEntities';
     updateDataSource({
       ...dataSource,
       viewGroups: parentKey ? dataSource.viewGroups?.map(v => {
-        const refName = extractData.type === 'P' ? 'refEntities' : 'refLogicEntities';
-        return {
-          ...v,
-          [refName]: v[refName].concat(extractData.id)
+        if(parentKey === v.id) {
+          currentGroup = v;
+          return {
+            ...v,
+            [refName]: (v[refName] || []).concat(extractData.id)
+          }
         }
+        return v;
       }) : dataSource.viewGroups,
       [allName]: allData.concat(extractData)
     })
     Message.success({title: FormatMessage.string({id: 'optSuccess'})});
+    jumpDetail({
+      ...extractData,
+      type: refName,
+      groups: [currentGroup],
+    }, allName);
   }
   if(validateRepeat()) {
     Modal.confirm({

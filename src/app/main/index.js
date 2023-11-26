@@ -313,7 +313,7 @@ const Index = React.memo(({getUserData, mode, isChildWindow,
   const _contextMenuClick = (e, m, callback) => {
     dealMenuClick(dataSourceRef.current, m, restProps?.update, _tabClose,
         // eslint-disable-next-line no-use-before-define
-        callback, genImg);
+        callback, genImg, _jumpDetail);
   };
   const getDataSource = () => {
     return dataSourceRef.current;

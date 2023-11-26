@@ -1345,6 +1345,14 @@ export const getAllData = (params) => {
                 groups: getGroup(b.type, b),
             };
         });
+    const logicEntityData = (data.logicEntities || [])
+        .map((b) => {
+            return {
+                ...b,
+                type: 'refLogicEntities',
+                groups: getGroup('refLogicEntities', b),
+            };
+        });
     const dictData = (data.dicts || []).map((d) => {
         const groups = getGroup('refDicts', d);
         return {
@@ -1357,6 +1365,16 @@ export const getAllData = (params) => {
         {
             key: 'entities',
             data: entityData.map((e) => {
+                const groups = e.groups.map(g => g.name).join('|');
+                return {
+                    ...e,
+                    suggest: `${e.defKey}-${e.defName}${groups ? `@${groups}` : ''}`,
+                };
+            }),
+        },
+        {
+            key: 'logicEntities',
+            data: logicEntityData.map((e) => {
                 const groups = e.groups.map(g => g.name).join('|');
                 return {
                     ...e,
