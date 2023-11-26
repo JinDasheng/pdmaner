@@ -222,9 +222,23 @@ const extractOpt = (dataSource, menu, updateDataSource, jumpDetail) => {
   if(menu.parentKey !== 'logicEntities' && menu.parentKey !== 'entities') {
     parentKey = menu.parentKey;
   }
+
+  const defKey = currentData.defKey;
+
+  // 重命名逻辑模型
+  const renameDefKey = (defKey = '') => {
+    // 判断是否是LE开头
+    const reg = /^le_/i;
+    const newDefKey = defKey.replace(reg, '');
+    if(name === 'entities') {
+      return `LE_${newDefKey}`;
+    }
+    return newDefKey;
+  }
   // 组装新数据
   let extractData = {
-    ..._.pick(currentData, ['defKey', 'defName', 'comment', 'env', 'notes', 'properties']),
+    ..._.pick(currentData, ['defName', 'comment', 'env', 'notes', 'properties']),
+    defKey: renameDefKey(currentData.defKey || currentData.defName || ''),
     id: Math.uuid(),
     type: menu.dataType === 'entity' ? 'L' : 'P',
     headers: menu.dataType === 'entity' ? getLogicHeaders() : resetHeader(dataSource, {}),
