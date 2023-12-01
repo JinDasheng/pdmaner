@@ -1071,7 +1071,7 @@ export const generatorTableKey = (defKey, dataSource) => {
 }
 
 export const generatorKey = (newKey, data) => {
-  if (!data.includes(newKey)) {
+  if (!data.includes(newKey.toLocaleLowerCase())) {
     return newKey;
   } else {
     return generatorKey(`${newKey}_1`, data);
