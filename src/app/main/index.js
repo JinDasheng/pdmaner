@@ -416,6 +416,51 @@ const Index = React.memo(({getUserData, mode, isChildWindow,
     const cavRef = getCurrentCav();
     cavRef.exportImg(type);
   };
+  /**
+   * 计算类型的度量，长度,精度
+   * 初衷：各个数据库类型和写法的不一致也能在逆向解析中成功识别到domain，比如 整型字段
+   * mysql: INT
+   * oracle: NUMBER(10), 如果也写成int，则oracle中会是 NUMBER(38)
+   * 在oralce中得到的某个field为：
+   * {
+   *   "len": 10,
+   *   "scale": null,
+   *   "type": "NUMBER",
+   *   "typeFullName": "NUMBER(10)"
+   * }
+   * 就能匹配上如下的mapping和domain了
+   * 如下的mapping：
+   * {
+   *   "defKey": "int",
+   *   "id": "IDxINT",
+   *   "defName": "整数",
+   *   "IDxMYSQL": "INT",
+   *   "IDxORACLE": "NUMBER(10)",
+   *   "IDxJAVA": "Integer"
+   * },
+   * 以及如下的domain定义：
+   * {
+   *   "defKey": "Int",
+   *   "defName": "整数(INT)",
+   *   "applyFor": "IDxINT",
+   *   "len": "",
+   *   "scale": "",
+   *   "uiHint": "",
+   *   "id": "IDxDOMAINxInt"
+   * }
+   * @param {String} len - 字段长度
+   * @param {String} scale - 字段精度
+   * @returns (长度[,精度]) 或者 ''
+   */
+  const calcMeasure = (len = '', scale = '') => {
+    if (!len) {
+      return '';
+    }
+    if (!scale) {
+      return `(${len})`;
+    }
+    return `(${len},${scale}`;
+  };
   const calcDomain = (data = [], dbKey = null, finalDomains) => {
     const dataTypeSupports = _.get(dataSourceRef.current, 'profile.dataTypeSupports', []);
     const defaultDb = _.get(dataSourceRef.current, 'profile.default.db', dataTypeSupports[0]);
@@ -432,9 +477,11 @@ const Index = React.memo(({getUserData, mode, isChildWindow,
             const mapping = mappings.filter(m => m.id === domain.applyFor)[0];
             return {
               id: domain.id,
-              type: `${mapping?.[currentDb]?.toLocaleLowerCase()}${domain.len || ''}${domain.scale || ''}`,
+              // 为了存储到后面的 baseType
+              applyFor: domain.applyFor,
+              type: `${mapping?.[currentDb]?.toLocaleLowerCase()}${calcMeasure(domain.len || '', domain.scale || '')}`,
             };
-          }).filter(domain => domain.type === `${f.type?.toLocaleLowerCase()}${f.len || ''}${f.scale || ''}`)[0];
+          }).filter(domain => domain.type === `${f.type?.toLocaleLowerCase()}${calcMeasure(f.len || '', f.scale || '')}`)[0];
           const domain = domainData?.id || '';
           if (domain) {
             return {
@@ -442,6 +489,9 @@ const Index = React.memo(({getUserData, mode, isChildWindow,
               domain,
               len: '',
               scale: '',
+              // 有domain后，type置空，才能根据domain以及目标数据库来动态生成类型
+              type: '',
+              baseType: domainData.applyFor,
             };
           }
           return {
