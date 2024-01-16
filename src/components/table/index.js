@@ -17,7 +17,7 @@ import {
   validateFields,
   emptyField,
   getColumnWidth,
-  generatorKey, transformFieldType, parseExcel,
+  generatorKey, transformFieldType, getFieldBaseType,parseExcel,
 } from '../../lib/datasource_util';
 import { moveArrayPositionByArray } from '../../lib/array_util';
 import { addBodyEvent, removeBodyEvent } from '../../lib/listener';
@@ -41,9 +41,10 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort, sea
                                className, expand, otherOpt = true, disableHeaderReset,
                                updateDataSource, disableAddStandard, ready, twinkle, getDataSource,
                                disableDragRow = true, freeze = false, reading = false,
-                               fixHeader = true, openDict, defaultGroups, searchRef,
-                               openConfig, isEntity, needHideInGraph, virtual = true, autoWidth},
-                               refInstance) => {
+                               fixHeader = true, openDict, defaultGroups, info, searchRef,
+                               openConfig, isEntity, needHideInGraph, virtual = true,
+                               allFieldOptions, autoWidth},
+                                     refInstance) => {
   const { lang } = useContext(ConfigContent);
   const { valueContext, valueSearch } = useContext(TableContent);
   const inputRef = useRef({});
@@ -151,12 +152,14 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort, sea
         ...pre,
         fields: pre.fields.map((field) => {
           if (name === 'domain') {
+            const domainData = domains.find(d => d.id === value);
             if (selectedFieldsRef.current.includes(field.id) || (f.id === field.id)) {
               const newField = {
                 [name]: value,
                 type: value ? '' : f.type,
                 len: value ? '' : f.len,
                 scale: value ? '' : f.scale,
+                baseType: domainData?.applyFor || '',
               };
               changeFields.push({
                 id: field.id,
@@ -182,10 +185,21 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort, sea
                 domain: '',
               };
             }
-            const newField = {
+            if(name === 'type') {
+              const currentMap = mapping.find(m => m[db] === value);
+              if(currentMap) {
+                others.baseType = currentMap.id;
+              } else {
+                others.baseType = '';
+              }
+            }
+            let newField = {
               ...others,
               [name]: value,
             };
+            if((name === 'defKey' || name === 'defName') && allFieldOptions) {
+              newField = allFieldOptions.find(a => a.id === value) || newField;
+            }
             changeFields.push({
               id: field.id,
               ...newField,
@@ -482,6 +496,7 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort, sea
       } else {
         newField = {
           ...emptyField,
+          baseType: mapping[0]?.id || '',
           extProps: getDataSource().profile?.extProps || {},
           domain: domain.id,
         };
@@ -586,16 +601,17 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort, sea
             const finalFields = pasteFields.map((f) => {
               const key = generatorKey(f.defKey || '', fieldKeys);
               fieldKeys.push(key.toLocaleLowerCase());
-              return {
-                ...f,
-                id: Math.uuid(),
-                defKey: key,
-              };
-            });
-            Component.Message.success({
-              title: Component.FormatMessage.string({id: 'pasteSuccess'}),
-            });
-            addField(null, finalFields);
+                return {
+                  ...f,
+                  id: Math.uuid(),
+                  defKey: key,
+                  baseType: getFieldBaseType(f, domains, mapping, db),
+                };
+              });
+              Component.Message.success({
+                title: Component.FormatMessage.string({id: 'pasteSuccess'}),
+              });
+              addField(null, finalFields);
           });
           current && current.focus({
             preventScroll: true,
@@ -1137,6 +1153,7 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort, sea
                   dataPosition.length + dataPosition.index)
               : filterFields).map((f, i) => (
                 <Tr
+                  allFieldOptions={allFieldOptions}
                   needHideInGraph={needHideInGraph}
                   isView={isView}
                   entities={dataSource?.entities}
@@ -1239,11 +1256,11 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort, sea
                 onChange={importFields}
               />
               </span>}
-              <span className={`${currentPrefix}-table-opt-info`}>
+              {info || <span className={`${currentPrefix}-table-opt-info`}>
                 <Component.Tooltip title={<OptHelp/>} force placement='topLeft'>
                   <Component.Icon type='icon-xinxi'/>
                 </Component.Tooltip>
-              </span>
+              </span>}
               {
                   isEntity && <div className={`${currentPrefix}-table-opt-config`}>
                     <div>

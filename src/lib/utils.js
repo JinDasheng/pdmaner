@@ -607,41 +607,21 @@ export const _transform = (f, dataSource, code, type = 'id', codeType = 'dbDDL',
     const dicts = dataSource?.dicts || [];
     const uiHints = _.get(dataSource, 'profile.uiHint', []);
     const temp = {};
-    if (codeType === 'dbDDL'){
-        // 转换数据域
-        if (f.domain) {
-            const domainIndex = domains.findIndex(dom => dom[type] === f.domain);
-            const domain = domains[domainIndex] || { len: '', scale: '' };
-            const dataType = mappings.filter(m => m.id === domain.applyFor)[0]?.[code || db] || '';
-            temp.len = domain.len === undefined ? '' : domain.len;
-            temp.scale = domain.scale === undefined ? '' : domain.scale;
-            temp.type = dataType;
-            temp.domain = type === 'id' ? (domain.defName || domain.defKey) : f.domain;
-            temp.dbType = mappings.filter(m => m.id === domain.applyFor)[0]?.[db] || f.type;
-            temp.domainData = domain;
-        } else {
-            const realType = mappings.filter(m => m[db] === f.type)[0]?.[code] || f.type;
-            temp.type = realType;
-            temp.dbType = realType;
-        }
+    if(f.baseType) {
+        const mapping = mappings.find(m => m.id === f.baseType);
+        temp.baseType = mapping?.defName || mapping?.defKey || '';
+        temp.type = mapping?.[code || db] || f.type || '';
+        temp.dbType = mapping?.[db] || f.type || '';
     } else {
-        // 代码类型转换
-        if (f.domain) {
-            const domainIndex = domains.findIndex(dom => dom[type] === f.domain);
-            if (domainIndex > -1) {
-                const domain = domains[domainIndex];
-                const mapping = mappings.filter(m => m.id === domain?.applyFor)[0];
-                temp.domain = type === 'id' ? (domain.defName || domain.defKey) : f.domain;
-                temp.len = domain.len === undefined ? '' : domain.len;
-                temp.scale = domain.scale === undefined ? '' : domain.scale;
-                temp.type = mapping?.[code] || '';
-                temp.dbType = mapping?.[db] || f.type;
-                temp.domainData = domain;
-            }
-        } else {
-            temp.type = mappings.filter(m => m[db] === f.type)[0]?.[code] || f.type;
-            temp.dbType = f.type;
-        }
+        temp.dbType = f.type || '';
+    }
+    if (f.domain) {
+        // 转换数据域
+        const domain = domains.find(dom => dom[type] === f.domain) || { len: '', scale: '' };
+        temp.len = domain.len === undefined ? '' : domain.len;
+        temp.scale = domain.scale === undefined ? '' : domain.scale;
+        temp.domain = type === 'id' ? (domain.defName || domain.defKey) : f.domain;
+        temp.domainData = domain;
     }
     // 转换数据字典
     if (f.refDict && !omitName.includes('refDict')) {
@@ -965,6 +945,22 @@ export const _mergeData = (pre, next, needOld, merge = true, mergeNames) => {
     return merge ? next : pre;
 };
 
+export const _getFieldBaseType = (f, domains, mappings, currentDb) => {
+    const type2baseTye = (type) => {
+        return mappings.find(m => m[currentDb]?.toLocaleLowerCase()
+            === type?.toLocaleLowerCase())?.id || ''
+    }
+    // 计算字段的baseType并存储
+    if(!f.baseType) {
+        if(f.domain) {
+            const domainData = domains.find(d => d.id === f.domain);
+            return domainData?.applyFor || type2baseTye(f.type);
+        }
+        return type2baseTye(f.type);
+    }
+    return f.baseType;
+}
+
 export const _mergeDataSource = (oldDataSource, newDataSource, selectEntity, ignoreProps) => {
     // 合并项目
     // 合并数据类型/代码模板/数据类型匹配
@@ -1006,12 +1002,15 @@ export const _mergeDataSource = (oldDataSource, newDataSource, selectEntity, ign
     const tempDomains = _mergeData(domains, newDomains, true, false);
     // 合并数据表
     const entities = oldDataSource.entities || [];
+    const newDb = _.get(newDataSource, 'profile.default.db',
+        _.get(newDataSource, 'profile.dataTypeSupports[0].id'));
     const newEntities = (selectEntity || []).map(e => ({
         ...e,
         isNew: true,
         properties: e.properties || oldDataSource?.profile?.default?.entityInitProperties || {},
         fields: (e.fields || []).map(f => ({
             ...f,
+            baseType: _getFieldBaseType(f, newDomains, newMappings, newDb),
             extProps: f.extProps || oldDataSource?.profile?.extProps || {}
         })),
     }));
@@ -1257,7 +1256,7 @@ export const _mergeDataSource = (oldDataSource, newDataSource, selectEntity, ign
                 }),
                 fields: (d.fields || []).map((f) => {
                     return {
-                        ...calcField(f, ['uiHint', 'refDict', 'domain'], [tempUiHint, tempUiHint, tempDomains]),
+                        ...calcField(f, ['uiHint', 'refDict', 'domain', 'baseType'], [tempUiHint, tempUiHint, tempDomains, tempMappings]),
                     }
                 })
             }
@@ -1346,6 +1345,14 @@ export const getAllData = (params) => {
                 groups: getGroup(b.type, b),
             };
         });
+    const logicEntityData = (data.logicEntities || [])
+        .map((b) => {
+            return {
+                ...b,
+                type: 'refLogicEntities',
+                groups: getGroup('refLogicEntities', b),
+            };
+        });
     const dictData = (data.dicts || []).map((d) => {
         const groups = getGroup('refDicts', d);
         return {
@@ -1358,6 +1365,16 @@ export const getAllData = (params) => {
         {
             key: 'entities',
             data: entityData.map((e) => {
+                const groups = e.groups.map(g => g.name).join('|');
+                return {
+                    ...e,
+                    suggest: `${e.defKey}-${e.defName}${groups ? `@${groups}` : ''}`,
+                };
+            }),
+        },
+        {
+            key: 'logicEntities',
+            data: logicEntityData.map((e) => {
                 const groups = e.groups.map(g => g.name).join('|');
                 return {
                     ...e,

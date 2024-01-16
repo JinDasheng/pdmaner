@@ -47,7 +47,7 @@ export default React.memo(({ prefix, dataSource, dataChange, name, parentKey }) 
               if (value.includes(d.id)) {
                   return {
                       ...d,
-                      [refNames]: [...new Set(d[refNames].concat(id).concat(selected))],
+                      [refNames]: [...new Set((d[refNames] || []).concat(id).concat(selected))],
                   };
               }
               return {

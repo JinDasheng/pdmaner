@@ -13,13 +13,14 @@ const Table = forwardRef(({node}, ref) => {
   const id = node.id;
   const size = node.size();
   const linkData = JSON.parse(node.getProp('link') || '{}');
+  const isLogic = node.getProp('type') === 'L';
   const allFk = node?._model?.getIncomingEdges(id)?.map(t => t.getTargetPortId()
       ?.split(separator)[0]) || [];
   const onDragOver = (e) => {
     e.preventDefault();
   };
   const onDrop = (e) => {
-    store?.data?.updateFields(store.data.originKey, JSON.parse(e.dataTransfer.getData('fields')));
+    store?.data?.updateFields(store.data.originKey, JSON.parse(e.dataTransfer.getData('fields')), isLogic);
   };
   const nodeClickText = () => {
     store?.data?.nodeClickText(node);
@@ -53,7 +54,7 @@ const Table = forwardRef(({node}, ref) => {
     return bodyData.map((f) => {
       return <div
         key={`${f.id}${f.defName}`}
-        className={`${validateSelected(f, store.data) ? 'chiner-er-table-body-selected' : ''} ${f.primaryKey ? 'chiner-er-table-body-primary' : ''}`}>
+        className={`${f.__isFirst ? 'chiner-er-table-body-border' : ''} ${validateSelected(f, store.data) ? 'chiner-er-table-body-selected' : ''} ${(f.primaryKey && !isLogic) ? 'chiner-er-table-body-primary' : ''}`}>
         {
           [{refKey: 'primaryKey'}].concat(data.headers
               .filter(h => h.refKey !== 'primaryKey')).map((h) => {
@@ -81,6 +82,40 @@ const Table = forwardRef(({node}, ref) => {
     });
   };
   const body = useMemo(() => {
+    if(isLogic && data?.sysProps?.lePropOrient === 'H') {
+      const primaryKeyFields = data.fields.filter(f => f.primaryKey);
+      const lineClamp = Math.floor((size.height - 29 - primaryKeyFields.length * 23) / 18);
+      const bodyValue = data.fields.filter(f => !f.primaryKey).map((f) => {
+        if(data?.sysProps?.propShowFields?.includes('N')) {
+          return f.defName || f.defKey;
+        }
+        return f.defKey || f.defName;
+      }).join(';');
+      return <div
+        style={{background: calcColor(node.getProp('fillColor') || '#DDE5FF')}}
+        className='chiner-er-table-body'
+      >
+        {
+          renderBody(primaryKeyFields, (key) => {
+            return data.maxWidth[key];
+          })
+        }
+        <Tooltip compareName={['clientHeight', 'scrollHeight']} offsetTop={8} title={bodyValue}>
+          <div style={{
+            borderTop: '1px solid #DFE3EB',
+            whiteSpace: 'pre-wrap',
+            height: lineClamp * 18,
+            display: '-webkit-box',
+            WebkitBoxOrient: 'vertical',
+            WebkitLineClamp: lineClamp,
+            overflow: 'hidden',
+            wordBreak: 'break-all',
+          }}>
+            {bodyValue}
+          </div>
+        </Tooltip>
+      </div>;
+    }
     return <div
       className='chiner-er-table-body'
       style={{background: calcColor(node.getProp('fillColor') || '#DDE5FF')}}

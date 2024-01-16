@@ -8,8 +8,8 @@ import EntityBasePropertiesList from '../../app/container/entity/EntityBasePrope
 
 export default React.memo(({f, name, remarkChange, onKeyDown, currentPrefix,
                              onChange, onBlur, checkboxComponents, reading, cellRef, dicts,
-                             setDict, getDataSource, updateDataSource, entities,
-                             openDict, defaultGroups, domains, uiHint}) => {
+                             setDict, getDataSource, updateDataSource, entities,mapping,
+                             openDict, defaultGroups, domains, uiHint, allFieldOptions}) => {
   const tooltipRef = useRef(null);
   const columnWidth = getColumnWidth();
   const cell = useRef(null);
@@ -292,7 +292,6 @@ export default React.memo(({f, name, remarkChange, onKeyDown, currentPrefix,
   } else if (name === 'type') {
     const currentDataSource = getDataSource();
     const db = currentDataSource.profile?.default?.db;
-    const mapping = currentDataSource?.dataTypeMapping?.mappings || [];
     return <Component.Select className={`${currentPrefix}-table-type-select`} value={f[name]} onChange={onChange} showNotMatch>
       {mapping.map((m) => {
         return (<Component.Select.Option
@@ -300,6 +299,28 @@ export default React.memo(({f, name, remarkChange, onKeyDown, currentPrefix,
           value={m[db]}
         >
           {`${m.defName || m.defKey}-${m[db] || ''}`}
+        </Component.Select.Option>);
+      })}
+    </Component.Select>;
+  } else if((name === 'defKey' || name === 'defName') && allFieldOptions) {
+    return <Component.Select searchType='value' className={`${currentPrefix}-logic-entity-def-select`} value={f[name]} onChange={onChange} showNotMatch>
+      {allFieldOptions.map((m) => {
+        return (<Component.Select.Option
+          key={m.id}
+          value={m.id}
+        >
+          {`${m.defName}[${m.parent}-${m.defKey}]`}
+        </Component.Select.Option>);
+      })}
+    </Component.Select>;
+  } else if (name === 'baseType') {
+    return <Component.Select className={`${currentPrefix}-logic-entity-baseType-select`} value={f[name]} onChange={onChange}>
+      {mapping.map((m) => {
+        return (<Component.Select.Option
+          key={m.id}
+          value={m.id}
+        >
+          {`${m.defName}-${m.defKey}`}
         </Component.Select.Option>);
       })}
     </Component.Select>;
@@ -324,8 +345,11 @@ export default React.memo(({f, name, remarkChange, onKeyDown, currentPrefix,
       || (pre.f[pre.name] !== next.f[next.name]));
   } else if (pre.name === 'refEntity') {
     return pre?.entities === next?.entities;
-  } else if (pre.name === 'type') {
+  } else if (pre.name === 'type' || pre.name === 'baseType') {
     return !((pre?.mapping !== next?.mapping)
+        || (pre.f[pre.name] !== next.f[next.name]));
+  } else if(pre.name === 'defKey' || pre.name === 'defName') {
+    return !((pre?.allFieldOptions !== next?.allFieldOptions)
         || (pre.f[pre.name] !== next.f[next.name]));
   }
   return pre.f[pre.name] === next.f[next.name];
