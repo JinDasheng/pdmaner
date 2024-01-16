@@ -8,6 +8,7 @@ import Button from '../button';
 import VersionListCard from './versionListCard';
 import { getPrefix } from '../../lib/prefixUtil';
 import {getMaxVersion} from '../../lib/datasource_version_util';
+import {transformationData} from '../../lib/datasource_util';
 import './style/index.less';
 import VersionEdit from './VersionEdit';
 import FormatMessage from '../formatmessage';
@@ -136,7 +137,11 @@ const VersionListBar = React.memo((props) => {
                         }
                         return Promise.resolve(t);
                     }))
-                    .then(([v1, v2]) => {
+                    .then(([v1, vPre]) => {
+                        const v2 = vPre ? {
+                            ...vPre.data,
+                            data: transformationData(vPre.data),
+                        } : vPre;
                         if(needChange) {
                             setVersionsData((prevState) => {
                                 return prevState.map((v) => {

@@ -196,7 +196,7 @@ export const html2svg = (data = [], dom) => {
     const tempText = text.slice(0, length);
     if(tempText.length > 0) {
       e.innerText = `${tempText}...`;
-      if(e.scrollWidth > width) {
+      if(Math.abs(e.scrollWidth - width) > 1) {
         checkLength(e, text, length - 1, width);
       }
     } else {
@@ -209,7 +209,7 @@ export const html2svg = (data = [], dom) => {
     const ellipsis = f.querySelectorAll('.chiner-ellipsis');
     ellipsis.forEach(e => {
     const width = e.getBoundingClientRect().width
-      if(e.scrollWidth > width) {
+      if(Math.abs(e.scrollWidth - width) > 1) {
         const text = e.innerText;
         // 由于生成的svg无法实现文本超宽省略，因此需要手动计算文本超宽增加省略
         const name = `${text}${width}`;

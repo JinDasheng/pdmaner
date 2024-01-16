@@ -408,7 +408,7 @@ export const packageChanges = (currentDataSource, preDataSource, db) => {
         }
         // 2.字段调整
         const fieldsChange = compareArray(cData.fields, pData.fields, 'field', null, ['refDictData', 'extProps', 'domainData', 'uiHintData', 'notes',
-          'attr1', 'attr2', 'attr3', 'attr4', 'attr5', 'attr6', 'attr7', 'attr8', 'attr9']);
+          'attr1', 'attr2', 'attr3', 'attr4', 'attr5', 'attr6', 'attr7', 'attr8', 'attr9', 'baseType', 'baseTypeData']);
         if (fieldsChange.length > 0) {
           fieldChanged = {
             fieldAdded: setNull(fieldsChange.filter(c => c.opt === 'add').map(c => {

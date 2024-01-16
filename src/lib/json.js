@@ -389,9 +389,20 @@ export const connectDB = (dataSource, config, params = {}, cmd, cb) => {
     // 需要创建临时项目文件 转换字段
     const updateFields = (data) => {
       return (data || []).map(e => {
+        const fields = (e.fields || []);
         return {
           ...e,
-          fields: (e.fields || []).map(f => {
+          indexes: (e.indexes || []).map(i => ({
+            ...i,
+            fields: (i.fields || []).map((f) => {
+              return {
+                ...f,
+                fieldDefKey:
+                    fields.find(field => field.id === f.fieldDefKey)?.defKey || f.fieldDefKey
+              };
+            }),
+          })),
+          fields: fields.map(f => {
             return {
               ...f,
               ...transform(f, dataSource, undefined, undefined, undefined, ['refDict']),
