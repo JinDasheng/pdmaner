@@ -26,6 +26,7 @@ const saveFile = json.saveFile;
 const saveTempImages = json.saveTempImages;
 const saveAsTemplate = json.saveAsTemplate;
 const selectWordFile = json.selectWordFile;
+const selectDir = json.selectDir;
 const writeLog = json.writeLog;
 const showItemInFolder = json.showItemInFolder;
 const getLogPath = json.getLogPath;
@@ -82,5 +83,6 @@ export {
   renameBackupAllFile,
   getBackupAllFileData,
   getFilePath,
+  selectDir,
 };
 

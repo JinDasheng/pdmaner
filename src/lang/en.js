@@ -77,7 +77,7 @@ export default {
         exportSql: 'export DDL',
         exportDict: 'exportDictSQL',
         exportWord: 'export WORD',
-        exportExcel: 'export EXCEL(developing)',
+        exportExcel: 'export EXCEL',
         exportHtml: 'export HTML',
         exportMarkdown: 'export Markdown',
         exportWordStep1: '[1/2] 1. Generating diagram...[{count}/{length}]',
@@ -432,6 +432,7 @@ export default {
     tableEdit: {
         database: 'database',
         columnSetting: 'columnSetting',
+        excelMode: 'Table format editing',
         changeDb: 'change default db',
         data: 'table',
         dbDDL: 'dbDDL',
@@ -980,6 +981,10 @@ exportFile: {
     markdown: 'export markdown',
 },
 components: {
+    input: {
+        low: 'low',
+        up: 'up',
+    },
     select: {
         empty: '---please select---',
     },
@@ -1089,6 +1094,11 @@ components: {
         tableListEmpty: 'Please click the 【Add row】/【Load comparison list】 button first',
         compareList: 'comparison-list',
         mergeToLeft: 'Merge delta to the left',
+    },
+    sheet: {
+        add: 'append',
+        addRow: 'append {count} rows',
+        backTop: 'backTop',
     },
 },
 projectTemplate: {

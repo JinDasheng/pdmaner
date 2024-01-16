@@ -77,7 +77,7 @@ export default {
         exportSql: '导出数据表结构DDL',
         exportDict: '导出数据字典SQL',
         exportWord: '导出为WORD文档',
-        exportExcel: '导出EXCEL文档(开发中)',
+        exportExcel: '导出EXCEL文档',
         exportHtml: '导出HTML文档',
         exportMarkdown: '导出Markdown',
         exportWordStep1: '[1/2] 1.正在生成关系图...[{count}/{length}]',
@@ -433,6 +433,7 @@ export default {
     tableEdit: {
         database: '数据库方言:',
         columnSetting: '列设置',
+        excelMode: '表格式编辑',
         changeDb: '切换数据库方言',
         data: '数据表',
         dbDDL: '数据库代码',
@@ -980,6 +981,10 @@ export default {
         warring: '正在开发中，敬请期待……',
     },
     components: {
+        input: {
+            low: '全小写',
+            up: '全大写',
+        },
         select: {
             empty: '---请选择---',
         },
@@ -1090,6 +1095,11 @@ export default {
             tableListEmpty: '请先点击【添加行】或【加载对比清单】按钮',
             compareList: '对比清单',
             mergeToLeft: '合并增量至左边',
+        },
+        sheet: {
+            add: '追加',
+            addRow: '追加{count}行',
+            backTop: '回到顶部',
         },
     },
     projectTemplate: {

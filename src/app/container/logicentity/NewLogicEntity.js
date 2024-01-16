@@ -129,6 +129,7 @@ export default React.memo(({prefix, dataSource, data, dataChange, getDataSource,
         data={{
               fields: fieldsData,
           }}
+        tableType='logicEntity'
         dataSource={dataSource}
         tableDataChange={fields => _dataChange(fields, 'fields')}
       />;

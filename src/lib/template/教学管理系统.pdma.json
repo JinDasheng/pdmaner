@@ -2,9 +2,9 @@
   "name": "教学管理系统-标准模板",
   "describe": "标准模板案例",
   "avatar": "",
-  "version": "4.5.1",
-  "createdTime": "2023-5-18 19:46:33",
-  "updatedTime": "2023-5-18 19:47:23",
+  "version": "4.7.0",
+  "createdTime": "2024-1-15 22:57:23",
+  "updatedTime": "2024-1-15 22:57:23",
   "dbConns": [],
   "profile": {
     "default": {
@@ -26,7 +26,8 @@
           "domain": "16120F75-6AA7-4483-868D-F07F511BB081",
           "refDict": "",
           "uiHint": "",
-          "id": "ADB3AD14-6603-43E2-8261-114E32442B5B"
+          "id": "ADB3AD14-6603-43E2-8261-114E32442B5B",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "REVISION",
@@ -43,7 +44,8 @@
           "hideInGraph": true,
           "refDict": "",
           "uiHint": "",
-          "id": "92BF430E-01FA-4AEF-944F-25A142632654"
+          "id": "92BF430E-01FA-4AEF-944F-25A142632654",
+          "baseType": "1D764C4A-6F9F-421E-B11A-6F3E23B51811"
         },
         {
           "defKey": "CREATED_BY",
@@ -60,7 +62,8 @@
           "hideInGraph": true,
           "refDict": "",
           "uiHint": "",
-          "id": "C8BE2C7A-8251-4ADD-BB4F-411C5754DA62"
+          "id": "C8BE2C7A-8251-4ADD-BB4F-411C5754DA62",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "CREATED_TIME",
@@ -77,7 +80,8 @@
           "hideInGraph": true,
           "refDict": "",
           "uiHint": "",
-          "id": "4E471FD6-3E73-4A90-B660-51598A482409"
+          "id": "4E471FD6-3E73-4A90-B660-51598A482409",
+          "baseType": "89D69E81-EA34-42EE-9FA2-93B8BD27E098"
         },
         {
           "defKey": "UPDATED_BY",
@@ -94,7 +98,8 @@
           "hideInGraph": true,
           "refDict": "",
           "uiHint": "",
-          "id": "0DC24AA9-4CD0-45D8-95CF-FA546BE343AB"
+          "id": "0DC24AA9-4CD0-45D8-95CF-FA546BE343AB",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "UPDATED_TIME",
@@ -111,10 +116,11 @@
           "hideInGraph": true,
           "refDict": "",
           "uiHint": "",
-          "id": "09F64AC4-4DEE-428F-AF64-4C103884E1AC"
+          "id": "09F64AC4-4DEE-428F-AF64-4C103884E1AC",
+          "baseType": "89D69E81-EA34-42EE-9FA2-93B8BD27E098"
         }
       ],
-      "entityInitProperties": {
+      "entityInitProperties":                                                                                                     {
         "partitioned by": "(date string)",
         "row format delimited": "",
         "fields terminated by ','": "",
@@ -634,7 +640,6 @@
         "partitionBy": "",
         "dorisDistributedBy": "DISTRIBUTED BY HASH(`COLLEGE_ID`) BUCKETS 1"
       },
-      "nameTemplate": "{defKey}[{defName}]",
       "headers": [
         {
           "refKey": "hideInGraph",
@@ -778,7 +783,8 @@
           "type": "VARCHAR",
           "refDict": "",
           "uiHint": "",
-          "id": "9651B83A-2208-4F1E-A870-C3C4E1FAF103"
+          "id": "9651B83A-2208-4F1E-A870-C3C4E1FAF103",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "COLLEGE_NAME",
@@ -795,7 +801,8 @@
           "type": "VARCHAR",
           "refDict": "",
           "uiHint": "",
-          "id": "04BE6748-E056-428D-BFA8-B04F4CE843B3"
+          "id": "04BE6748-E056-428D-BFA8-B04F4CE843B3",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "SHORT_NAME",
@@ -812,7 +819,8 @@
           "type": "VARCHAR",
           "refDict": "",
           "uiHint": "",
-          "id": "41E142D0-1539-4E99-83D7-41672E03BFEE"
+          "id": "41E142D0-1539-4E99-83D7-41672E03BFEE",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "INTRO",
@@ -829,7 +837,8 @@
           "type": "VARCHAR",
           "refDict": "",
           "uiHint": "",
-          "id": "53B857E0-25ED-4666-8437-FD8C68748C85"
+          "id": "53B857E0-25ED-4666-8437-FD8C68748C85",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "PROFESSION_NUMBER",
@@ -846,7 +855,8 @@
           "type": "INT",
           "refDict": "",
           "uiHint": "",
-          "id": "BDDAC28C-5DF2-4551-9FEA-D956D7C510EA"
+          "id": "BDDAC28C-5DF2-4551-9FEA-D956D7C510EA",
+          "baseType": "1D764C4A-6F9F-421E-B11A-6F3E23B51811"
         },
         {
           "defKey": "STUDENT_NUMBER",
@@ -863,7 +873,8 @@
           "type": "INT",
           "refDict": "",
           "uiHint": "",
-          "id": "9993DFC9-B6DD-4A15-9DA5-EE7DEE011A4D"
+          "id": "9993DFC9-B6DD-4A15-9DA5-EE7DEE011A4D",
+          "baseType": "1D764C4A-6F9F-421E-B11A-6F3E23B51811"
         },
         {
           "defKey": "PRESIDENT",
@@ -880,7 +891,8 @@
           "type": "VARCHAR",
           "refDict": "",
           "uiHint": "",
-          "id": "CC08D659-F79E-4A52-B274-5E07B7533A72"
+          "id": "CC08D659-F79E-4A52-B274-5E07B7533A72",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "TENANT_ID",
@@ -897,7 +909,8 @@
           "type": "VARCHAR",
           "refDict": "",
           "uiHint": "",
-          "id": "8EB6E9A5-6DA4-44DC-8519-E100B189651E"
+          "id": "8EB6E9A5-6DA4-44DC-8519-E100B189651E",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "REVISION",
@@ -914,7 +927,8 @@
           "type": "INT",
           "refDict": "",
           "uiHint": "",
-          "id": "913C460B-E48B-4563-886B-C0CC71E5A54B"
+          "id": "913C460B-E48B-4563-886B-C0CC71E5A54B",
+          "baseType": "1D764C4A-6F9F-421E-B11A-6F3E23B51811"
         },
         {
           "defKey": "CREATED_BY",
@@ -931,7 +945,8 @@
           "type": "VARCHAR",
           "refDict": "",
           "uiHint": "",
-          "id": "3D37BF7C-E283-47DA-870E-002AB6DB6704"
+          "id": "3D37BF7C-E283-47DA-870E-002AB6DB6704",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "CREATED_TIME",
@@ -948,7 +963,8 @@
           "type": "DATETIME",
           "refDict": "",
           "uiHint": "",
-          "id": "2B8ED950-CDCE-4323-BD61-CBE0173AE679"
+          "id": "2B8ED950-CDCE-4323-BD61-CBE0173AE679",
+          "baseType": "89D69E81-EA34-42EE-9FA2-93B8BD27E098"
         },
         {
           "defKey": "UPDATED_BY",
@@ -965,7 +981,8 @@
           "type": "VARCHAR",
           "refDict": "",
           "uiHint": "",
-          "id": "43FD5A95-5EE1-4316-B708-AC61B32FE9AE"
+          "id": "43FD5A95-5EE1-4316-B708-AC61B32FE9AE",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "UPDATED_TIME",
@@ -982,7 +999,8 @@
           "type": "DATETIME",
           "refDict": "",
           "uiHint": "",
-          "id": "1868F7F4-8F4D-403D-ABA0-60D89BE37066"
+          "id": "1868F7F4-8F4D-403D-ABA0-60D89BE37066",
+          "baseType": "89D69E81-EA34-42EE-9FA2-93B8BD27E098"
         }
       ],
       "correlations": [
@@ -1004,7 +1022,11 @@
         }
       ],
       "id": "26B8D13E-BE37-4E20-8496-13A586E84581",
-      "indexes": []
+      "indexes": [],
+      "type": "P",
+      "sysProps": {
+        "nameTemplate": "{defKey}[{defName}]"
+      }
     },
     {
       "defKey": "SIMS_MAJOR",
@@ -1014,7 +1036,6 @@
         "partitionBy": "",
         "dorisDistributedBy": "DISTRIBUTED BY HASH(`MAJOR_ID`) BUCKETS 1"
       },
-      "nameTemplate": "{defKey}[{defName}]",
       "headers": [
         {
           "refKey": "hideInGraph",
@@ -1218,7 +1239,8 @@
           "type": "VARCHAR",
           "refDict": "",
           "uiHint": "",
-          "id": "8707AEB9-3EC5-4EEA-9E14-99BAF28B46B4"
+          "id": "8707AEB9-3EC5-4EEA-9E14-99BAF28B46B4",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "MAJOR_NAME",
@@ -1235,7 +1257,8 @@
           "type": "VARCHAR",
           "refDict": "",
           "uiHint": "",
-          "id": "3577A78C-D13B-416D-8026-E2CED2929199"
+          "id": "3577A78C-D13B-416D-8026-E2CED2929199",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "SHORT_NAME",
@@ -1252,7 +1275,8 @@
           "type": "VARCHAR",
           "refDict": "",
           "uiHint": "",
-          "id": "C2157568-FF44-4BE8-A231-5B98E50DFCEE"
+          "id": "C2157568-FF44-4BE8-A231-5B98E50DFCEE",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "ESTAB_DATE",
@@ -1269,7 +1293,8 @@
           "type": "DATETIME",
           "refDict": "",
           "uiHint": "",
-          "id": "52DCCDBE-1220-4AF6-A7B6-F7CCE61114CB"
+          "id": "52DCCDBE-1220-4AF6-A7B6-F7CCE61114CB",
+          "baseType": "89D69E81-EA34-42EE-9FA2-93B8BD27E098"
         },
         {
           "defKey": "INTRO",
@@ -1286,7 +1311,8 @@
           "type": "VARCHAR",
           "refDict": "",
           "uiHint": "",
-          "id": "61C9D879-BD45-408A-BAEC-577E220D67A2"
+          "id": "61C9D879-BD45-408A-BAEC-577E220D67A2",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "TUITION_FEE",
@@ -1303,7 +1329,8 @@
           "type": "DECIMAL",
           "refDict": "",
           "uiHint": "",
-          "id": "5B5A5E16-AC5E-4184-B561-AEF2D381C898"
+          "id": "5B5A5E16-AC5E-4184-B561-AEF2D381C898",
+          "baseType": "1A0BDC09-0792-4174-9E8E-80BE8DF44B8E"
         },
         {
           "defKey": "TENANT_ID",
@@ -1320,7 +1347,8 @@
           "type": "VARCHAR",
           "refDict": "",
           "uiHint": "",
-          "id": "2618820B-865E-4C80-BFEA-50AD5FB1D5D6"
+          "id": "2618820B-865E-4C80-BFEA-50AD5FB1D5D6",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "REVISION",
@@ -1337,7 +1365,8 @@
           "type": "INT",
           "refDict": "",
           "uiHint": "",
-          "id": "E3CDC9C7-9DDD-46C4-A617-D253C745E5C7"
+          "id": "E3CDC9C7-9DDD-46C4-A617-D253C745E5C7",
+          "baseType": "1D764C4A-6F9F-421E-B11A-6F3E23B51811"
         },
         {
           "defKey": "CREATED_BY",
@@ -1354,7 +1383,8 @@
           "type": "VARCHAR",
           "refDict": "",
           "uiHint": "",
-          "id": "9BFE70DA-2B5E-4443-A792-CD9F7B200D35"
+          "id": "9BFE70DA-2B5E-4443-A792-CD9F7B200D35",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "CREATED_TIME",
@@ -1371,7 +1401,8 @@
           "type": "DATETIME",
           "refDict": "",
           "uiHint": "",
-          "id": "660F4ED1-87F4-4C4A-BEA9-E744A2C0CA51"
+          "id": "660F4ED1-87F4-4C4A-BEA9-E744A2C0CA51",
+          "baseType": "89D69E81-EA34-42EE-9FA2-93B8BD27E098"
         },
         {
           "defKey": "UPDATED_BY",
@@ -1388,7 +1419,8 @@
           "type": "VARCHAR",
           "refDict": "",
           "uiHint": "",
-          "id": "96E1502E-EA6D-4D86-8782-92D6AC604CA9"
+          "id": "96E1502E-EA6D-4D86-8782-92D6AC604CA9",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "UPDATED_TIME",
@@ -1405,7 +1437,8 @@
           "type": "DATETIME",
           "refDict": "",
           "uiHint": "",
-          "id": "3B7186B6-989F-4C9F-B8ED-F36D20713363"
+          "id": "3B7186B6-989F-4C9F-B8ED-F36D20713363",
+          "baseType": "89D69E81-EA34-42EE-9FA2-93B8BD27E098"
         }
       ],
       "correlations": [
@@ -1420,7 +1453,11 @@
       ],
       "id": "C2F51B91-7C24-4CB4-8406-706F4851EB0B",
       "indexes": [],
-      "notes": {}
+      "notes": {},
+      "type": "P",
+      "sysProps": {
+        "nameTemplate": "{defKey}[{defName}]"
+      }
     },
     {
       "defKey": "SIMS_CLASS",
@@ -1430,7 +1467,6 @@
         "partitionBy": "",
         "dorisDistributedBy": "DISTRIBUTED BY HASH(`CLASS_ID`) BUCKETS 1"
       },
-      "nameTemplate": "{defKey}[{defName}]",
       "headers": [
         {
           "refKey": "hideInGraph",
@@ -1574,7 +1610,8 @@
           "type": "VARCHAR",
           "refDict": "",
           "uiHint": "",
-          "id": "D793F097-1364-49FD-B02C-D4EBBA5A055A"
+          "id": "D793F097-1364-49FD-B02C-D4EBBA5A055A",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "MAJOR_ID",
@@ -1591,7 +1628,8 @@
           "type": "VARCHAR",
           "refDict": "",
           "uiHint": "",
-          "id": "63130D1B-63C8-491C-B36D-5603A30BFB37"
+          "id": "63130D1B-63C8-491C-B36D-5603A30BFB37",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "CLASS_ID",
@@ -1608,7 +1646,8 @@
           "type": "VARCHAR",
           "refDict": "",
           "uiHint": "",
-          "id": "6D6BC6AA-8114-4B91-8A2C-4B5FEACEB347"
+          "id": "6D6BC6AA-8114-4B91-8A2C-4B5FEACEB347",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "CLASS_NAME",
@@ -1625,7 +1664,8 @@
           "type": "VARCHAR",
           "refDict": "",
           "uiHint": "",
-          "id": "782EC244-02B2-4661-BC21-615F7A468BA8"
+          "id": "782EC244-02B2-4661-BC21-615F7A468BA8",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "STUDENT_NUMBER",
@@ -1642,7 +1682,8 @@
           "type": "INT",
           "refDict": "",
           "uiHint": "",
-          "id": "85A3FDFD-6131-42F4-A85E-4509E2F81458"
+          "id": "85A3FDFD-6131-42F4-A85E-4509E2F81458",
+          "baseType": "1D764C4A-6F9F-421E-B11A-6F3E23B51811"
         },
         {
           "defKey": "ADVISER",
@@ -1659,7 +1700,8 @@
           "type": "VARCHAR",
           "refDict": "",
           "uiHint": "",
-          "id": "6BB204C7-1363-4EB4-94B3-555F47C28754"
+          "id": "6BB204C7-1363-4EB4-94B3-555F47C28754",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "ESTAB_DATE",
@@ -1676,7 +1718,8 @@
           "type": "DATETIME",
           "refDict": "",
           "uiHint": "",
-          "id": "54763240-9F13-4490-99D7-CCC0F86A110E"
+          "id": "54763240-9F13-4490-99D7-CCC0F86A110E",
+          "baseType": "89D69E81-EA34-42EE-9FA2-93B8BD27E098"
         },
         {
           "defKey": "YEAR_NUMBER",
@@ -1693,7 +1736,8 @@
           "type": "INT",
           "refDict": "",
           "uiHint": "",
-          "id": "118E8C4B-0630-4DCD-96C3-186D0AC6FC66"
+          "id": "118E8C4B-0630-4DCD-96C3-186D0AC6FC66",
+          "baseType": "1D764C4A-6F9F-421E-B11A-6F3E23B51811"
         },
         {
           "defKey": "TENANT_ID",
@@ -1710,7 +1754,8 @@
           "type": "VARCHAR",
           "refDict": "",
           "uiHint": "",
-          "id": "9484FAE7-B93C-451B-859B-F7563E218A92"
+          "id": "9484FAE7-B93C-451B-859B-F7563E218A92",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "REVISION",
@@ -1727,7 +1772,8 @@
           "type": "INT",
           "refDict": "",
           "uiHint": "",
-          "id": "45833E99-76D8-483A-B303-DC4C1699DCAE"
+          "id": "45833E99-76D8-483A-B303-DC4C1699DCAE",
+          "baseType": "1D764C4A-6F9F-421E-B11A-6F3E23B51811"
         },
         {
           "defKey": "CREATED_BY",
@@ -1744,7 +1790,8 @@
           "type": "VARCHAR",
           "refDict": "",
           "uiHint": "",
-          "id": "71FAA0D7-FC33-4FE7-A8A2-E9C4BBDB7EDD"
+          "id": "71FAA0D7-FC33-4FE7-A8A2-E9C4BBDB7EDD",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "CREATED_TIME",
@@ -1761,7 +1808,8 @@
           "type": "DATETIME",
           "refDict": "",
           "uiHint": "",
-          "id": "18F2D7E1-428D-4138-9990-D7FDF7D34D34"
+          "id": "18F2D7E1-428D-4138-9990-D7FDF7D34D34",
+          "baseType": "89D69E81-EA34-42EE-9FA2-93B8BD27E098"
         },
         {
           "defKey": "UPDATED_BY",
@@ -1778,7 +1826,8 @@
           "type": "VARCHAR",
           "refDict": "",
           "uiHint": "",
-          "id": "B6DA6C8A-2FF6-4759-B610-D5374035FEBE"
+          "id": "B6DA6C8A-2FF6-4759-B610-D5374035FEBE",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "UPDATED_TIME",
@@ -1795,7 +1844,8 @@
           "type": "DATETIME",
           "refDict": "",
           "uiHint": "",
-          "id": "1DAB3A13-B7D2-46AD-8DE1-89DA5ADDB3DE"
+          "id": "1DAB3A13-B7D2-46AD-8DE1-89DA5ADDB3DE",
+          "baseType": "89D69E81-EA34-42EE-9FA2-93B8BD27E098"
         }
       ],
       "correlations": [
@@ -1818,7 +1868,11 @@
       ],
       "id": "C698249E-307D-4087-9EC4-3BABCFC00660",
       "indexes": [],
-      "notes": {}
+      "notes": {},
+      "type": "P",
+      "sysProps": {
+        "nameTemplate": "{defKey}[{defName}]"
+      }
     },
     {
       "defKey": "SIMS_STUDENT",
@@ -1831,7 +1885,6 @@
         "collection items terminated by": "'-'",
         "dorisDistributedBy": "DISTRIBUTED BY HASH(`STUDENT_ID`) BUCKETS 1"
       },
-      "nameTemplate": "{defKey}[{defName}]",
       "headers": [
         {
           "refKey": "hideInGraph",
@@ -2055,7 +2108,8 @@
           "type": "VARCHAR",
           "refDict": "",
           "uiHint": "",
-          "id": "84ADFE5C-3750-4E38-AC46-7AD11E869B41"
+          "id": "84ADFE5C-3750-4E38-AC46-7AD11E869B41",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "CLASS_ID",
@@ -2072,7 +2126,8 @@
           "type": "VARCHAR",
           "refDict": "",
           "uiHint": "",
-          "id": "1BCE9672-14BA-4B2B-B8C6-222CC6CF0F61"
+          "id": "1BCE9672-14BA-4B2B-B8C6-222CC6CF0F61",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "STUDENT_ID",
@@ -2089,7 +2144,8 @@
           "type": "VARCHAR",
           "refDict": "",
           "uiHint": "",
-          "id": "5FAE5CA5-B7A6-40C3-878D-1BB3D4A45B5C"
+          "id": "5FAE5CA5-B7A6-40C3-878D-1BB3D4A45B5C",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "STUDENT_NAME",
@@ -2106,7 +2162,8 @@
           "type": "VARCHAR",
           "refDict": "",
           "uiHint": "",
-          "id": "51D4FD5A-9EFB-4318-A5D6-6317D630D043"
+          "id": "51D4FD5A-9EFB-4318-A5D6-6317D630D043",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "ENG_NAME",
@@ -2123,7 +2180,8 @@
           "type": "VARCHAR",
           "refDict": "",
           "uiHint": "",
-          "id": "6A9A2D74-E294-497E-8A0F-0DF671A7F4EE"
+          "id": "6A9A2D74-E294-497E-8A0F-0DF671A7F4EE",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "ID_CARD_NO",
@@ -2140,7 +2198,8 @@
           "type": "VARCHAR",
           "refDict": "",
           "uiHint": "",
-          "id": "47AEF665-86ED-40A2-88DB-79BF561CCE32"
+          "id": "47AEF665-86ED-40A2-88DB-79BF561CCE32",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "MOBILE_PHONE",
@@ -2157,7 +2216,8 @@
           "type": "VARCHAR",
           "refDict": "",
           "uiHint": "",
-          "id": "8D412D1B-5BE4-4031-8293-EE7EA4E65BCE"
+          "id": "8D412D1B-5BE4-4031-8293-EE7EA4E65BCE",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "GENDER",
@@ -2174,7 +2234,8 @@
           "refDict": "BF9E20E0-80D3-486D-BD58-5FADCF3E4A1D",
           "type": "VARCHAR",
           "uiHint": "",
-          "id": "C1960E6F-08D3-4773-BF97-57AB8D86FD5C"
+          "id": "C1960E6F-08D3-4773-BF97-57AB8D86FD5C",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "MONTHLY_SALARY",
@@ -2191,7 +2252,8 @@
           "type": "DECIMAL",
           "refDict": "",
           "uiHint": "",
-          "id": "7D073DAB-3675-40A5-BDA5-E6D6F0B75CA7"
+          "id": "7D073DAB-3675-40A5-BDA5-E6D6F0B75CA7",
+          "baseType": "1A0BDC09-0792-4174-9E8E-80BE8DF44B8E"
         },
         {
           "defKey": "BIRTH",
@@ -2208,7 +2270,8 @@
           "type": "DATETIME",
           "refDict": "",
           "uiHint": "",
-          "id": "F705D168-2A65-4C82-8135-DDC85032F855"
+          "id": "F705D168-2A65-4C82-8135-DDC85032F855",
+          "baseType": "89D69E81-EA34-42EE-9FA2-93B8BD27E098"
         },
         {
           "defKey": "AVATAR",
@@ -2225,7 +2288,8 @@
           "type": "INT",
           "refDict": "",
           "uiHint": "",
-          "id": "F5F7AACF-2046-4879-9095-098FD2020E9A"
+          "id": "F5F7AACF-2046-4879-9095-098FD2020E9A",
+          "baseType": "1D764C4A-6F9F-421E-B11A-6F3E23B51811"
         },
         {
           "defKey": "HEIGHT",
@@ -2242,7 +2306,8 @@
           "type": "INT",
           "refDict": "",
           "uiHint": "",
-          "id": "050036B4-0F46-4E58-9375-805208E87A71"
+          "id": "050036B4-0F46-4E58-9375-805208E87A71",
+          "baseType": "1D764C4A-6F9F-421E-B11A-6F3E23B51811"
         },
         {
           "defKey": "WEIGHT",
@@ -2259,7 +2324,8 @@
           "type": "INT",
           "refDict": "",
           "uiHint": "",
-          "id": "AB6E2104-5A5C-4B24-8C27-BF9082C87004"
+          "id": "AB6E2104-5A5C-4B24-8C27-BF9082C87004",
+          "baseType": "1D764C4A-6F9F-421E-B11A-6F3E23B51811"
         },
         {
           "defKey": "NATION",
@@ -2276,7 +2342,8 @@
           "refDict": "115EDEFC-0323-410E-81AB-CCAB8879837A",
           "type": "VARCHAR",
           "uiHint": "",
-          "id": "60841340-4D1A-4366-B8CC-CCE3B009DD87"
+          "id": "60841340-4D1A-4366-B8CC-CCE3B009DD87",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "POLITICAL",
@@ -2293,7 +2360,8 @@
           "refDict": "06EED564-BBA9-4747-8D73-AF809A330CB8",
           "type": "VARCHAR",
           "uiHint": "",
-          "id": "BD431E79-93A8-4FB7-83D4-046DA0A54F76"
+          "id": "BD431E79-93A8-4FB7-83D4-046DA0A54F76",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "MARITAL",
@@ -2310,7 +2378,8 @@
           "refDict": "EA1587B7-3954-437A-BFE0-FCB0453BCABA",
           "type": "VARCHAR",
           "uiHint": "",
-          "id": "1BE185DC-216C-4264-A594-9FC766DD8F82"
+          "id": "1BE185DC-216C-4264-A594-9FC766DD8F82",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "DOMICILE_PLACE_PROVINCE",
@@ -2327,7 +2396,8 @@
           "type": "VARCHAR",
           "refDict": "",
           "uiHint": "",
-          "id": "59F27EDC-6256-4778-9F80-17027C3FA2CA"
+          "id": "59F27EDC-6256-4778-9F80-17027C3FA2CA",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "DOMICILE_PLACE_CITY",
@@ -2344,7 +2414,8 @@
           "type": "VARCHAR",
           "refDict": "",
           "uiHint": "",
-          "id": "2D97524F-666A-4E6D-89B5-44598FEDE0FF"
+          "id": "2D97524F-666A-4E6D-89B5-44598FEDE0FF",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "DOMICILE_PLACE_ADDRESS",
@@ -2361,7 +2432,8 @@
           "type": "VARCHAR",
           "refDict": "",
           "uiHint": "",
-          "id": "AB597B75-9A96-4A23-ACB5-44ACF237AFA0"
+          "id": "AB597B75-9A96-4A23-ACB5-44ACF237AFA0",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "HOBBY",
@@ -2378,7 +2450,8 @@
           "type": "VARCHAR",
           "refDict": "",
           "uiHint": "",
-          "id": "8D847450-A7A0-4DA4-AF6D-0890CF77C4A6"
+          "id": "8D847450-A7A0-4DA4-AF6D-0890CF77C4A6",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "INTRO",
@@ -2395,7 +2468,8 @@
           "type": "VARCHAR",
           "refDict": "",
           "uiHint": "",
-          "id": "1BFC4737-B5E1-4FD2-8388-C027B604EEC7"
+          "id": "1BFC4737-B5E1-4FD2-8388-C027B604EEC7",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "PRESENT_ADDRESS",
@@ -2412,7 +2486,8 @@
           "type": "VARCHAR",
           "refDict": "",
           "uiHint": "",
-          "id": "DDD1F108-23F0-4754-805E-E01F0129DFFF"
+          "id": "DDD1F108-23F0-4754-805E-E01F0129DFFF",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "EMAIL",
@@ -2429,7 +2504,8 @@
           "type": "VARCHAR",
           "refDict": "",
           "uiHint": "",
-          "id": "40AFC519-70CE-4477-A1AD-0A44A3A591C5"
+          "id": "40AFC519-70CE-4477-A1AD-0A44A3A591C5",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "ENTRY_DATE",
@@ -2446,7 +2522,8 @@
           "type": "DATETIME",
           "refDict": "",
           "uiHint": "",
-          "id": "35AD45EE-6BCF-4D86-8EDB-F49037D746CA"
+          "id": "35AD45EE-6BCF-4D86-8EDB-F49037D746CA",
+          "baseType": "89D69E81-EA34-42EE-9FA2-93B8BD27E098"
         },
         {
           "defKey": "STATUS",
@@ -2463,7 +2540,8 @@
           "refDict": "4642BC5F-02EE-4E17-A60C-CF22F86A0282",
           "type": "VARCHAR",
           "uiHint": "",
-          "id": "82343970-31F4-4457-A2F8-876B058FED17"
+          "id": "82343970-31F4-4457-A2F8-876B058FED17",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "TENANT_ID",
@@ -2480,7 +2558,8 @@
           "type": "VARCHAR",
           "refDict": "",
           "uiHint": "",
-          "id": "8BB51B25-9448-4415-B11C-E698B873C8F2"
+          "id": "8BB51B25-9448-4415-B11C-E698B873C8F2",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "REVISION",
@@ -2497,7 +2576,8 @@
           "type": "INT",
           "refDict": "",
           "uiHint": "",
-          "id": "7188C7FB-468C-4C26-8368-70425DB901C1"
+          "id": "7188C7FB-468C-4C26-8368-70425DB901C1",
+          "baseType": "1D764C4A-6F9F-421E-B11A-6F3E23B51811"
         },
         {
           "defKey": "CREATED_BY",
@@ -2514,7 +2594,8 @@
           "type": "VARCHAR",
           "refDict": "",
           "uiHint": "",
-          "id": "44F67AB1-1058-4098-8BA9-709A25F74F69"
+          "id": "44F67AB1-1058-4098-8BA9-709A25F74F69",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "CREATED_TIME",
@@ -2531,7 +2612,8 @@
           "type": "DATETIME",
           "refDict": "",
           "uiHint": "",
-          "id": "674F8100-E364-40E0-817B-EE3A41BF45C5"
+          "id": "674F8100-E364-40E0-817B-EE3A41BF45C5",
+          "baseType": "89D69E81-EA34-42EE-9FA2-93B8BD27E098"
         },
         {
           "defKey": "UPDATED_BY",
@@ -2548,7 +2630,8 @@
           "type": "VARCHAR",
           "refDict": "",
           "uiHint": "",
-          "id": "35782438-EA32-47AA-955C-1B2AD50F8E7A"
+          "id": "35782438-EA32-47AA-955C-1B2AD50F8E7A",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "UPDATED_TIME",
@@ -2565,7 +2648,8 @@
           "type": "DATETIME",
           "refDict": "",
           "uiHint": "",
-          "id": "41AFEC1A-F0E0-4BD9-8F72-BF3DF29B7B7C"
+          "id": "41AFEC1A-F0E0-4BD9-8F72-BF3DF29B7B7C",
+          "baseType": "89D69E81-EA34-42EE-9FA2-93B8BD27E098"
         }
       ],
       "correlations": [
@@ -2614,7 +2698,11 @@
         }
       ],
       "id": "0FC9DB49-4FDB-437E-83E9-7EE803F1CC84",
-      "notes": {}
+      "notes": {},
+      "type": "P",
+      "sysProps": {
+        "nameTemplate": "{defKey}[{defName}]"
+      }
     },
     {
       "defKey": "SIMS_TEACHER",
@@ -2624,7 +2712,6 @@
         "partitionBy": "",
         "dorisDistributedBy": "DISTRIBUTED BY HASH(`TEACHER_ID`) BUCKETS 1"
       },
-      "nameTemplate": "{defKey}[{defName}]",
       "headers": [
         {
           "refKey": "hideInGraph",
@@ -2768,7 +2855,8 @@
           "type": "VARCHAR",
           "refDict": "",
           "uiHint": "",
-          "id": "EFD22F94-E1D0-4CAD-947D-E856A997D7B5"
+          "id": "EFD22F94-E1D0-4CAD-947D-E856A997D7B5",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "TEACHER_ID",
@@ -2785,7 +2873,8 @@
           "type": "VARCHAR",
           "refDict": "",
           "uiHint": "",
-          "id": "C5916046-F140-4B0C-BF84-EBD7DDB38EAA"
+          "id": "C5916046-F140-4B0C-BF84-EBD7DDB38EAA",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "TEACHER_NAME",
@@ -2802,7 +2891,8 @@
           "type": "VARCHAR",
           "refDict": "",
           "uiHint": "",
-          "id": "EAA04B36-6088-4677-8694-DE53A75DE0AD"
+          "id": "EAA04B36-6088-4677-8694-DE53A75DE0AD",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "GENDER",
@@ -2819,7 +2909,8 @@
           "refDict": "BF9E20E0-80D3-486D-BD58-5FADCF3E4A1D",
           "type": "VARCHAR",
           "uiHint": "",
-          "id": "1F013EA0-19A0-45DB-9801-9F6D8E206B76"
+          "id": "1F013EA0-19A0-45DB-9801-9F6D8E206B76",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "BIRTH",
@@ -2836,7 +2927,8 @@
           "type": "DATETIME",
           "refDict": "",
           "uiHint": "",
-          "id": "86F51625-13F1-42F3-9414-CA3108880DAE"
+          "id": "86F51625-13F1-42F3-9414-CA3108880DAE",
+          "baseType": "89D69E81-EA34-42EE-9FA2-93B8BD27E098"
         },
         {
           "defKey": "GRADUATE_INSTITUTION",
@@ -2853,7 +2945,8 @@
           "type": "VARCHAR",
           "refDict": "",
           "uiHint": "",
-          "id": "C10DFCF8-3EC4-4B85-BAA7-ACEC989D842F"
+          "id": "C10DFCF8-3EC4-4B85-BAA7-ACEC989D842F",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "PRACTICE_YEARS",
@@ -2870,7 +2963,8 @@
           "type": "INT",
           "refDict": "",
           "uiHint": "",
-          "id": "D789B585-FFD8-440E-BEE2-46FB298F49A7"
+          "id": "D789B585-FFD8-440E-BEE2-46FB298F49A7",
+          "baseType": "1D764C4A-6F9F-421E-B11A-6F3E23B51811"
         },
         {
           "defKey": "POLITICAL",
@@ -2888,7 +2982,8 @@
           "isStandard": true,
           "type": "VARCHAR",
           "uiHint": "",
-          "id": "569930CE-0BF2-412B-87B1-131FEF19F0E9"
+          "id": "569930CE-0BF2-412B-87B1-131FEF19F0E9",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "MARITAL",
@@ -2906,7 +3001,8 @@
           "isStandard": true,
           "type": "VARCHAR",
           "uiHint": "",
-          "id": "68CDDFDD-3B15-4797-BEF9-519D3D67FEDD"
+          "id": "68CDDFDD-3B15-4797-BEF9-519D3D67FEDD",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "AVATAR",
@@ -2923,7 +3019,8 @@
           "type": "VARCHAR",
           "refDict": "",
           "uiHint": "",
-          "id": "CDB182D2-3DE7-4661-AFEE-FA2ADF2437AF"
+          "id": "CDB182D2-3DE7-4661-AFEE-FA2ADF2437AF",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "INTRO",
@@ -2940,7 +3037,8 @@
           "type": "VARCHAR",
           "refDict": "",
           "uiHint": "",
-          "id": "69530973-3EC7-4A60-A685-01D4782D3AF4"
+          "id": "69530973-3EC7-4A60-A685-01D4782D3AF4",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "TENANT_ID",
@@ -2957,7 +3055,8 @@
           "type": "VARCHAR",
           "refDict": "",
           "uiHint": "",
-          "id": "A3D6FC1B-32DE-4D6B-BD54-B21408409AA9"
+          "id": "A3D6FC1B-32DE-4D6B-BD54-B21408409AA9",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "REVISION",
@@ -2974,7 +3073,8 @@
           "type": "INT",
           "refDict": "",
           "uiHint": "",
-          "id": "938DCFBD-1497-43A4-AFD4-F4C3FACC9227"
+          "id": "938DCFBD-1497-43A4-AFD4-F4C3FACC9227",
+          "baseType": "1D764C4A-6F9F-421E-B11A-6F3E23B51811"
         },
         {
           "defKey": "CREATED_BY",
@@ -2991,7 +3091,8 @@
           "type": "VARCHAR",
           "refDict": "",
           "uiHint": "",
-          "id": "39A27481-D4F9-47DB-961E-0E4483589B72"
+          "id": "39A27481-D4F9-47DB-961E-0E4483589B72",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "CREATED_TIME",
@@ -3008,7 +3109,8 @@
           "type": "DATETIME",
           "refDict": "",
           "uiHint": "",
-          "id": "2D819E14-1585-4F45-B7AE-6E67FAF5A927"
+          "id": "2D819E14-1585-4F45-B7AE-6E67FAF5A927",
+          "baseType": "89D69E81-EA34-42EE-9FA2-93B8BD27E098"
         },
         {
           "defKey": "UPDATED_BY",
@@ -3025,7 +3127,8 @@
           "type": "VARCHAR",
           "refDict": "",
           "uiHint": "",
-          "id": "681DBA6D-A86C-44C4-A7B5-8E83FF22F78D"
+          "id": "681DBA6D-A86C-44C4-A7B5-8E83FF22F78D",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "UPDATED_TIME",
@@ -3042,7 +3145,8 @@
           "type": "DATETIME",
           "refDict": "",
           "uiHint": "",
-          "id": "7376A655-992A-4C94-BAFC-494DA519737D"
+          "id": "7376A655-992A-4C94-BAFC-494DA519737D",
+          "baseType": "89D69E81-EA34-42EE-9FA2-93B8BD27E098"
         }
       ],
       "correlations": [
@@ -3057,7 +3161,11 @@
       ],
       "id": "536B8B19-C2B3-45D1-ADA8-402C0083FC31",
       "indexes": [],
-      "notes": {}
+      "notes": {},
+      "type": "P",
+      "sysProps": {
+        "nameTemplate": "{defKey}[{defName}]"
+      }
     },
     {
       "defKey": "SIMS_LESSON",
@@ -3067,7 +3175,6 @@
         "partitionBy": "",
         "dorisDistributedBy": "DISTRIBUTED BY HASH(`LESSON_ID`) BUCKETS 1"
       },
-      "nameTemplate": "{defKey}[{defName}]",
       "headers": [
         {
           "refKey": "hideInGraph",
@@ -3211,7 +3318,8 @@
           "type": "VARCHAR",
           "refDict": "",
           "uiHint": "",
-          "id": "3D337B5E-182D-45C7-9752-E2DD4D7CF2BD"
+          "id": "3D337B5E-182D-45C7-9752-E2DD4D7CF2BD",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "LESSON_NAME",
@@ -3228,7 +3336,8 @@
           "type": "VARCHAR",
           "refDict": "",
           "uiHint": "",
-          "id": "4ECC9FC7-C811-492C-96E3-47C16AFB500A"
+          "id": "4ECC9FC7-C811-492C-96E3-47C16AFB500A",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "INTRO",
@@ -3245,7 +3354,8 @@
           "type": "VARCHAR",
           "refDict": "",
           "uiHint": "",
-          "id": "CCCF9A57-4961-4239-9C04-640F56A2B1C1"
+          "id": "CCCF9A57-4961-4239-9C04-640F56A2B1C1",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "HOURS",
@@ -3262,7 +3372,8 @@
           "type": "INT",
           "refDict": "",
           "uiHint": "",
-          "id": "E76DF7AC-75A3-485A-8622-D851D8ACD418"
+          "id": "E76DF7AC-75A3-485A-8622-D851D8ACD418",
+          "baseType": "1D764C4A-6F9F-421E-B11A-6F3E23B51811"
         },
         {
           "defKey": "SCORE",
@@ -3279,7 +3390,8 @@
           "type": "INT",
           "refDict": "",
           "uiHint": "",
-          "id": "4AE396AA-8851-4031-9CA3-272E0823298F"
+          "id": "4AE396AA-8851-4031-9CA3-272E0823298F",
+          "baseType": "1D764C4A-6F9F-421E-B11A-6F3E23B51811"
         },
         {
           "defKey": "TENANT_ID",
@@ -3296,7 +3408,8 @@
           "type": "VARCHAR",
           "refDict": "",
           "uiHint": "",
-          "id": "C86A2449-A8A2-4891-88E0-0E54B799BDD7"
+          "id": "C86A2449-A8A2-4891-88E0-0E54B799BDD7",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "REVISION",
@@ -3313,7 +3426,8 @@
           "type": "INT",
           "refDict": "",
           "uiHint": "",
-          "id": "CFABB61A-ED91-4F0A-AF2F-5292F2F509DA"
+          "id": "CFABB61A-ED91-4F0A-AF2F-5292F2F509DA",
+          "baseType": "1D764C4A-6F9F-421E-B11A-6F3E23B51811"
         },
         {
           "defKey": "CREATED_BY",
@@ -3330,7 +3444,8 @@
           "type": "VARCHAR",
           "refDict": "",
           "uiHint": "",
-          "id": "D3CF6A33-7127-49B9-92DB-72A36639DFDC"
+          "id": "D3CF6A33-7127-49B9-92DB-72A36639DFDC",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "CREATED_TIME",
@@ -3347,7 +3462,8 @@
           "type": "DATETIME",
           "refDict": "",
           "uiHint": "",
-          "id": "3BEDED99-A539-485E-BA83-20660B129B3A"
+          "id": "3BEDED99-A539-485E-BA83-20660B129B3A",
+          "baseType": "89D69E81-EA34-42EE-9FA2-93B8BD27E098"
         },
         {
           "defKey": "UPDATED_BY",
@@ -3364,7 +3480,8 @@
           "type": "VARCHAR",
           "refDict": "",
           "uiHint": "",
-          "id": "CCDB961E-09C0-49E9-89BE-21B17588DF53"
+          "id": "CCDB961E-09C0-49E9-89BE-21B17588DF53",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "UPDATED_TIME",
@@ -3381,7 +3498,8 @@
           "type": "DATETIME",
           "refDict": "",
           "uiHint": "",
-          "id": "DCD8E749-4B83-42DB-A65A-694C927E2824"
+          "id": "DCD8E749-4B83-42DB-A65A-694C927E2824",
+          "baseType": "89D69E81-EA34-42EE-9FA2-93B8BD27E098"
         }
       ],
       "correlations": [
@@ -3396,7 +3514,11 @@
       ],
       "id": "9095C2A1-EF4C-4357-AAB2-26F99C1845CA",
       "indexes": [],
-      "notes": {}
+      "notes": {},
+      "type": "P",
+      "sysProps": {
+        "nameTemplate": "{defKey}[{defName}]"
+      }
     },
     {
       "defKey": "SIMS_INSTRUCT",
@@ -3406,7 +3528,6 @@
         "partitionBy": "",
         "dorisDistributedBy": "DISTRIBUTED BY HASH(`INSTRUCT_ID`) BUCKETS 1"
       },
-      "nameTemplate": "{defKey}[{defName}]",
       "headers": [
         {
           "refKey": "hideInGraph",
@@ -3550,7 +3671,8 @@
           "type": "VARCHAR",
           "refDict": "",
           "uiHint": "",
-          "id": "EBB91947-AC9D-426E-B38E-5EE460002796"
+          "id": "EBB91947-AC9D-426E-B38E-5EE460002796",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "CLASS_ID",
@@ -3567,7 +3689,8 @@
           "type": "VARCHAR",
           "refDict": "",
           "uiHint": "",
-          "id": "A23704D2-7128-41A2-988C-D20CB984FA83"
+          "id": "A23704D2-7128-41A2-988C-D20CB984FA83",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "LESSON_ID",
@@ -3584,7 +3707,8 @@
           "type": "VARCHAR",
           "refDict": "",
           "uiHint": "",
-          "id": "AE73CBE3-577D-4457-8987-5BEFDECAEED9"
+          "id": "AE73CBE3-577D-4457-8987-5BEFDECAEED9",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "TEACHER_ID",
@@ -3601,7 +3725,8 @@
           "type": "VARCHAR",
           "refDict": "",
           "uiHint": "",
-          "id": "E50C225A-7597-47DB-9057-878F1B491F21"
+          "id": "E50C225A-7597-47DB-9057-878F1B491F21",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "TENANT_ID",
@@ -3618,7 +3743,8 @@
           "type": "VARCHAR",
           "refDict": "",
           "uiHint": "",
-          "id": "D6AFA91F-9A45-44E5-9907-7EBD9253B598"
+          "id": "D6AFA91F-9A45-44E5-9907-7EBD9253B598",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "REVISION",
@@ -3635,7 +3761,8 @@
           "type": "INT",
           "refDict": "",
           "uiHint": "",
-          "id": "5CE25044-60C5-4692-85DE-D6928C7103A1"
+          "id": "5CE25044-60C5-4692-85DE-D6928C7103A1",
+          "baseType": "1D764C4A-6F9F-421E-B11A-6F3E23B51811"
         },
         {
           "defKey": "CREATED_BY",
@@ -3652,7 +3779,8 @@
           "type": "VARCHAR",
           "refDict": "",
           "uiHint": "",
-          "id": "D76C1177-91E3-4D45-B61D-F43EDC7D59E8"
+          "id": "D76C1177-91E3-4D45-B61D-F43EDC7D59E8",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "CREATED_TIME",
@@ -3669,7 +3797,8 @@
           "type": "DATETIME",
           "refDict": "",
           "uiHint": "",
-          "id": "D178B020-A55A-4A8A-85E5-611F598031BD"
+          "id": "D178B020-A55A-4A8A-85E5-611F598031BD",
+          "baseType": "89D69E81-EA34-42EE-9FA2-93B8BD27E098"
         },
         {
           "defKey": "UPDATED_BY",
@@ -3686,7 +3815,8 @@
           "type": "VARCHAR",
           "refDict": "",
           "uiHint": "",
-          "id": "3251E42F-8A56-40E7-AE16-F88611EC466A"
+          "id": "3251E42F-8A56-40E7-AE16-F88611EC466A",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "UPDATED_TIME",
@@ -3703,13 +3833,18 @@
           "type": "DATETIME",
           "refDict": "",
           "uiHint": "",
-          "id": "AAB91339-8543-4432-B27C-2AB5FFD5D38F"
+          "id": "AAB91339-8543-4432-B27C-2AB5FFD5D38F",
+          "baseType": "89D69E81-EA34-42EE-9FA2-93B8BD27E098"
         }
       ],
       "correlations": [],
       "id": "1A50AEEB-F956-4275-AE11-5D6F1F471FBE",
       "indexes": [],
-      "notes": {}
+      "notes": {},
+      "type": "P",
+      "sysProps": {
+        "nameTemplate": "{defKey}[{defName}]"
+      }
     },
     {
       "defKey": "SIMS_EXAM",
@@ -3719,7 +3854,6 @@
         "partitionBy": "",
         "dorisDistributedBy": "DISTRIBUTED BY HASH(`EXAM_ID`) BUCKETS 1"
       },
-      "nameTemplate": "{defKey}[{defName}]",
       "headers": [
         {
           "refKey": "hideInGraph",
@@ -3864,7 +3998,8 @@
           "refDict": "",
           "uiHint": "",
           "id": "C5D96022-B0B0-4F9C-B3E1-6E1F69662E9F",
-          "extProps": {}
+          "extProps": {},
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "STUDENT_ID",
@@ -3882,7 +4017,8 @@
           "refDict": "",
           "uiHint": "",
           "id": "0C5A31BB-2855-4BB9-84D1-7E63B37A71E1",
-          "extProps": {}
+          "extProps": {},
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "EXAM_NAME",
@@ -3900,7 +4036,8 @@
           "refDict": "",
           "uiHint": "",
           "id": "53CAC6C4-CB01-4D8D-8E01-2912EA85EDD6",
-          "extProps": {}
+          "extProps": {},
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "EXAM_SCORE",
@@ -3918,7 +4055,8 @@
           "refDict": "",
           "uiHint": "",
           "id": "FA59122E-20A1-47EB-9BE9-31F90A029AAD",
-          "extProps": {}
+          "extProps": {},
+          "baseType": "1A0BDC09-0792-4174-9E8E-80BE8DF44B8E"
         },
         {
           "defKey": "TENANT_ID",
@@ -3936,7 +4074,8 @@
           "refDict": "",
           "uiHint": "",
           "id": "2C59F43F-9649-4789-A44F-7DED0435CAB5",
-          "extProps": {}
+          "extProps": {},
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "REVISION",
@@ -3954,7 +4093,8 @@
           "refDict": "",
           "uiHint": "",
           "id": "25143244-C289-446B-8670-BC8C10DA503E",
-          "extProps": {}
+          "extProps": {},
+          "baseType": "1D764C4A-6F9F-421E-B11A-6F3E23B51811"
         },
         {
           "defKey": "CREATED_BY",
@@ -3972,7 +4112,8 @@
           "refDict": "",
           "uiHint": "",
           "id": "632BFB89-3714-4971-834D-61004D3F0ED7",
-          "extProps": {}
+          "extProps": {},
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "CREATED_TIME",
@@ -3990,7 +4131,8 @@
           "refDict": "",
           "uiHint": "",
           "id": "68E8278F-B0B9-4C76-9B80-0B0E0C1993B6",
-          "extProps": {}
+          "extProps": {},
+          "baseType": "89D69E81-EA34-42EE-9FA2-93B8BD27E098"
         },
         {
           "defKey": "UPDATED_BY",
@@ -4008,7 +4150,8 @@
           "refDict": "",
           "uiHint": "",
           "id": "898B48FA-AA9F-48FE-92FD-919EB8C619C8",
-          "extProps": {}
+          "extProps": {},
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "UPDATED_TIME",
@@ -4026,7 +4169,8 @@
           "refDict": "",
           "uiHint": "",
           "id": "D2975854-EE5C-471D-8E14-94D7CC3DB514",
-          "extProps": {}
+          "extProps": {},
+          "baseType": "89D69E81-EA34-42EE-9FA2-93B8BD27E098"
         },
         {
           "defKey": "lesson_id",
@@ -4043,7 +4187,8 @@
           "hideInGraph": false,
           "refDict": "",
           "id": "BE9F3B2B-F555-4EA4-B544-0BDDD7214521",
-          "extProps": {}
+          "extProps": {},
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "exam_date",
@@ -4060,13 +4205,18 @@
           "hideInGraph": false,
           "refDict": "",
           "id": "05ADFDD2-4DFF-4B47-A325-5DC3109621E9",
-          "extProps": {}
+          "extProps": {},
+          "baseType": "89D69E81-EA34-42EE-9FA2-93B8BD27E098"
         }
       ],
       "correlations": [],
       "id": "6B1610FB-364F-4514-95D6-9DDA681BFC61",
       "indexes": [],
-      "notes": {}
+      "notes": {},
+      "type": "P",
+      "sysProps": {
+        "nameTemplate": "{defKey}[{defName}]"
+      }
     }
   ],
   "views": [
@@ -4077,7 +4227,6 @@
       "properties": {
         "partitionBy": ""
       },
-      "nameTemplate": "{defKey}[{defName}]",
       "headers": [
         {
           "refKey": "hideInGraph",
@@ -4163,7 +4312,8 @@
           "type": "VARCHAR",
           "refDict": "",
           "uiHint": "",
-          "id": "2AE46886-6281-428E-BE5F-8583268CB3EA"
+          "id": "2AE46886-6281-428E-BE5F-8583268CB3EA",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "STUDENT_NAME",
@@ -4182,7 +4332,8 @@
           "type": "VARCHAR",
           "refDict": "",
           "uiHint": "",
-          "id": "AD7F1687-E91E-4EC6-973B-99A10AD6520D"
+          "id": "AD7F1687-E91E-4EC6-973B-99A10AD6520D",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "MOBILE_PHONE",
@@ -4201,7 +4352,8 @@
           "type": "VARCHAR",
           "refDict": "",
           "uiHint": "",
-          "id": "99CEDCC6-D947-40DA-909C-23FFBE56900F"
+          "id": "99CEDCC6-D947-40DA-909C-23FFBE56900F",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "GENDER",
@@ -4220,7 +4372,8 @@
           "refEntityField": "C1960E6F-08D3-4773-BF97-57AB8D86FD5C",
           "type": "VARCHAR",
           "uiHint": "",
-          "id": "A9D232D6-8491-4648-9045-5D282E8A1A91"
+          "id": "A9D232D6-8491-4648-9045-5D282E8A1A91",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "LESSON_NAME",
@@ -4239,7 +4392,8 @@
           "type": "VARCHAR",
           "refDict": "",
           "uiHint": "",
-          "id": "96555C8C-DA61-48E2-807C-47667C7D0469"
+          "id": "96555C8C-DA61-48E2-807C-47667C7D0469",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "LESSON_ID",
@@ -4258,7 +4412,8 @@
           "type": "VARCHAR",
           "refDict": "",
           "uiHint": "",
-          "id": "7E45A4DA-D3FA-47CB-8D59-F0D1AF72D7C9"
+          "id": "7E45A4DA-D3FA-47CB-8D59-F0D1AF72D7C9",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "EXAM_DATE",
@@ -4277,7 +4432,8 @@
           "type": "DATETIME",
           "refDict": "",
           "uiHint": "",
-          "id": "3E27A0D3-AB5C-47CD-B5FB-2BAA1B2D0312"
+          "id": "3E27A0D3-AB5C-47CD-B5FB-2BAA1B2D0312",
+          "baseType": "89D69E81-EA34-42EE-9FA2-93B8BD27E098"
         },
         {
           "defKey": "EXAM_SCORE",
@@ -4296,7 +4452,8 @@
           "type": "DECIMAL",
           "refDict": "",
           "uiHint": "",
-          "id": "2AD0455A-A799-4114-B146-E9D0DF195338"
+          "id": "2AD0455A-A799-4114-B146-E9D0DF195338",
+          "baseType": "1A0BDC09-0792-4174-9E8E-80BE8DF44B8E"
         },
         {
           "defKey": "TENANT_ID",
@@ -4315,7 +4472,8 @@
           "type": "VARCHAR",
           "refDict": "",
           "uiHint": "",
-          "id": "EF6683DA-F7F1-495D-87CA-D29F5C150237"
+          "id": "EF6683DA-F7F1-495D-87CA-D29F5C150237",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "REVISION",
@@ -4334,7 +4492,8 @@
           "type": "INT",
           "refDict": "",
           "uiHint": "",
-          "id": "EE36FB43-C366-46F2-B5B8-711DF756FF3F"
+          "id": "EE36FB43-C366-46F2-B5B8-711DF756FF3F",
+          "baseType": "1D764C4A-6F9F-421E-B11A-6F3E23B51811"
         },
         {
           "defKey": "CREATED_BY",
@@ -4353,7 +4512,8 @@
           "type": "VARCHAR",
           "refDict": "",
           "uiHint": "",
-          "id": "6B2F5029-590E-47AC-8861-DD195F09580C"
+          "id": "6B2F5029-590E-47AC-8861-DD195F09580C",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "CREATED_TIME",
@@ -4372,7 +4532,8 @@
           "type": "DATETIME",
           "refDict": "",
           "uiHint": "",
-          "id": "F65EDC3D-6B2E-465F-943A-85336CB75F9F"
+          "id": "F65EDC3D-6B2E-465F-943A-85336CB75F9F",
+          "baseType": "89D69E81-EA34-42EE-9FA2-93B8BD27E098"
         },
         {
           "defKey": "UPDATED_BY",
@@ -4391,7 +4552,8 @@
           "type": "VARCHAR",
           "refDict": "",
           "uiHint": "",
-          "id": "3276F868-CDFB-4B64-82E2-0D71C6C5AE0D"
+          "id": "3276F868-CDFB-4B64-82E2-0D71C6C5AE0D",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "UPDATED_TIME",
@@ -4410,7 +4572,8 @@
           "type": "DATETIME",
           "refDict": "",
           "uiHint": "",
-          "id": "B3104ABE-49EA-4FCD-81C2-3C8AFF8156D6"
+          "id": "B3104ABE-49EA-4FCD-81C2-3C8AFF8156D6",
+          "baseType": "89D69E81-EA34-42EE-9FA2-93B8BD27E098"
         }
       ],
       "correlations": [],
@@ -4421,14 +4584,16 @@
       ],
       "id": "DD60F248-86A6-450C-BA20-B4990DCCAF44",
       "indexes": [],
-      "notes": {}
+      "notes": {},
+      "sysProps": {
+        "nameTemplate": "{defKey}[{defName}]"
+      }
     },
     {
       "defKey": "V_CLASS_STUDENT",
       "defName": "班级学生",
       "comment": "",
       "properties": {},
-      "nameTemplate": "{defKey}[{defName}]",
       "headers": [
         {
           "refKey": "hideInGraph",
@@ -4514,7 +4679,8 @@
           "refEntityField": "782EC244-02B2-4661-BC21-615F7A468BA8",
           "refDict": "",
           "uiHint": "",
-          "id": "3498EA92-4BFC-4FCA-9A0B-36821731881B"
+          "id": "3498EA92-4BFC-4FCA-9A0B-36821731881B",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "ENG_NAME",
@@ -4533,7 +4699,8 @@
           "refEntityField": "6A9A2D74-E294-497E-8A0F-0DF671A7F4EE",
           "refDict": "",
           "uiHint": "",
-          "id": "46AFA304-8F05-4003-933A-F222A14DAE3B"
+          "id": "46AFA304-8F05-4003-933A-F222A14DAE3B",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "STUDENT_NAME",
@@ -4552,7 +4719,8 @@
           "refEntityField": "51D4FD5A-9EFB-4318-A5D6-6317D630D043",
           "refDict": "",
           "uiHint": "",
-          "id": "FD734B03-A001-42BA-A5E4-1074EF86ABE4"
+          "id": "FD734B03-A001-42BA-A5E4-1074EF86ABE4",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "STUDENT_ID",
@@ -4571,7 +4739,8 @@
           "refEntityField": "5FAE5CA5-B7A6-40C3-878D-1BB3D4A45B5C",
           "refDict": "",
           "uiHint": "",
-          "id": "13684B95-755D-4A0B-B4F2-2C4BED526108"
+          "id": "13684B95-755D-4A0B-B4F2-2C4BED526108",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "CLASS_ID",
@@ -4590,7 +4759,8 @@
           "refEntityField": "1BCE9672-14BA-4B2B-B8C6-222CC6CF0F61",
           "refDict": "",
           "uiHint": "",
-          "id": "D2418A3E-8B2B-471D-8B49-1A1889C996C7"
+          "id": "D2418A3E-8B2B-471D-8B49-1A1889C996C7",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "COLLEGE_ID",
@@ -4609,7 +4779,8 @@
           "refEntityField": "84ADFE5C-3750-4E38-AC46-7AD11E869B41",
           "refDict": "",
           "uiHint": "",
-          "id": "CB009570-D1A4-484F-BA1B-8E3B8DA11190"
+          "id": "CB009570-D1A4-484F-BA1B-8E3B8DA11190",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "ADVISER",
@@ -4628,7 +4799,8 @@
           "refEntityField": "6BB204C7-1363-4EB4-94B3-555F47C28754",
           "refDict": "",
           "uiHint": "",
-          "id": "36FA87FF-9A78-4CCC-9576-943AD907F66A"
+          "id": "36FA87FF-9A78-4CCC-9576-943AD907F66A",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "ID_CARD_NO",
@@ -4647,7 +4819,8 @@
           "refEntityField": "47AEF665-86ED-40A2-88DB-79BF561CCE32",
           "refDict": "",
           "uiHint": "",
-          "id": "704904CA-C612-4CC2-9891-15DF38676B0C"
+          "id": "704904CA-C612-4CC2-9891-15DF38676B0C",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "MOBILE_PHONE",
@@ -4666,7 +4839,8 @@
           "refEntityField": "8D412D1B-5BE4-4031-8293-EE7EA4E65BCE",
           "refDict": "",
           "uiHint": "",
-          "id": "FDAF2E38-0782-48F4-8FBD-A840778E13F8"
+          "id": "FDAF2E38-0782-48F4-8FBD-A840778E13F8",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "GENDER",
@@ -4685,7 +4859,8 @@
           "refEntity": "0FC9DB49-4FDB-437E-83E9-7EE803F1CC84",
           "refEntityField": "C1960E6F-08D3-4773-BF97-57AB8D86FD5C",
           "uiHint": "",
-          "id": "E39A19BE-19C8-42A7-A599-9F879B756060"
+          "id": "E39A19BE-19C8-42A7-A599-9F879B756060",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "MARITAL",
@@ -4704,7 +4879,8 @@
           "refEntity": "0FC9DB49-4FDB-437E-83E9-7EE803F1CC84",
           "refEntityField": "1BE185DC-216C-4264-A594-9FC766DD8F82",
           "uiHint": "",
-          "id": "9AFA5CE4-7670-47D3-BCCB-84FB7A44FE90"
+          "id": "9AFA5CE4-7670-47D3-BCCB-84FB7A44FE90",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "POLITICAL",
@@ -4723,7 +4899,8 @@
           "refEntity": "0FC9DB49-4FDB-437E-83E9-7EE803F1CC84",
           "refEntityField": "BD431E79-93A8-4FB7-83D4-046DA0A54F76",
           "uiHint": "",
-          "id": "6118A8F8-12FA-4C68-90FF-15CC55754D08"
+          "id": "6118A8F8-12FA-4C68-90FF-15CC55754D08",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "BIRTH",
@@ -4742,7 +4919,8 @@
           "refEntityField": "F705D168-2A65-4C82-8135-DDC85032F855",
           "refDict": "",
           "uiHint": "",
-          "id": "D2D1BD75-0343-4270-81EE-C9B2E0B6AC96"
+          "id": "D2D1BD75-0343-4270-81EE-C9B2E0B6AC96",
+          "baseType": "89D69E81-EA34-42EE-9FA2-93B8BD27E098"
         }
       ],
       "correlations": [],
@@ -4752,7 +4930,10 @@
         "0FC9DB49-4FDB-437E-83E9-7EE803F1CC84"
       ],
       "id": "81C7ED2A-2A19-4649-BB0F-B730BDF0D1EC",
-      "notes": {}
+      "notes": {},
+      "sysProps": {
+        "nameTemplate": "{defKey}[{defName}]"
+      }
     }
   ],
   "dicts": [
@@ -8643,7 +8824,8 @@
           "domain": "9092C4E0-1A54-4859-ABBB-5B62DBC27573",
           "refDict": "",
           "uiHint": "",
-          "id": "A64A91C8-A41F-4113-92FB-7563D7EF054D"
+          "id": "A64A91C8-A41F-4113-92FB-7563D7EF054D",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "MOBILE_PHONE",
@@ -8660,7 +8842,8 @@
           "domain": "9092C4E0-1A54-4859-ABBB-5B62DBC27573",
           "refDict": "",
           "uiHint": "",
-          "id": "479DA2AB-1974-411A-A81E-92FB939E75EB"
+          "id": "479DA2AB-1974-411A-A81E-92FB939E75EB",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "GENDER",
@@ -8677,7 +8860,8 @@
           "domain": "73FD2BAD-2358-4336-B96D-45DC897BD792",
           "refDict": "BF9E20E0-80D3-486D-BD58-5FADCF3E4A1D",
           "uiHint": "",
-          "id": "48473E29-6594-4912-AADE-C8AB44FCA3E9"
+          "id": "48473E29-6594-4912-AADE-C8AB44FCA3E9",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "BIRTH",
@@ -8694,7 +8878,8 @@
           "domain": "7CFFA0D3-6A93-4DDC-BC10-DF21211064DC",
           "refDict": "",
           "uiHint": "",
-          "id": "2BD3D2EE-2411-49A6-983D-84B81057312F"
+          "id": "2BD3D2EE-2411-49A6-983D-84B81057312F",
+          "baseType": "89D69E81-EA34-42EE-9FA2-93B8BD27E098"
         },
         {
           "defKey": "AVATAR",
@@ -8711,7 +8896,8 @@
           "domain": "9092C4E0-1A54-4859-ABBB-5B62DBC27573",
           "refDict": "",
           "uiHint": "",
-          "id": "FDD67CEE-4B52-4BD1-A1A3-9C5EBC6037E6"
+          "id": "FDD67CEE-4B52-4BD1-A1A3-9C5EBC6037E6",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "HEIGHT",
@@ -8728,7 +8914,8 @@
           "domain": "6BC8F04B-6CFA-4995-98D3-318F5CDD774E",
           "refDict": "",
           "uiHint": "",
-          "id": "CAAA0E79-41A1-4758-B481-D171168C4D68"
+          "id": "CAAA0E79-41A1-4758-B481-D171168C4D68",
+          "baseType": "1D764C4A-6F9F-421E-B11A-6F3E23B51811"
         },
         {
           "defKey": "WEIGHT",
@@ -8745,7 +8932,8 @@
           "domain": "6BC8F04B-6CFA-4995-98D3-318F5CDD774E",
           "refDict": "",
           "uiHint": "",
-          "id": "575482CE-64A6-4CB9-99DC-8E126D190AAA"
+          "id": "575482CE-64A6-4CB9-99DC-8E126D190AAA",
+          "baseType": "1D764C4A-6F9F-421E-B11A-6F3E23B51811"
         },
         {
           "defKey": "NATION",
@@ -8762,7 +8950,8 @@
           "domain": "73FD2BAD-2358-4336-B96D-45DC897BD792",
           "refDict": "115EDEFC-0323-410E-81AB-CCAB8879837A",
           "uiHint": "",
-          "id": "15B0D75D-0B97-4985-A816-D0EAFA90446B"
+          "id": "15B0D75D-0B97-4985-A816-D0EAFA90446B",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "POLITICAL",
@@ -8779,7 +8968,8 @@
           "domain": "73FD2BAD-2358-4336-B96D-45DC897BD792",
           "refDict": "06EED564-BBA9-4747-8D73-AF809A330CB8",
           "uiHint": "",
-          "id": "F458E86D-84D6-45A1-9DD3-51E6C8170D7F"
+          "id": "F458E86D-84D6-45A1-9DD3-51E6C8170D7F",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "MARITAL",
@@ -8796,7 +8986,8 @@
           "domain": "73FD2BAD-2358-4336-B96D-45DC897BD792",
           "refDict": "EA1587B7-3954-437A-BFE0-FCB0453BCABA",
           "uiHint": "",
-          "id": "7275E578-6893-4922-AC69-95B261BFBD61"
+          "id": "7275E578-6893-4922-AC69-95B261BFBD61",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "DOMICILE_PLACE_PROVINCE",
@@ -8813,7 +9004,8 @@
           "domain": "9092C4E0-1A54-4859-ABBB-5B62DBC27573",
           "refDict": "",
           "uiHint": "",
-          "id": "F04BF130-3EC1-4E02-9DED-3214CA88E352"
+          "id": "F04BF130-3EC1-4E02-9DED-3214CA88E352",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "DOMICILE_PLACE_CITY",
@@ -8830,7 +9022,8 @@
           "domain": "73FD2BAD-2358-4336-B96D-45DC897BD792",
           "refDict": "",
           "uiHint": "",
-          "id": "B97F5BC2-33DE-4857-9DB8-ECFD02C9040C"
+          "id": "B97F5BC2-33DE-4857-9DB8-ECFD02C9040C",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "DOMICILE_PLACE_ADDRESS",
@@ -8847,7 +9040,8 @@
           "domain": "9092C4E0-1A54-4859-ABBB-5B62DBC27573",
           "refDict": "",
           "uiHint": "",
-          "id": "812ADF1D-8C03-40CA-B030-E539838FB889"
+          "id": "812ADF1D-8C03-40CA-B030-E539838FB889",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         }
       ],
       "id": "F30202B9-4B5D-4CE7-87CE-B3890C84D3F2"

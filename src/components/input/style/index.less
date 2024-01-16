@@ -30,4 +30,29 @@
     border-bottom: 1px solid @primary-border-color;
     border-right: 1px solid @primary-border-color;
   }
+  &-toggle {
+    display: flex;
+    flex-direction: row;
+    height: 25px;
+    font-size: 12px;
+    align-items: center;
+    width: 120px;
+    background: @primary-color;
+    color: @background-color;
+    justify-content: center;
+    border-top: 1px solid @primary-border-color;
+    border-bottom: 1px solid @primary-border-color;
+    border-right: 1px solid @primary-border-color;
+    user-select: none;
+    & > span:nth-child(1), & >  span:nth-child(3) {
+      cursor: pointer;
+    }
+    & > span:nth-child(2) {
+      display: inline-block;
+      width: 1px;
+      height: 70%;
+      margin: 0 5px;
+      background: @primary-border-color;
+    }
+  }
 }

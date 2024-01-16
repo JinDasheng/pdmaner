@@ -68,7 +68,7 @@ import './style/index.less';
 import {getPrefix} from '../../lib/prefixUtil';
 import {addBodyEvent, removeBodyEvent} from '../../lib/listener';
 import {firstUp} from '../../lib/string';
-import {connectDB, getLogPath, selectWordFile, showItemInFolder} from '../../lib/middle';
+import {connectDB, getLogPath, selectWordFile, selectDir, showItemInFolder} from '../../lib/middle';
 import { imgAll } from '../../lib/generatefile/img';
 import {compareVersion} from '../../lib/update';
 import {notify} from '../../lib/subscribe';
@@ -359,6 +359,49 @@ const Index = React.memo(({getUserData, mode, isChildWindow,
       });
     });
   };
+
+  const dealExportFile = (result, file) => {
+    if (result.status === 'FAILED') {
+      const termReady = (term) => {
+        term.write(typeof result.body === 'object' ? JSON.stringify(result.body, null, 2)
+            : result.body);
+      };
+      restProps.closeLoading();
+      Modal.error({
+        bodyStyle: {width: '80%'},
+        contentStyle: {width: '100%', height: '100%'},
+        title: FormatMessage.string({id: 'optFail'}),
+        message: <div>
+          <div style={{textAlign: 'center'}}><FormatMessage id='dbConnect.log'/><a onClick={showItemInFolder}>{getLogPath()}</a></div>
+          <Terminal termReady={termReady}/>
+        </div>,
+      });
+    } else {
+      restProps.closeLoading();
+      Modal.success({
+        title: FormatMessage.string({
+          id: 'toolbar.exportSuccess',
+        }),
+        message: FormatMessage.string({
+          id: 'toolbar.exportPath',
+          data: {path: file},
+        }),
+      });
+    }
+  };
+
+  const exportExcel = () => {
+    selectDir(dataSourceRef.current.name, 'xlsx')
+        .then((file) => {
+          restProps.openLoading(FormatMessage.string({id: 'toolbar.exportExcel'}));
+          connectDB(dataSourceRef.current, configRef.current, {
+            sinerFile: projectInfo,
+            outFile: file,
+          }, 'GenExcelImpl', (result) => {
+            dealExportFile(result, file);
+          });
+        });
+  };
   const exportWord = () => {
     openModal(<ExportWord
       save={restProps.save}
@@ -377,33 +420,7 @@ const Index = React.memo(({getUserData, mode, isChildWindow,
                 imgExt: '.png',
                 outFile: dir,
               }, 'GenDocx', (result) => {
-                if (result.status === 'FAILED') {
-                  const termReady = (term) => {
-                    term.write(typeof result.body === 'object' ? JSON.stringify(result.body, null, 2)
-                        : result.body);
-                  };
-                  restProps.closeLoading();
-                  Modal.error({
-                    bodyStyle: {width: '80%'},
-                    contentStyle: {width: '100%', height: '100%'},
-                    title: FormatMessage.string({id: 'optFail'}),
-                    message: <div>
-                      <div style={{textAlign: 'center'}}><FormatMessage id='dbConnect.log'/><a onClick={showItemInFolder}>{getLogPath()}</a></div>
-                      <Terminal termReady={termReady}/>
-                    </div>,
-                  });
-                } else {
-                  restProps.closeLoading();
-                  Modal.success({
-                    title: FormatMessage.string({
-                      id: 'toolbar.exportSuccess',
-                    }),
-                    message: FormatMessage.string({
-                      id: 'toolbar.exportPath',
-                      data: {path: dir},
-                    }),
-                  });
-                }
+                dealExportFile(result, dir);
               });
             });
           });
@@ -591,7 +608,8 @@ const Index = React.memo(({getUserData, mode, isChildWindow,
       restProps.closeLoading();
     } else {
       restProps.closeLoading();
-      const entities = (result.body?.tables || result.body || []).map((t) => {
+      const entities = (result.body?.tables || result.body?.entities || result.body || [])
+          .map((t) => {
         const fields = (t.fields || []).map(f => ({...f, id: Math.uuid()}));
         return {
           ...t,
@@ -613,7 +631,19 @@ const Index = React.memo(({getUserData, mode, isChildWindow,
           })),
         };
       });
-      const viewGroups = result.body?.groupTopics?.map((g) => {
+      const dicts = (result.body?.dicts || []).map((d) => {
+        return {
+          ...d,
+          id: d.id || Math.uuid(),
+          items: (d.items || []).map((i) => {
+            return {
+              ..._.omit(i, ['rowNo', 'enabledName']),
+              id: Math.uuid(),
+            };
+          }),
+        };
+      });
+      const viewGroups = (result.body?.groupTopics || result.body?.viewGroups)?.map((g) => {
         return {
           ...g,
           id: dataSourceRef.current.viewGroups
@@ -645,6 +675,7 @@ const Index = React.memo(({getUserData, mode, isChildWindow,
         mergeDataSource(dataSourceRef.current,
             {
               domains,
+              dicts,
               viewGroups: (viewGroups || [])
                   .map((g) => {
                     return {
@@ -1565,6 +1596,7 @@ const Index = React.memo(({getUserData, mode, isChildWindow,
       case 'exportDicts': exportDicts();break;
       case 'png':
       case 'svg': exportImg(key); break;
+      case 'export-excel': exportExcel(); break;
       case 'word': exportWord(); break;
       case 'html':
       case 'markdown': generateSimpleFile(key, dataSourceRef.current, projectInfoRef.current); break;

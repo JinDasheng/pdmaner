@@ -405,6 +405,7 @@ export const connectDB = (dataSource, config, params = {}, cmd, cb) => {
       entities: updateFields(dataSource.entities),
       views: updateFields(dataSource.views),
     }));
+    tempParams.dataFile = sinerFile;
     tempParams.sinerFile = sinerFile;
   }
   console.log(outFile);
@@ -546,6 +547,14 @@ const getDefaultTemplate = (ext, name) => {
 export const saveAsTemplate = (name, ext) => {
   return copyFile(getDefaultTemplate(ext, name), [{name: name, extensions: [ext]}]);
 };
+
+export const selectDir = (name, type) => {
+  return new Promise((res, rej) => {
+    openFileOrDirPath([], ['openDirectory']).then((dir) => {
+      res(`${dir}${path.sep}${name}-${moment().format('YYYYMDHHmmss')}.${type}`);
+    });
+  })
+}
 
 export const selectWordFile = (dataSource, template) => {
   const name = _.get(dataSource, 'name');

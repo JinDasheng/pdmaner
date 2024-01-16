@@ -2,14 +2,14 @@
   "name": "empty",
   "describe": "empty",
   "avatar": "",
-  "version": "4.4.0",
-  "createdTime": "2023-3-14 19:20:56",
-  "updatedTime": "2023-3-19 15:27:07",
+  "version": "4.7.0",
+  "createdTime": "2024-1-15 22:57:23",
+  "updatedTime": "2024-1-15 22:57:23",
   "dbConns": [],
   "profile": {
     "default": {
       "db": "29D1CE08-4C35-4D2D-AAA9-23D93305B52E",
-      "dbConn": "",
+      "dbConn": "A1422602-F98A-468C-9625-5B4B49F0D761",
       "entityInitFields": [
         {
           "defKey": "TENANT_ID",
@@ -26,7 +26,8 @@
           "domain": "16120F75-6AA7-4483-868D-F07F511BB081",
           "refDict": "",
           "uiHint": "",
-          "id": "ADB3AD14-6603-43E2-8261-114E32442B5B"
+          "id": "ADB3AD14-6603-43E2-8261-114E32442B5B",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "REVISION",
@@ -43,7 +44,8 @@
           "hideInGraph": true,
           "refDict": "",
           "uiHint": "",
-          "id": "92BF430E-01FA-4AEF-944F-25A142632654"
+          "id": "92BF430E-01FA-4AEF-944F-25A142632654",
+          "baseType": "1D764C4A-6F9F-421E-B11A-6F3E23B51811"
         },
         {
           "defKey": "CREATED_BY",
@@ -60,7 +62,8 @@
           "hideInGraph": true,
           "refDict": "",
           "uiHint": "",
-          "id": "C8BE2C7A-8251-4ADD-BB4F-411C5754DA62"
+          "id": "C8BE2C7A-8251-4ADD-BB4F-411C5754DA62",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "CREATED_TIME",
@@ -77,7 +80,8 @@
           "hideInGraph": true,
           "refDict": "",
           "uiHint": "",
-          "id": "4E471FD6-3E73-4A90-B660-51598A482409"
+          "id": "4E471FD6-3E73-4A90-B660-51598A482409",
+          "baseType": "89D69E81-EA34-42EE-9FA2-93B8BD27E098"
         },
         {
           "defKey": "UPDATED_BY",
@@ -94,7 +98,8 @@
           "hideInGraph": true,
           "refDict": "",
           "uiHint": "",
-          "id": "0DC24AA9-4CD0-45D8-95CF-FA546BE343AB"
+          "id": "0DC24AA9-4CD0-45D8-95CF-FA546BE343AB",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "UPDATED_TIME",
@@ -111,10 +116,11 @@
           "hideInGraph": true,
           "refDict": "",
           "uiHint": "",
-          "id": "09F64AC4-4DEE-428F-AF64-4C103884E1AC"
+          "id": "09F64AC4-4DEE-428F-AF64-4C103884E1AC",
+          "baseType": "89D69E81-EA34-42EE-9FA2-93B8BD27E098"
         }
       ],
-      "entityInitProperties": {
+      "entityInitProperties":                                                                                                     {
         "partitioned by": "(date string)",
         "row format delimited": "",
         "fields terminated by ','": "",
@@ -130,51 +136,68 @@
     "dataTypeSupports": [
       {
         "defKey": "MYSQL",
-        "id": "29D1CE08-4C35-4D2D-AAA9-23D93305B52E"
+        "id": "29D1CE08-4C35-4D2D-AAA9-23D93305B52E",
+        "old": "29D1CE08-4C35-4D2D-AAA9-23D93305B52E"
       },
       {
         "defKey": "ORACLE",
-        "id": "A4E23CB7-BB01-4BD1-9F71-F73F3E15A542"
+        "id": "A4E23CB7-BB01-4BD1-9F71-F73F3E15A542",
+        "old": "A4E23CB7-BB01-4BD1-9F71-F73F3E15A542"
       },
       {
         "defKey": "SQLServer",
-        "id": "BFC87171-C74F-494A-B7C2-76B9C55FACC9"
+        "id": "BFC87171-C74F-494A-B7C2-76B9C55FACC9",
+        "old": "BFC87171-C74F-494A-B7C2-76B9C55FACC9"
       },
       {
         "defKey": "PostgreSQL",
-        "id": "DFBEC1DD-AA84-456E-BBF3-C95DD0DB2022"
+        "id": "DFBEC1DD-AA84-456E-BBF3-C95DD0DB2022",
+        "old": "DFBEC1DD-AA84-456E-BBF3-C95DD0DB2022"
       },
       {
         "defKey": "DB2",
-        "id": "89504F5D-94BF-4C9E-8B2E-44F37305FED5"
+        "id": "89504F5D-94BF-4C9E-8B2E-44F37305FED5",
+        "old": "89504F5D-94BF-4C9E-8B2E-44F37305FED5"
       },
       {
         "defKey": "DM",
-        "id": "0BBCABA5-B8E4-41B0-B8E4-8F5EA6029307"
+        "id": "0BBCABA5-B8E4-41B0-B8E4-8F5EA6029307",
+        "old": "0BBCABA5-B8E4-41B0-B8E4-8F5EA6029307"
       },
       {
         "defKey": "GaussDB",
-        "id": "592C7013-143D-4E7B-AF64-0D7BF1E28230"
+        "id": "592C7013-143D-4E7B-AF64-0D7BF1E28230",
+        "old": "592C7013-143D-4E7B-AF64-0D7BF1E28230"
       },
       {
         "defKey": "Kingbase",
-        "id": "77BD85E5-9D0D-4096-8427-CBA306FC9C6A"
+        "id": "77BD85E5-9D0D-4096-8427-CBA306FC9C6A",
+        "old": "77BD85E5-9D0D-4096-8427-CBA306FC9C6A"
       },
       {
         "defKey": "GBase",
-        "id": "56F4B55B-F0B8-4049-9E6B-50B95C1D793A"
+        "id": "56F4B55B-F0B8-4049-9E6B-50B95C1D793A",
+        "old": "56F4B55B-F0B8-4049-9E6B-50B95C1D793A"
       },
       {
         "defKey": "MaxCompute",
-        "id": "11D1FB71-A587-4217-89BA-611B8A1F83E0"
+        "id": "11D1FB71-A587-4217-89BA-611B8A1F83E0",
+        "old": "11D1FB71-A587-4217-89BA-611B8A1F83E0"
       },
       {
         "defKey": "SQLite",
-        "id": "B363BE0B-F852-49B8-9B2E-F6D2174DEAC1"
+        "id": "B363BE0B-F852-49B8-9B2E-F6D2174DEAC1",
+        "old": "B363BE0B-F852-49B8-9B2E-F6D2174DEAC1"
       },
       {
         "defKey": "Hive",
-        "id": "81CCA482-3F4D-4EAC-8CF9-F5E7BC098AD2"
+        "id": "81CCA482-3F4D-4EAC-8CF9-F5E7BC098AD2",
+        "old": "81CCA482-3F4D-4EAC-8CF9-F5E7BC098AD2"
+      },
+      {
+        "defKey": "Doris",
+        "id": "483F9346-C99E-4014-A1D2-A554606BD8A3",
+        "old": "483F9346-C99E-4014-A1D2-A554606BD8A3"
       },
       {
         "defKey": "JAVA",
@@ -199,10 +222,6 @@
       {
         "defKey": "Rust",
         "id": "BDF457FD-9F98-4AC3-A705-7587B00A3BAB"
-      },
-      {
-        "defKey": "Doris",
-        "id": "483F9346-C99E-4014-A1D2-A554606BD8A3"
       }
     ],
     "codeTemplates": [
@@ -215,8 +234,7 @@
         "type": "appCode",
         "applyFor": "F3AC2415-E86B-40C6-9FEB-F4B7937D2C30",
         "Default": "using System;\nusing System.Collections.Generic;\n\n$blankline\n{{\n    var today=new Date();\n    var fullYear=today.getFullYear();\n    var month=today.getMonth() + 1;\n    var days=today.getDate();\n}}\n/*\n * @author : http://www.chiner.com.cn\n * @date : {{=fullYear}}-{{=month}}-{{=days}}\n * @desc : {{=it.func.join(it.entity.defName,it.entity.comment,'-')}}\n */\nnamespace PDManer.Application\n{\n    public partial class {{=it.func.camel(it.entity.defKey,true) }}\n    {\n    \n        {{~it.entity.fields:field:index}}\n        /// <summary>\n        /// {{=it.func.join(field.defName,field.comment,';')}}\n        /// </summary>\n        public {{=field.type}} {{=it.func.camel(field.defKey,true)}} { get; set; }\n        $blankline\n        {{~}}\n        \n    }\n}",
-        "SqlSugar": "using System;\nusing System.Collections.Generic;\nusing SqlSugar;\n\n$blankline\n{{\n    var today=new Date();\n    var fullYear=today.getFullYear();\n    var month=today.getMonth() + 1;\n    var days=today.getDate();\n    var sqlSugartable='[SugarTable(\"{{=it.entity.defKey}}\", TableDescription = \"{{=it.func.join(it.entity.defName,it.entity.comment,';')}}\")]';\n}}\n/*\n * @author : xkdong@163.com\n * @date : {{=fullYear}}-{{=month}}-{{=days}}\n * @desc : {{=it.func.join(it.entity.defName,it.entity.comment,'-')}}\n */\nnamespace Model.DBModel\n{\n    /// <summary>\n    /// {{=it.func.join(it.entity.defName,it.entity.comment,';')}}\n    /// </summary>\n    {{=sqlSugartable}}\n    public class {{=it.entity.defKey}}\n    {\n        {{~it.entity.fields:field:index}}\n        /// <summary>\n        /// {{=it.func.join(field.defName,field.comment,';')}}\n        /// </summary>\n        {{? field.primaryKey }}\n        [SugarColumn(IsIdentity = true, IsPrimaryKey = true)]\n        {{?}}\n        public {{=field.type}} {{=it.func.camel(field.defKey,true)}}{ get; set; }\n        $blankline\n        {{~}}\n    }\n}",
-        "FreeSql": "using System;\r\nusing FreeSql.DataAnnotations;\r\n\r\n$blankline\r\n{{\r\n    var today=new Date();\r\n    var fullYear=today.getFullYear();\r\n    var month=today.getMonth() + 1;\r\n    var days=today.getDate();\r\n    var nameSpace=it.entity.env.base.nameSpace +'.Models';\r\n    \r\n    function getTableAttribute(){ \r\n        return `[Table(Name = \"${it.func.camel(it.entity.defKey,true)}\")]`;\r\n    }\r\n    \r\n    function getIndexAttribute(){\r\n        var indexAtrr=[];  \r\n        it.entity.indexes.forEach(function(field){\r\n            var fields=[];\r\n            for(var item  of field.fields){\r\n                fields.push(it.func.camel(item.fieldDefKey,true)+(item.ascOrDesc!='A'?' desc':''));\r\n            }\r\n            index=`[Index(\"${field.defKey}\",\"${it.func.join(fields)}\",${field.unique})]`;\r\n            indexAtrr.push(index)\r\n        });\r\n        return indexAtrr.join('\\n    ');\r\n    }\r\n    \r\n    function getColumnAttribute(){\r\n        var atrrs=[];\r\n        if(field.primaryKey) atrrs.push('IsPrimary = true');\r\n        if(field.autoIncrement) atrrs.push('IsIdentity = true'); \r\n        if(field.type=='string' && field.len ) atrrs.push(`StringLength = ${field.len}`);\r\n        if(field.type=='string' && field.notNull ) atrrs.push('IsNullable = false');\r\n        if(field.type=='decimal' && field.len ) atrrs.push(`Precision = ${field.len}`);\r\n        if(field.type=='decimal' && field.scale ) atrrs.push(`Scale = ${field.scale}`);\r\n        if(field.defKey=='Version' || field.defName=='乐观锁' || field.comment=='乐观锁') atrrs.push('IsVersion = true');\r\n        return atrrs.length>0?`[Column(${it.func.join(atrrs)})]`:'';\r\n    }\r\n    \r\n   function getProperty(){\r\n       var stype = field.type ;\r\n       if(field.notNull && field.type!='string') stype+='?'; \r\n       var name = it.func.camel(field.defKey,true);\r\n       var defaultValue = field.defaultValue ? '= '+field.defaultValue.replaceAll('\\'','\\\"')+';':'';\r\n       return `public ${stype} ${name} { get; set; } ${defaultValue}`;\r\n   }\r\n}}\r\n\r\n/*\r\n * @author : Alen\r\n * @date : {{=fullYear}}-{{=month}}-{{=days}}\r\n * @desc : {{=it.func.join(it.entity.defName,it.entity.comment,'-')}}\r\n */\r\nnamespace {{=nameSpace}}\r\n{\r\n\t/// <summary>\r\n\t/// {{=it.func.join(it.entity.defName,it.entity.comment,';')}}\r\n\t/// </summary>\r\n    {{=getTableAttribute()}}\r\n    {{=getIndexAttribute()}}\r\n    public partial class {{=it.func.camel(it.entity.defKey,true) }}\r\n    {\r\n        {{~it.entity.fields:field:index}}\r\n        /// <summary>\r\n        /// {{=it.func.join(field.defName,field.comment,';')}}\r\n        /// </summary>\r\n        {{=getColumnAttribute()}}\r\n        {{=getProperty()}}\r\n        $blankline\r\n        {{~}}\r\n    }\r\n}\r\n"
+        "SqlSugar": "using System;\nusing System.Collections.Generic;\nusing SqlSugar;\n\n$blankline\n{{\n    var today=new Date();\n    var fullYear=today.getFullYear();\n    var month=today.getMonth() + 1;\n    var days=today.getDate();\n    var sqlSugartable='[SugarTable(\"{{=it.entity.defKey}}\", TableDescription = \"{{=it.func.join(it.entity.defName,it.entity.comment,';')}}\")]';\n}}\n/*\n * @author : xkdong@163.com\n * @date : {{=fullYear}}-{{=month}}-{{=days}}\n * @desc : {{=it.func.join(it.entity.defName,it.entity.comment,'-')}}\n */\nnamespace Model.DBModel\n{\n    /// <summary>\n    /// {{=it.func.join(it.entity.defName,it.entity.comment,';')}}\n    /// </summary>\n    {{=sqlSugartable}}\n    public class {{=it.entity.defKey}}\n    {\n        {{~it.entity.fields:field:index}}\n        /// <summary>\n        /// {{=it.func.join(field.defName,field.comment,';')}}\n        /// </summary>\n        {{? field.primaryKey }}\n        [SugarColumn(IsIdentity = true, IsPrimaryKey = true)]\n        {{?}}\n        public {{=field.type}} {{=it.func.camel(field.defKey,true)}}{ get; set; }\n        $blankline\n        {{~}}\n    }\n}"
       },
       {
         "applyFor": "895CFD1D-4273-4D32-A2C4-CAC70200AB5B",
@@ -600,16 +618,16 @@
         "freeze": false
       }
     ],
-    "modelType": "modalGroup",
+    "modelType": "modalAll",
     "recentColors": [
+      "#741774",
+      "#d147d1",
       "#d148d1",
       "#ce4bce",
       "#831b83",
       "#dd31dd",
       "#da2fda",
-      "#e988e9",
-      "#000000",
-      "#DDE5FF"
+      "#e988e9"
     ],
     "DDLToggleCase": "L"
   },
@@ -634,15 +652,15 @@
         "77BD85E5-9D0D-4096-8427-CBA306FC9C6A": "VARCHAR",
         "11D1FB71-A587-4217-89BA-611B8A1F83E0": "STRING",
         "B363BE0B-F852-49B8-9B2E-F6D2174DEAC1": "TEXT",
+        "81CCA482-3F4D-4EAC-8CF9-F5E7BC098AD2": "string",
+        "56F4B55B-F0B8-4049-9E6B-50B95C1D793A": "VARCHAR",
+        "483F9346-C99E-4014-A1D2-A554606BD8A3": "VARCHAR",
         "797A1496-D649-4261-89B4-544132EC3F36": "String",
         "895CFD1D-4273-4D32-A2C4-CAC70200AB5B": "String",
         "A2EE7B4A-CE62-4290-B00C-B26C1BF18073": "String",
         "F3AC2415-E86B-40C6-9FEB-F4B7937D2C30": "string",
-        "81CCA482-3F4D-4EAC-8CF9-F5E7BC098AD2": "string",
         "B91D99E0-9B7C-416C-8737-B760957DAF09": "string",
-        "BDF457FD-9F98-4AC3-A705-7587B00A3BAB": "String",
-        "56F4B55B-F0B8-4049-9E6B-50B95C1D793A": "VARCHAR",
-        "483F9346-C99E-4014-A1D2-A554606BD8A3": "VARCHAR"
+        "BDF457FD-9F98-4AC3-A705-7587B00A3BAB": "String"
       },
       {
         "defKey": "double",
@@ -658,15 +676,15 @@
         "77BD85E5-9D0D-4096-8427-CBA306FC9C6A": "NUMERIC",
         "11D1FB71-A587-4217-89BA-611B8A1F83E0": "DOUBLE",
         "B363BE0B-F852-49B8-9B2E-F6D2174DEAC1": "REAL",
+        "81CCA482-3F4D-4EAC-8CF9-F5E7BC098AD2": "double",
+        "56F4B55B-F0B8-4049-9E6B-50B95C1D793A": "DECIMAL",
+        "483F9346-C99E-4014-A1D2-A554606BD8A3": "DECIMAL",
         "797A1496-D649-4261-89B4-544132EC3F36": "Double",
         "895CFD1D-4273-4D32-A2C4-CAC70200AB5B": "Double",
         "A2EE7B4A-CE62-4290-B00C-B26C1BF18073": "Double",
         "F3AC2415-E86B-40C6-9FEB-F4B7937D2C30": "decimal",
-        "81CCA482-3F4D-4EAC-8CF9-F5E7BC098AD2": "double",
         "B91D99E0-9B7C-416C-8737-B760957DAF09": "*float64",
-        "BDF457FD-9F98-4AC3-A705-7587B00A3BAB": "f64",
-        "56F4B55B-F0B8-4049-9E6B-50B95C1D793A": "DECIMAL",
-        "483F9346-C99E-4014-A1D2-A554606BD8A3": "DECIMAL"
+        "BDF457FD-9F98-4AC3-A705-7587B00A3BAB": "f64"
       },
       {
         "defKey": "int",
@@ -682,15 +700,15 @@
         "77BD85E5-9D0D-4096-8427-CBA306FC9C6A": "INT4",
         "11D1FB71-A587-4217-89BA-611B8A1F83E0": "INT",
         "B363BE0B-F852-49B8-9B2E-F6D2174DEAC1": "INTEGER",
+        "81CCA482-3F4D-4EAC-8CF9-F5E7BC098AD2": "int",
+        "56F4B55B-F0B8-4049-9E6B-50B95C1D793A": "INTEGER",
+        "483F9346-C99E-4014-A1D2-A554606BD8A3": "INT",
         "797A1496-D649-4261-89B4-544132EC3F36": "Integer",
         "895CFD1D-4273-4D32-A2C4-CAC70200AB5B": "Integer",
         "A2EE7B4A-CE62-4290-B00C-B26C1BF18073": "Integer",
         "F3AC2415-E86B-40C6-9FEB-F4B7937D2C30": "float",
-        "81CCA482-3F4D-4EAC-8CF9-F5E7BC098AD2": "int",
         "B91D99E0-9B7C-416C-8737-B760957DAF09": "*int",
-        "BDF457FD-9F98-4AC3-A705-7587B00A3BAB": "i32",
-        "56F4B55B-F0B8-4049-9E6B-50B95C1D793A": "INTEGER",
-        "483F9346-C99E-4014-A1D2-A554606BD8A3": "INT"
+        "BDF457FD-9F98-4AC3-A705-7587B00A3BAB": "i32"
       },
       {
         "defKey": "date",
@@ -706,15 +724,15 @@
         "77BD85E5-9D0D-4096-8427-CBA306FC9C6A": "DATE",
         "11D1FB71-A587-4217-89BA-611B8A1F83E0": "DATETIME",
         "B363BE0B-F852-49B8-9B2E-F6D2174DEAC1": "NUMERIC",
+        "81CCA482-3F4D-4EAC-8CF9-F5E7BC098AD2": "timestamp",
+        "56F4B55B-F0B8-4049-9E6B-50B95C1D793A": "DATE",
+        "483F9346-C99E-4014-A1D2-A554606BD8A3": "DATETIME",
         "797A1496-D649-4261-89B4-544132EC3F36": "Date",
         "895CFD1D-4273-4D32-A2C4-CAC70200AB5B": "Date",
         "A2EE7B4A-CE62-4290-B00C-B26C1BF18073": "Date",
         "F3AC2415-E86B-40C6-9FEB-F4B7937D2C30": "DateTime",
-        "81CCA482-3F4D-4EAC-8CF9-F5E7BC098AD2": "timestamp",
         "B91D99E0-9B7C-416C-8737-B760957DAF09": "*time.Time",
-        "BDF457FD-9F98-4AC3-A705-7587B00A3BAB": "DateTime<Local>",
-        "56F4B55B-F0B8-4049-9E6B-50B95C1D793A": "DATE",
-        "483F9346-C99E-4014-A1D2-A554606BD8A3": "DATETIME"
+        "BDF457FD-9F98-4AC3-A705-7587B00A3BAB": "DateTime<Local>"
       },
       {
         "defKey": "bytes",
@@ -730,13 +748,13 @@
         "77BD85E5-9D0D-4096-8427-CBA306FC9C6A": "BYTEA",
         "11D1FB71-A587-4217-89BA-611B8A1F83E0": "BINARY",
         "B363BE0B-F852-49B8-9B2E-F6D2174DEAC1": "NONE",
+        "81CCA482-3F4D-4EAC-8CF9-F5E7BC098AD2": "binary",
+        "56F4B55B-F0B8-4049-9E6B-50B95C1D793A": "BYTE",
         "797A1496-D649-4261-89B4-544132EC3F36": "byte[]",
         "895CFD1D-4273-4D32-A2C4-CAC70200AB5B": "byte[]",
         "A2EE7B4A-CE62-4290-B00C-B26C1BF18073": "byte[]",
         "F3AC2415-E86B-40C6-9FEB-F4B7937D2C30": "binary",
-        "81CCA482-3F4D-4EAC-8CF9-F5E7BC098AD2": "binary",
-        "B91D99E0-9B7C-416C-8737-B760957DAF09": "[]byte",
-        "56F4B55B-F0B8-4049-9E6B-50B95C1D793A": "BYTE"
+        "B91D99E0-9B7C-416C-8737-B760957DAF09": "[]byte"
       },
       {
         "defKey": "largeText",
@@ -752,15 +770,15 @@
         "77BD85E5-9D0D-4096-8427-CBA306FC9C6A": "TEXT",
         "11D1FB71-A587-4217-89BA-611B8A1F83E0": "STRING",
         "B363BE0B-F852-49B8-9B2E-F6D2174DEAC1": "TEXT",
+        "81CCA482-3F4D-4EAC-8CF9-F5E7BC098AD2": "string",
+        "56F4B55B-F0B8-4049-9E6B-50B95C1D793A": "TEXT",
+        "483F9346-C99E-4014-A1D2-A554606BD8A3": "STRING",
         "797A1496-D649-4261-89B4-544132EC3F36": "String",
         "895CFD1D-4273-4D32-A2C4-CAC70200AB5B": "String",
         "A2EE7B4A-CE62-4290-B00C-B26C1BF18073": "String",
         "F3AC2415-E86B-40C6-9FEB-F4B7937D2C30": "string",
-        "81CCA482-3F4D-4EAC-8CF9-F5E7BC098AD2": "string",
         "B91D99E0-9B7C-416C-8737-B760957DAF09": "string",
-        "BDF457FD-9F98-4AC3-A705-7587B00A3BAB": "String",
-        "56F4B55B-F0B8-4049-9E6B-50B95C1D793A": "TEXT",
-        "483F9346-C99E-4014-A1D2-A554606BD8A3": "STRING"
+        "BDF457FD-9F98-4AC3-A705-7587B00A3BAB": "String"
       }
     ]
   },
@@ -857,235 +875,6 @@
     }
   ],
   "diagrams": [],
-  "standardFields": [
-    {
-      "defKey": "personInfo",
-      "defName": "个人基本信息要素",
-      "fields": [
-        {
-          "defKey": "ID_CARD_NO",
-          "defName": "身份证号",
-          "comment": "",
-          "type": "VARCHAR",
-          "len": "60",
-          "scale": "",
-          "primaryKey": false,
-          "notNull": false,
-          "autoIncrement": false,
-          "defaultValue": "",
-          "hideInGraph": false,
-          "domain": "9092C4E0-1A54-4859-ABBB-5B62DBC27573",
-          "refDict": "",
-          "uiHint": "",
-          "id": "A64A91C8-A41F-4113-92FB-7563D7EF054D"
-        },
-        {
-          "defKey": "MOBILE_PHONE",
-          "defName": "手机号",
-          "comment": "",
-          "type": "VARCHAR",
-          "len": "60",
-          "scale": "",
-          "primaryKey": false,
-          "notNull": false,
-          "autoIncrement": false,
-          "defaultValue": "",
-          "hideInGraph": false,
-          "domain": "9092C4E0-1A54-4859-ABBB-5B62DBC27573",
-          "refDict": "",
-          "uiHint": "",
-          "id": "479DA2AB-1974-411A-A81E-92FB939E75EB"
-        },
-        {
-          "defKey": "GENDER",
-          "defName": "性别",
-          "comment": "",
-          "type": "VARCHAR",
-          "len": "32",
-          "scale": "",
-          "primaryKey": false,
-          "notNull": false,
-          "autoIncrement": false,
-          "defaultValue": "",
-          "hideInGraph": false,
-          "domain": "73FD2BAD-2358-4336-B96D-45DC897BD792",
-          "refDict": "BF9E20E0-80D3-486D-BD58-5FADCF3E4A1D",
-          "uiHint": "",
-          "id": "48473E29-6594-4912-AADE-C8AB44FCA3E9"
-        },
-        {
-          "defKey": "BIRTH",
-          "defName": "出生日期",
-          "comment": "",
-          "type": "DATETIME",
-          "len": "",
-          "scale": "",
-          "primaryKey": false,
-          "notNull": false,
-          "autoIncrement": false,
-          "defaultValue": "",
-          "hideInGraph": false,
-          "domain": "7CFFA0D3-6A93-4DDC-BC10-DF21211064DC",
-          "refDict": "",
-          "uiHint": "",
-          "id": "2BD3D2EE-2411-49A6-983D-84B81057312F"
-        },
-        {
-          "defKey": "AVATAR",
-          "defName": "头像",
-          "comment": "",
-          "type": "VARCHAR",
-          "len": "60",
-          "scale": "",
-          "primaryKey": false,
-          "notNull": false,
-          "autoIncrement": false,
-          "defaultValue": "",
-          "hideInGraph": false,
-          "domain": "9092C4E0-1A54-4859-ABBB-5B62DBC27573",
-          "refDict": "",
-          "uiHint": "",
-          "id": "FDD67CEE-4B52-4BD1-A1A3-9C5EBC6037E6"
-        },
-        {
-          "defKey": "HEIGHT",
-          "defName": "身高",
-          "comment": "",
-          "type": "INT",
-          "len": "",
-          "scale": "",
-          "primaryKey": false,
-          "notNull": false,
-          "autoIncrement": false,
-          "defaultValue": "",
-          "hideInGraph": false,
-          "domain": "6BC8F04B-6CFA-4995-98D3-318F5CDD774E",
-          "refDict": "",
-          "uiHint": "",
-          "id": "CAAA0E79-41A1-4758-B481-D171168C4D68"
-        },
-        {
-          "defKey": "WEIGHT",
-          "defName": "体重",
-          "comment": "",
-          "type": "INT",
-          "len": "",
-          "scale": "",
-          "primaryKey": false,
-          "notNull": false,
-          "autoIncrement": false,
-          "defaultValue": "",
-          "hideInGraph": false,
-          "domain": "6BC8F04B-6CFA-4995-98D3-318F5CDD774E",
-          "refDict": "",
-          "uiHint": "",
-          "id": "575482CE-64A6-4CB9-99DC-8E126D190AAA"
-        },
-        {
-          "defKey": "NATION",
-          "defName": "名族",
-          "comment": "",
-          "type": "VARCHAR",
-          "len": "32",
-          "scale": "",
-          "primaryKey": false,
-          "notNull": false,
-          "autoIncrement": false,
-          "defaultValue": "",
-          "hideInGraph": false,
-          "domain": "73FD2BAD-2358-4336-B96D-45DC897BD792",
-          "refDict": "115EDEFC-0323-410E-81AB-CCAB8879837A",
-          "uiHint": "",
-          "id": "15B0D75D-0B97-4985-A816-D0EAFA90446B"
-        },
-        {
-          "defKey": "POLITICAL",
-          "defName": "政治面貌",
-          "comment": "",
-          "type": "VARCHAR",
-          "len": "32",
-          "scale": "",
-          "primaryKey": false,
-          "notNull": false,
-          "autoIncrement": false,
-          "defaultValue": "",
-          "hideInGraph": false,
-          "domain": "73FD2BAD-2358-4336-B96D-45DC897BD792",
-          "refDict": "06EED564-BBA9-4747-8D73-AF809A330CB8",
-          "uiHint": "",
-          "id": "F458E86D-84D6-45A1-9DD3-51E6C8170D7F"
-        },
-        {
-          "defKey": "MARITAL",
-          "defName": "婚姻状况",
-          "comment": "",
-          "type": "VARCHAR",
-          "len": "32",
-          "scale": "",
-          "primaryKey": false,
-          "notNull": false,
-          "autoIncrement": false,
-          "defaultValue": "",
-          "hideInGraph": false,
-          "domain": "73FD2BAD-2358-4336-B96D-45DC897BD792",
-          "refDict": "EA1587B7-3954-437A-BFE0-FCB0453BCABA",
-          "uiHint": "",
-          "id": "7275E578-6893-4922-AC69-95B261BFBD61"
-        },
-        {
-          "defKey": "DOMICILE_PLACE_PROVINCE",
-          "defName": "籍贯（省）",
-          "comment": "",
-          "type": "VARCHAR",
-          "len": "60",
-          "scale": "",
-          "primaryKey": false,
-          "notNull": false,
-          "autoIncrement": false,
-          "defaultValue": "",
-          "hideInGraph": false,
-          "domain": "9092C4E0-1A54-4859-ABBB-5B62DBC27573",
-          "refDict": "",
-          "uiHint": "",
-          "id": "F04BF130-3EC1-4E02-9DED-3214CA88E352"
-        },
-        {
-          "defKey": "DOMICILE_PLACE_CITY",
-          "defName": "籍贯（市）",
-          "comment": "",
-          "type": "VARCHAR",
-          "len": "32",
-          "scale": "",
-          "primaryKey": false,
-          "notNull": false,
-          "autoIncrement": false,
-          "defaultValue": "",
-          "hideInGraph": false,
-          "domain": "73FD2BAD-2358-4336-B96D-45DC897BD792",
-          "refDict": "",
-          "uiHint": "",
-          "id": "B97F5BC2-33DE-4857-9DB8-ECFD02C9040C"
-        },
-        {
-          "defKey": "DOMICILE_PLACE_ADDRESS",
-          "defName": "户籍地址",
-          "comment": "",
-          "type": "VARCHAR",
-          "len": "60",
-          "scale": "",
-          "primaryKey": false,
-          "notNull": false,
-          "autoIncrement": false,
-          "defaultValue": "",
-          "hideInGraph": false,
-          "domain": "9092C4E0-1A54-4859-ABBB-5B62DBC27573",
-          "refDict": "",
-          "uiHint": "",
-          "id": "812ADF1D-8C03-40CA-B030-E539838FB889"
-        }
-      ],
-      "id": "F30202B9-4B5D-4CE7-87CE-B3890C84D3F2"
-    }
-  ],
+  "standardFields": [],
   "dbConn": []
 }

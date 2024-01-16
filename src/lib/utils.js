@@ -612,6 +612,7 @@ export const _transform = (f, dataSource, code, type = 'id', codeType = 'dbDDL',
         temp.baseType = mapping?.defName || mapping?.defKey || '';
         temp.type = mapping?.[code || db] || f.type || '';
         temp.dbType = mapping?.[db] || f.type || '';
+        temp.baseTypeData = mapping;
     } else {
         temp.dbType = f.type || '';
     }
@@ -1002,15 +1003,20 @@ export const _mergeDataSource = (oldDataSource, newDataSource, selectEntity, ign
     const tempDomains = _mergeData(domains, newDomains, true, false);
     // 合并数据表
     const entities = oldDataSource.entities || [];
-    const newDb = _.get(newDataSource, 'profile.default.db',
-        _.get(newDataSource, 'profile.dataTypeSupports[0].id'));
+    const getDb = (dataSource) => {
+        return _.get(dataSource, 'profile.default.db',
+            _.get(dataSource, 'profile.dataTypeSupports[0].id'));
+    };
+    const preDb = getDb(oldDataSource);
+    const newDb = getDb(newDataSource) || preDb;
+    // 合并baseType
     const newEntities = (selectEntity || []).map(e => ({
         ...e,
         isNew: true,
         properties: e.properties || oldDataSource?.profile?.default?.entityInitProperties || {},
         fields: (e.fields || []).map(f => ({
             ...f,
-            baseType: _getFieldBaseType(f, newDomains, newMappings, newDb),
+            baseType: _getFieldBaseType(f, tempDomains, tempMappings, newDb),
             extProps: f.extProps || oldDataSource?.profile?.extProps || {}
         })),
     }));
@@ -1559,3 +1565,87 @@ export const _getAllDataSQLByFilter = (data, code, filterTemplate, filterDefKey)
     // }
     return sqlString;
 };
+
+export const id2DefSplit = '[';
+
+export const _def2Id = (fields, dataSource) => {
+    const domains = dataSource?.domains || [];
+    const mappings = dataSource?.dataTypeMapping?.mappings || [];
+    const dicts = dataSource?.dicts || [];
+    const uiHints = _.get(dataSource, 'profile.uiHint', []);
+    const db = _.get(dataSource, 'profile.default.db', _.get(dataSource, 'profile.dataTypeSupports[0].id'));
+    // domain refDict uiHint type
+    const refactorName = (f, data, name, defaultName = name) => {
+        const d = data.find(d => d.id === f[name]);
+        return d ? `${defaultName === 'type' ? d[db] : d.defKey}[${d.defName}]` : f[defaultName]
+    };
+    return fields.map(f => {
+        const temp = {...f};
+        if(f.baseType) {
+            temp.type = refactorName(f, mappings, 'baseType', 'type')
+            temp.baseType = refactorName(f, mappings, 'baseType')
+        }
+        if(f.domain) {
+            temp.domain = refactorName(f, domains, 'domain')
+        }
+        if(f.refDict) {
+            temp.refDict = refactorName(f, dicts, 'refDict')
+        }
+        if(f.uiHint) {
+            temp.uiHint = refactorName(f, uiHints, 'uiHint')
+        }
+        return temp
+    })
+}
+
+export const _id2Def = (fields, dataSource) => {
+    const domains = dataSource?.domains || [];
+    const mappings = dataSource?.dataTypeMapping?.mappings || [];
+    const dicts = dataSource?.dicts || [];
+    const uiHints = _.get(dataSource, 'profile.uiHint', []);
+    const db = _.get(dataSource, 'profile.default.db', _.get(dataSource, 'profile.dataTypeSupports[0].id'));
+    // domain refDict uiHint type
+    const refactorName = (f, data, name, defaultName = name) => {
+        if(f[name].includes(id2DefSplit)) {
+            const defKey = f[name].split(id2DefSplit)[0];
+            const d = data.find(m => m.defKey === defKey);
+            return d ? d.id : f[defaultName]
+        }
+        return f[defaultName]
+    };
+    return fields.map(f => {
+        const temp = {...f};
+        if(f.type && f.type.includes(id2DefSplit)) {
+            temp.type = f.type.split(id2DefSplit)[0];
+        }
+        if(f.domain) {
+            temp.domain = refactorName(f, domains, 'domain');
+        }
+        if(f.baseType && f.baseType.includes(id2DefSplit)) {
+            temp.baseType = refactorName(f, mappings, 'baseType');
+        } else {
+            temp.baseType = _getFieldBaseType(temp, domains, mappings, db);
+        }
+        if(f.refDict) {
+            temp.refDict = refactorName(f, dicts, 'refDict');
+        }
+        if(f.uiHint) {
+            temp.uiHint = refactorName(f, uiHints, 'uiHint');
+        }
+        return temp
+    })
+}
+
+
+export const _mergeId = (newFields, oldFields) => {
+    return newFields.map(f => {
+       const old = oldFields.find(o => o.id === f.id);
+       if(old) {
+           return {
+               ...old,
+               ...f,
+           }
+       }
+       return f;
+    });
+}

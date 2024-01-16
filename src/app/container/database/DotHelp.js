@@ -30,7 +30,7 @@ export default React.memo(({prefix}) => {
               <th><FormatMessage id='database.dot.conditional'/></th>
               <th>if</th>
               <th>{`{{? ${FormatMessage.string({id: 'database.dot.expression'})}}}`}</th>
-              <th>{'{{? i > 3}}'}</th>
+              <th>{'{{? i > 3}}...{{?}}'}</th>
             </tr>
             <tr>
               <th><FormatMessage id='database.dot.transition'/></th>

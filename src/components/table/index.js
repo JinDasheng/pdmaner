@@ -17,7 +17,7 @@ import {
   validateFields,
   emptyField,
   getColumnWidth,
-  generatorKey, transformFieldType, getFieldBaseType,parseExcel,
+  generatorKey, transformFieldType, getFieldBaseType, parseExcel, mergeId, emptyDictItem,
 } from '../../lib/datasource_util';
 import { moveArrayPositionByArray } from '../../lib/array_util';
 import { addBodyEvent, removeBodyEvent } from '../../lib/listener';
@@ -35,7 +35,7 @@ import {getCopyRealData, putCopyRealData} from '../../lib/contextMenuUtil';
 const empty = [];
 
 const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort, search,
-                               dataSource, customerHeaders, tableDataChange,
+                               dataSource, customerHeaders, tableDataChange, tableType,
                                defaultEmptyField, validate, disableCopyAndCut, onTableRowClick,
                                onAdd, ExtraOpt, style, hiddenHeader, getRestData,
                                className, expand, otherOpt = true, disableHeaderReset,
@@ -47,6 +47,7 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort, sea
                                      refInstance) => {
   const { lang } = useContext(ConfigContent);
   const { valueContext, valueSearch } = useContext(TableContent);
+  const sheetRef = useRef(null);
   const inputRef = useRef({});
   const currentPrefix = getPrefix(prefix);
   const [expands, setExpands] = useState([]);
@@ -1081,6 +1082,49 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort, sea
   const jumpEdit = () => {
     openConfig && openConfig();
   };
+  const jumpExcel = () => {
+    let modal = null;
+    const onOk = () => {
+      updateTableData((p) => {
+        const newFields = mergeId(sheetRef.current.getSheetData(), p.fields);
+        tableDataChange && tableDataChange(newFields, 'fields');
+        return {
+          ...p,
+          fields: newFields,
+        };
+      });
+      sheetRef.current.destroy();
+      modal && modal.close();
+    };
+    const onCancel = () => {
+      sheetRef.current.destroy();
+      modal && modal.close();
+    };
+    // 需要移除的列
+    const removeColumns = ['hideInGraph', 'isStandard', 'extProps'];
+    modal = Component.openModal(<Component.Sheet
+      emptyRow={isEntity ? emptyField : emptyDictItem}
+      data={{headers: tempHeaders
+            .filter(h => (h.enable !== false) && (!removeColumns.includes(h.refKey))),
+fields}}
+      dataSource={dataSource}
+      ref={sheetRef}
+    />, {
+      bodyStyle: {
+        width: tableType === 'logicEntity' ? '60%' : '90%',
+      },
+      contentStyle: {
+        height: '90vh',
+      },
+      title: Component.FormatMessage.string({id: 'tableEdit.excelMode'}),
+      buttons: [<Component.Button type='primary' key='ok' onClick={onOk}>
+        <Component.FormatMessage id='button.ok'/>
+      </Component.Button>,
+        <Component.Button key='cancel' onClick={onCancel}>
+          <Component.FormatMessage id='button.cancel'/>
+        </Component.Button>],
+    });
+  };
   const isView = finalTempHeaders.some(h => h.refKey === 'refEntity');
   const onScroll = (index, length) => {
     setDataPosition({
@@ -1272,7 +1316,8 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort, sea
                   </div>
               }
             </span>
-              {isEntity && <span className={`${currentPrefix}-table-opt-setting`} onClick={jumpEdit}>{Component.FormatMessage.string({id: 'tableEdit.columnSetting'})}</span>}
+              {isEntity && <span className={`${currentPrefix}-table-opt-setting`} key='setting' onClick={jumpEdit}>{Component.FormatMessage.string({id: 'tableEdit.columnSetting'})}</span>}
+              {(isEntity || tableType === 'dict' || tableType === 'logicEntity') && <span className={`${currentPrefix}-table-opt-setting`} key='excel' onClick={jumpExcel}>{Component.FormatMessage.string({id: 'tableEdit.excelMode'})}</span> }
             </span>
         }
         {

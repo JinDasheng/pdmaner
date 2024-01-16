@@ -8,7 +8,16 @@ import {firstUp} from './string';
 import {compareVersion} from './update';
 import demoProject from './template/教学管理系统.pdma.json';
 import {notify} from './subscribe';
-import {_getDefaultTemplate, _getFieldBaseType, _mergeData, _mergeDataSource, _transform} from './utils';
+import {
+  _def2Id,
+  _getDefaultTemplate,
+  _getFieldBaseType,
+  _id2Def,
+  _mergeData,
+  _mergeDataSource,
+  _transform,
+  _mergeId
+} from './utils';
 import {postWorkerFuc} from './event_tool';
 
 export const allType = [
@@ -2543,4 +2552,16 @@ export const parseExcel = (str, headers) => {
       return p;
     }, {})
   });
+}
+
+export const def2Id = (...args) => {
+  return _def2Id(...args);
+}
+
+export const id2Def = (...args) => {
+  return _id2Def(...args);
+}
+
+export const mergeId = (...args) => {
+  return _mergeId(...args);
 }

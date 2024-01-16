@@ -2,9 +2,10 @@ import React, { useState, forwardRef, useRef } from 'react';
 
 import './style/index.less';
 import {getPrefix} from '../../lib/prefixUtil';
+import FormatMessage from '../formatmessage';
 
 const Input = React.memo(forwardRef(({ prefix ,defaultValue, suffix, placeholder, readOnly,
-                                       onClick, type = 'text', trim, accept, onKeyDown, maxLength, disable,
+                                       onClick, type = 'text', trim, accept, onKeyDown, maxLength, disable, toggleCase,
                                        ...restProps }, ref) => {
   const [stateValue, setDefaultValue]  = useState(defaultValue);
   const composition = useRef(false);
@@ -24,6 +25,19 @@ const Input = React.memo(forwardRef(({ prefix ,defaultValue, suffix, placeholder
   if ('value' in restProps) {
     tempValue = restProps.value;
   }
+  const toggle = (e, toggleType) => {
+    const { onChange } = restProps;
+    const newValue = toggleType === 'up' ? tempValue.toLocaleUpperCase() : tempValue.toLocaleLowerCase();
+    setDefaultValue(newValue);
+    e.target.value = newValue;
+    onChange && onChange(e);
+  };
+  const low = (e) => {
+    toggle(e, 'low');
+  };
+  const up = (e) => {
+    toggle(e, 'up');
+  };
   const _onBlur = (e) => {
     const { onBlur, onChange } = restProps;
     const blurValue = e.target.value;
@@ -84,6 +98,9 @@ const Input = React.memo(forwardRef(({ prefix ,defaultValue, suffix, placeholder
       onBlur={_onBlur}
     />
     {suffix && <span className={`${currentPrefix}-input-suffix`}>{suffix}</span>}
+    {toggleCase && <span className={`${currentPrefix}-input-toggle`}>
+      <span onClick={up}><FormatMessage id='components.input.up'/></span><span />
+      <span onClick={low}><FormatMessage id='components.input.low'/></span></span>}
   </span>);
 }));
 export default Input;

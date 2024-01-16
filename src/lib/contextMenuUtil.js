@@ -212,58 +212,73 @@ export const dealMenuClick = (dataSource, menu, updateDataSource, tabClose, call
   }
 };
 
-const extractOpt = (dataSource, menu, updateDataSource, jumpDetail) => {
-  let modal = null;
-  const name = menu.dataType === 'entity' ? 'entities' : 'logicEntities';
-  const allName = menu.dataType === 'entity' ? 'logicEntities' : 'entities';
-  const currentData = (dataSource[name] || []).find(e => e.id === menu.dataKey) || {};
+const extractOpt = (dataSource, currentMenu, updateDataSource, jumpDetail) => {
+  const otherMenus = currentMenu.otherMenus.filter(m => m.type === currentMenu.dataType)
+  const name = currentMenu.dataType === 'entity' ? 'entities' : 'logicEntities';
+  const allName = currentMenu.dataType === 'entity' ? 'logicEntities' : 'entities';
   const allData = dataSource[allName] || [];
   let parentKey = '';
-  if(menu.parentKey !== 'logicEntities' && menu.parentKey !== 'entities') {
-    parentKey = menu.parentKey;
+  if(currentMenu.parentKey !== 'logicEntities' && currentMenu.parentKey !== 'entities') {
+    parentKey = currentMenu.parentKey;
+  }
+  const currentAllData = currentMenu.dataType === 'logicEntity' ?
+      allData.map(d => ({defKey: `${d.defKey || ''}${d.defName || ''}`})) : [...allData]
+
+  const genExtractData = (menu) => {
+    // 判断是否存在
+    const validateRepeat = (extractData) => {
+      const calcData = (data, key) => {
+        return data.some(d => d.defKey === key);
+      }
+      let isRepeat;
+      let newDefKey = extractData.defKey;
+      if(extractData.type === 'L') {
+        isRepeat = calcData(currentAllData,
+            `${extractData.defKey || ''}${extractData.defName || ''}`);
+      } else {
+        isRepeat = calcData(currentAllData,extractData.defKey);
+      }
+      if(isRepeat) {
+        newDefKey = validateRepeat({
+          ...extractData,
+          defKey: `${extractData.defKey}_1`
+        })
+      }
+      currentAllData.push({defKey: newDefKey})
+      return newDefKey;
+    }
+    const currentData = (dataSource[name] || []).find(e => e.id === menu.key) || {};
+    // 重命名逻辑模型
+    const renameDefKey = (defKey = '') => {
+      // 判断是否是LE开头
+      const reg = /^le_/i;
+      const newDefKey = defKey.replace(reg, '');
+      if(name === 'entities') {
+        return `LE_${newDefKey}`;
+      }
+      return newDefKey;
+    }
+    // 组装新数据
+    return {
+      ..._.pick(currentData, ['defName', 'comment', 'env', 'notes', 'properties']),
+      defKey: validateRepeat({
+        defKey: renameDefKey(currentData.defKey || currentData.defName || ''),
+        defName: currentData.defName,
+      }),
+      id: Math.uuid(),
+      type: menu.type === 'entity' ? 'L' : 'P',
+      headers: menu.type === 'entity' ? getLogicHeaders() : resetHeader(dataSource, {}),
+      fields: (currentData.fields || []).map(f => ({...f, id: Math.uuid()})),
+      indexes: [],
+      correlations: [],
+      sysProps: menu.type === 'entity' ? getDefaultLogicSys() : {
+        nameTemplate: '{defKey}[{defName}]',
+      }
+    }
   }
 
-  const defKey = currentData.defKey;
-
-  // 重命名逻辑模型
-  const renameDefKey = (defKey = '') => {
-    // 判断是否是LE开头
-    const reg = /^le_/i;
-    const newDefKey = defKey.replace(reg, '');
-    if(name === 'entities') {
-      return `LE_${newDefKey}`;
-    }
-    return newDefKey;
-  }
-  // 组装新数据
-  let extractData = {
-    ..._.pick(currentData, ['defName', 'comment', 'env', 'notes', 'properties']),
-    defKey: renameDefKey(currentData.defKey || currentData.defName || ''),
-    id: Math.uuid(),
-    type: menu.dataType === 'entity' ? 'L' : 'P',
-    headers: menu.dataType === 'entity' ? getLogicHeaders() : resetHeader(dataSource, {}),
-    fields: (currentData.fields || []).map(f => ({...f, id: Math.uuid()})),
-    indexes: [],
-    correlations: [],
-    sysProps: menu.dataType === 'entity' ? getDefaultLogicSys() : {
-      nameTemplate: '{defKey}[{defName}]',
-    }
-  }
-  // 判断是否存在
-  const validateRepeat = () => {
-    const calcData = (data, key) => {
-      return data.some(d => d.defKey === key);
-    }
-    let isRepeat;
-    if(extractData.type === 'L') {
-      isRepeat = calcData(allData.map(d => ({defKey: `${d.defKey || ''}${d.defName || ''}`})),
-          `${extractData.defKey || ''}${extractData.defName || ''}`);
-    } else {
-      isRepeat = calcData(allData,extractData.defKey);
-    }
-    return isRepeat;
-  }
-  const updateData = () => {
+  const updateData = (extractAllData) => {
+    const extractData = extractAllData[0];
     let currentGroup = null;
     const refName = extractData.type === 'P' ? 'refEntities' : 'refLogicEntities';
     updateDataSource({
@@ -273,12 +288,12 @@ const extractOpt = (dataSource, menu, updateDataSource, jumpDetail) => {
           currentGroup = v;
           return {
             ...v,
-            [refName]: (v[refName] || []).concat(extractData.id)
+            [refName]: (v[refName] || []).concat(extractAllData.map(e => e.id))
           }
         }
         return v;
       }) : dataSource.viewGroups,
-      [allName]: allData.concat(extractData)
+      [allName]: allData.concat(extractAllData)
     })
     Message.success({title: FormatMessage.string({id: 'optSuccess'})});
     jumpDetail({
@@ -287,59 +302,8 @@ const extractOpt = (dataSource, menu, updateDataSource, jumpDetail) => {
       groups: [currentGroup],
     }, allName);
   }
-  if(validateRepeat()) {
-    Modal.confirm({
-      title: FormatMessage.string({id: 'extractConfirmTitle'}),
-      message: FormatMessage.string({id: allName === 'entities' ? 'extractConfirmEntity' : 'extractConfirmLogicEntity'}),
-      onOk:() => {
-        const dataChange = (e, name) => {
-          extractData[name] = e.target.value;
-        }
-        const onOK = () => {
-          // 校验不能为空
-          if(allName === 'logicEntities' ? (!extractData.defKey && !extractData.defName) : !extractData.defKey) {
-            Modal.error({
-              title: FormatMessage.string({id: 'optFail'}),
-              message: allName === 'logicEntities' ? FormatMessage.string({id: 'logicEntity.validate'}) : FormatMessage.string({id: 'tableValidate.entityUniquenessCheck'})
-            });
-          } else if(validateRepeat()) {
-            // 校验不能重复
-            Modal.error({
-              title: FormatMessage.string({id: 'optFail'}),
-              message: allName === 'logicEntities' ? FormatMessage.string({
-                id: 'logicEntity.logicEntityUniquenessCheck',
-              }) : FormatMessage.string({
-                id: 'entityAndViewUniquenessCheck',
-                data: {
-                  key: FormatMessage.string({id: 'tableBase.defKey'})
-                }
-              })});
-          } else {
-            updateData();
-            modal?.close();
-          }
-        }
-        const onCancel = () => {
-          modal?.close();
-        }
-        modal = openModal(<Extract data={extractData} dataChange={dataChange}/>, {
-          bodyStyle: {width: '80%'},
-          title: FormatMessage.string({id: allName === 'entities' ? 'extractUpdateEntity' : 'extractUpdateLogicEntity'}),
-          buttons: [<Button key='onOK' onClick={onOK} type='primary'>
-            <FormatMessage id='button.ok'/>
-          </Button>,
-            <Button key='onCancel' onClick={onCancel}>
-              <FormatMessage id='button.cancel'/>
-            </Button>],
-          onEnter: () => {
-            onOK();
-          }
-        });
-      },
-    })
-  } else {
-    updateData();
-  }
+
+  updateData(otherMenus.map(m => genExtractData(m)))
 }
 
 const imgOpt = (dataSource, menu, genImg, imageType) => {
@@ -1118,7 +1082,7 @@ export const getCopyRealData = (dataSource, data) => {
           ...f,
           id: Math.uuid(),
           otherData: {
-            ..._.pick(transform(f, dataSource, db), ['domainData', 'refDictData', 'uiHintData', 'type']),
+            ..._.pick(transform(f, dataSource, db), ['domainData', 'refDictData', 'uiHintData', 'type', 'baseTypeData']),
             id: f.id,
           },
         }
@@ -1164,7 +1128,7 @@ export const putCopyRealData = (dataSource, data, needOldId) => {
         domain: domain || null,
         refDict: getDataId(dataSource.dicts || [], f.otherData?.refDictData, f.refDict),
         uiHint: getDataId(dataSource.profile?.uiHint || [], f.otherData?.uiHintData, f.uiHint),
-        baseType: getFieldBaseType(f, dataSource.domains || [], mappings, db)
+        baseType: getDataId(dataSource.dataTypeMapping?.mappings || [], f.otherData?.baseTypeData, getFieldBaseType(f, dataSource.domains || [], mappings, db))
       }
     })
   }

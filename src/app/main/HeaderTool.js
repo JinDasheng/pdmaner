@@ -249,7 +249,7 @@ export default React.memo(forwardRef(({currentPrefix, close, iconClick, openModa
                      children: [
                        {key: 'word', name: FormatMessage.string({id: 'toolbar.exportWord'})},
                        {key: 'html', name: FormatMessage.string({id: 'toolbar.exportHtml'})},
-                       {key: 'excel', disable: true, name: FormatMessage.string({id: 'toolbar.exportExcel'})},
+                       {key: 'export-excel', name: FormatMessage.string({id: 'toolbar.exportExcel'})},
                      ],
                    },
                     {

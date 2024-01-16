@@ -98,6 +98,7 @@ export default React.memo(({prefix, dataSource, dataChange, isNewView,
         </span>
         <span className={`${currentPrefix}-form-item-component`}>
           <Input
+            toggleCase
             maxLength={64}
             placeholder={FormatMessage.string({id: `${!isNewView ? 'tableBase.tableName' : 'viewBase.viewName'}`})}
             onChange={e => dataChange(e.target.value, 'defKey')}

@@ -157,6 +157,7 @@ export default React.memo(({prefix, dictData, dictChange, dataSource,
           validate={itemValidate}
           defaultEmptyField={emptyDictItem}
           data={memoizedData}
+          tableType='dict'
         />
       </div>
     </FieldSet>

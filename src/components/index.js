@@ -49,3 +49,4 @@ export { default as ColorPicker } from './colorpicker';
 export { default as Compare } from './compare';
 export { default as CompareList } from './compare/CompareList';
 export { default as VirtualList } from './virtuallist';
+export { default as Sheet } from './sheet';
