@@ -65,12 +65,14 @@ export const createContentMenu = (event, menus, cb) => {
     });
 };
 
-export const getChildrenCell = (n, cells) => {
+export const getChildrenCell = (n, cells, check = [n.id]) => {
+    // 避免极端情况下的死循环
     if (n.prop('children')?.length > 0) {
         return n.prop('children').reduce((a, b) => {
             const child = cells.find(c => c.id === b);
-            if (child) {
-                return a.concat(child).concat(getChildrenCell(child, cells));
+            if (child && !check.includes(child.id)) {
+                return a.concat(child)
+                    .concat(getChildrenCell(child, cells, check.concat(child.id)));
             }
             return a;
         }, []);

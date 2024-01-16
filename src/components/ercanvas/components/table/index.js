@@ -125,25 +125,32 @@ const Table = forwardRef(({node}, ref) => {
           return data.maxWidth[key];
         })
       }
-      {data.fields.length > sliceCount && <Tooltip
-        force
-        offsetTop={5}
-        title={<div
-          className='chiner-er-table-body'
-          style={{
-                fontSize: '12px',
-                overflow: 'auto',
-              }}
-          >
-          {renderBody(data.fields.slice(sliceCount), (key) => {
-              return data.originWidth[key];
-            })}
-        </div>}
-      >
+      {data.fields.length > sliceCount &&
         <div
           style={{textAlign: 'center', position: 'fixed', bottom: 0, left: 0, width: '100%', cursor: 'pointer'}}
-        >...</div>
-      </Tooltip>}
+        >
+          <Tooltip
+            force
+            offsetTop={5}
+            title={<div
+              className='chiner-er-table-body'
+              style={{
+                    fontSize: '12px',
+                    overflow: 'auto',
+                  }}
+              >
+              {renderBody(data.fields.slice(sliceCount), (key) => {
+                  return data.originWidth[key];
+                })}
+            </div>}
+          >
+            <span>
+              <span>
+                ...
+              </span>
+            </span>
+          </Tooltip>
+        </div>}
     </div>;
   }, [data.maxWidth, store.data.targetPort, store.data.sourcePort]);
   const title = `${getTitle(data)}${store?.data.count > 0 ? `:${store?.data.count}` : ''}`;

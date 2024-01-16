@@ -600,7 +600,7 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort, sea
             const fieldKeys = fields
                 .map(f => (f.defKey || '').toLocaleLowerCase());
             const finalFields = pasteFields.map((f) => {
-              const key = generatorKey((f.defKey || '').toLocaleLowerCase(), fieldKeys);
+              const key = generatorKey(f.defKey || '', fieldKeys);
               fieldKeys.push(key.toLocaleLowerCase());
                 return {
                   ...f,

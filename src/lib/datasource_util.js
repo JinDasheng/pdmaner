@@ -93,7 +93,7 @@ export const updateAllData = (dataSource) => {
       if (newDefKey && (newDefKey !== oldData?.defKey)) {
         // 不能跟当前打开的TAB的key重复
         // 不能跟已经存在的key重复
-        if (!currentDefKey[t.type].map(k => k?.toLocaleLowerCase()).includes(newDefKey?.toLocaleLowerCase())) {
+        if (!currentDefKey[t.type].some(k => k?.toLocaleLowerCase() === newDefKey?.toLocaleLowerCase())) {
           currentDefKey[t.type].push(newDefKey);
         } else {
           entityRepeatError.push(newDefKey);
@@ -1141,7 +1141,7 @@ export const generatorTableKey = (defKey, dataSource, name = 'entities', compare
 }
 
 export const generatorKey = (newKey, data) => {
-  if (!data.includes(newKey)) {
+  if (!data.includes(newKey.toLocaleLowerCase())) {
     return newKey;
   } else {
     return generatorKey(`${newKey}_1`, data);
