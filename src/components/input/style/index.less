@@ -3,20 +3,35 @@
 .@{prefix}-input {
   display: flex !important;
   flex-direction: row;
-  & > input {
-    line-height: 25px;
-    height: 25px;
-    padding: 5px 5px;
-    border: 1px solid @primary-border-color;
-    border-radius: 2px;
-    outline: none;
+  &-focus {
+    border: 1px solid @primary-color !important;
+    box-shadow: 0 0 0 2px @third-primary-color;
+  }
+  & > span:first-child {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
     &:hover {
       border: 1px solid @primary-color;
     }
-    &:focus {
-      border: 1px solid @primary-color;
-      box-shadow: 0 0 0 2px @third-primary-color;
+    border: 1px solid @primary-border-color;
+    border-radius: 2px;
+    & > input {
+      border-radius: 2px;
+      line-height: 23px;
+      height: 23px;
+      padding: 5px 5px;
+      outline: none;
+      border: none;
+      flex-grow: 1;
     }
+  }
+  &-count {
+    border-radius: 2px;
+    color: @primary-border-color;
+    font-size: 12px;
+    margin-right: 5px;
   }
   &-suffix {
     &-container {

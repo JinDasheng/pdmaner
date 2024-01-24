@@ -415,6 +415,11 @@ export const getDemoDbConnect = () => {
       url: FormatMessage.string({id: 'dbConnect.demoDbConnect.dm'}),
       driverClass: 'dm.jdbc.driver.DmDriver',
     },
+    dm_1: {
+      defKey: FormatMessage.string({id: 'dbConnect.demoDbConnect.dm_defKey_1'}),
+      url: FormatMessage.string({id: 'dbConnect.demoDbConnect.dm_1'}),
+      driverClass: 'dm.jdbc.driver.DmDriver',
+    },
     gaussdb: {
       defKey: FormatMessage.string({id: 'dbConnect.demoDbConnect.gaussdb_defKey'}),
       driverClass: 'org.postgresql.Driver',
@@ -454,6 +459,11 @@ export const getDemoDbConnect = () => {
       defKey: FormatMessage.string({id: 'dbConnect.demoDbConnect.doris_defKey'}),
       url: FormatMessage.string({id: 'dbConnect.demoDbConnect.mysql'}),
       driverClass: 'com.mysql.cj.jdbc.Driver',
+    },
+    'HighGo': {
+      defKey: FormatMessage.string({id: 'dbConnect.demoDbConnect.highgo_defKey'}),
+      url: FormatMessage.string({id: 'dbConnect.demoDbConnect.highgo'}),
+      driverClass: 'com.highgo.jdbc.Driver',
     }
   }
 };
@@ -727,6 +737,8 @@ const indexesTransform = (i) => {
     }),
   }
 }
+
+export const attEditType = ['TextInput', 'CheckBox', 'DropDown', 'DropDownMulti', 'NumberInput', 'TextArea'];
 
 export const attNames = ['attr1', 'attr2', 'attr3', 'attr4', 'attr5', 'attr6', 'attr7', 'attr8', 'attr9'];
 
@@ -1914,6 +1926,34 @@ export const transformationData = (oldDataSource) => {
           nameTemplate: v.nameTemplate
         },
       }))
+    }
+  }
+  if (compareVersion('4.9.0', oldDataSource.version.split('.'))) {
+    // 调整nameTemplate位置
+    tempDataSource = {
+      ...tempDataSource,
+      profile: {
+        ...tempDataSource?.profile,
+        headers: (tempDataSource?.profile?.headers || []).map(h => {
+          if(h.refKey === 'extProps') {
+            return {
+              ...h,
+              enable: false
+            }
+          }
+          return h;
+        }),
+        extAttrProps: attNames.reduce(((p, n) => {
+          return {
+            ...p,
+            [n]: {
+              editType: '',
+              optionsData: '',
+              optionsFetcher: ''
+            }
+          }
+        }), {})
+      },
     }
   }
     return tempDataSource;

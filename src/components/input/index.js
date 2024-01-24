@@ -5,10 +5,11 @@ import {getPrefix} from '../../lib/prefixUtil';
 import FormatMessage from '../formatmessage';
 
 const Input = React.memo(forwardRef(({ prefix ,defaultValue, suffix, placeholder, readOnly,
-                                       onClick, type = 'text', trim, accept, onKeyDown, maxLength, disable, toggleCase,
+                                       onClick, type = 'text', style, trim, accept, onKeyDown, maxLength, disable, toggleCase,
                                        ...restProps }, ref) => {
   const [stateValue, setDefaultValue]  = useState(defaultValue);
   const composition = useRef(false);
+  const [isFocus, setFocus] = useState(false);
   const _onChange = (e) => {
     const { onChange } = restProps;
     if (composition.current) {
@@ -38,7 +39,11 @@ const Input = React.memo(forwardRef(({ prefix ,defaultValue, suffix, placeholder
   const up = (e) => {
     toggle(e, 'up');
   };
+  const _onFocus = () => {
+    setFocus(true);
+  };
   const _onBlur = (e) => {
+    setFocus(false);
     const { onBlur, onChange } = restProps;
     const blurValue = e.target.value;
     // 去除空格
@@ -79,24 +84,28 @@ const Input = React.memo(forwardRef(({ prefix ,defaultValue, suffix, placeholder
       e.stopPropagation();
     }
   };
-  return (<span className={`${currentPrefix}-input ${suffix ? `${currentPrefix}-input-suffix-container` : ''}`}>
-    <input
-      onCompositionStart={onCompositionStart}
-      onCompositionEnd={onCompositionEnd}
-      onKeyDown={_onKeyDown}
-      ref={ref}
-      onClick={onClick}
-      readOnly={readOnly}
-      placeholder={placeholder}
-      draggable
-      disabled={disable}
-      accept={accept}
-      onDragStart={onDragStart}
-      type={type}
-      value={tempValue === 0 ? 0 : (tempValue || '')}
-      onChange={_onChange}
-      onBlur={_onBlur}
-    />
+  return (<span style={style} className={`${currentPrefix}-input ${suffix ? `${currentPrefix}-input-suffix-container` : ''}`}>
+    <span className={`${currentPrefix}-input-${isFocus ? 'focus' : 'blur'}`}>
+      <input
+        onCompositionStart={onCompositionStart}
+        onCompositionEnd={onCompositionEnd}
+        onKeyDown={_onKeyDown}
+        ref={ref}
+        onClick={onClick}
+        readOnly={readOnly}
+        placeholder={placeholder}
+        draggable
+        disabled={disable}
+        accept={accept}
+        onDragStart={onDragStart}
+        type={type}
+        value={tempValue === 0 ? 0 : (tempValue || '')}
+        onChange={_onChange}
+        onFocus={_onFocus}
+        onBlur={_onBlur}
+      />
+      {maxLength && <span className={`${currentPrefix}-input-count`}>{tempValue?.length || 0}/{maxLength}</span>}
+    </span>
     {suffix && <span className={`${currentPrefix}-input-suffix`}>{suffix}</span>}
     {toggleCase && <span className={`${currentPrefix}-input-toggle`}>
       <span onClick={up}><FormatMessage id='components.input.up'/></span><span />

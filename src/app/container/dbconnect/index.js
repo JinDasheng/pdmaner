@@ -11,7 +11,10 @@ const Option = Select.Option;
 
 export default React.memo(({prefix, dataSource, config, dataChange, lang}) => {
   const url = getDemoDbConnect();
-  const dataTypeSupports = _.get(dataSource, 'profile.dataTypeSupports', []);
+  const codeTemplates = _.get(dataSource, 'profile.codeTemplates', []);
+  const dataTypeSupports = _.get(dataSource, 'profile.dataTypeSupports', []).filter((d) => {
+    return codeTemplates.find(c => c.applyFor === d.id && c.type === 'dbDDL');
+  });
   const defaultDb = _.get(dataSource, 'profile.default.db', dataTypeSupports[0]?.id);
   const [dbConn, updateDbConn] = useState(dataSource?.dbConn || []);
   const [defaultConn, updateDefaultConn] = useState(() => {

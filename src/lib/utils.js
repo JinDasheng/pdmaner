@@ -648,6 +648,8 @@ export const _transform = (f, dataSource, code, type = 'id', codeType = 'dbDDL',
             temp.refEntity = entity.defKey || '';
             if(field) {
                 temp.refEntityField = field?.defKey || '';
+            } else {
+                temp.refEntityField = '';
             }
         }
     }

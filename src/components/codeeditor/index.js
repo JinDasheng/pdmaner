@@ -1,4 +1,4 @@
-import React, { useMemo, useRef } from 'react';
+import React, { useMemo, useRef, forwardRef, useImperativeHandle } from 'react';
 import AceEditor from 'react-ace';
 
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -22,8 +22,9 @@ import 'ace-builds/src-noconflict/ext-language_tools';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import 'ace-builds/src-noconflict/ext-searchbox';
 
-export default React.memo(({mode = 'sql', theme = 'monokai', value, onChange,
-                             height, width, focus, firstLine, readOnly, onLoad, blur, style}) => {
+export default React.memo(forwardRef(({mode = 'sql', theme = 'monokai', value, onChange,
+                             height, width, focus, firstLine, readOnly, onLoad, blur, style},
+                                      ref) => {
   const name = useMemo(() => Math.uuid(), []);
   const aceRef = useRef(null);
   const _onLoad = (ace) => {
@@ -46,6 +47,13 @@ export default React.memo(({mode = 'sql', theme = 'monokai', value, onChange,
   const onBlur = (e) => {
     blur && blur(e, aceRef.current.editor);
   };
+  useImperativeHandle(ref, () => {
+    return {
+      setValue: (v) => {
+        aceRef.current.editor.setValue(v);
+      },
+    };
+  }, []);
   return <div style={style} onKeyDown={_onKeyDown}>
     <AceEditor
       ref={aceRef}
@@ -64,4 +72,4 @@ export default React.memo(({mode = 'sql', theme = 'monokai', value, onChange,
       onBlur={onBlur}
     />
   </div>;
-});
+}));

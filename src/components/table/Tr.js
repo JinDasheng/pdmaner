@@ -9,7 +9,7 @@ export default React.memo(({f, i, expand, onMouseOver, tempHeaders, calcPosition
                              reading, getDataSource, updateDataSource, cellClick, setDict,
                              hiddenFields, selectedColumns, openDict, defaultGroups, dicts,
                              getFieldProps, domains, mapping, uiHint, isView, allFieldOptions,
-                             needHideInGraph = true}) => {
+                             needHideInGraph = true, extAttrProps}) => {
   const otherStyle = freeze ? { position: 'sticky', left: 0, zIndex: 2 } : {position: 'relative'};
   let type = 'fa-eye';
   if (f.hideInGraph) {
@@ -109,6 +109,7 @@ export default React.memo(({f, i, expand, onMouseOver, tempHeaders, calcPosition
                 uiHint={uiHint}
                 setDict={setDict}
                 entities={entities}
+                extAttrProps={extAttrProps}
               />
             </td>;
           })
@@ -125,7 +126,7 @@ export default React.memo(({f, i, expand, onMouseOver, tempHeaders, calcPosition
 ];
 }, (pre, next) => {
   const simpleProps = ['f', 'i', 'expand', 'tempHeaders', 'getClass', 'entities', 'allFieldOptions',
-    'selectedColumns', 'defaultGroups', 'getFieldProps', 'domains', 'mapping', 'dicts', 'uiHint'];
+    'selectedColumns', 'defaultGroups', 'getFieldProps', 'domains', 'mapping', 'dicts', 'uiHint', 'extAttrProps'];
   const calcArray = (oldData, newData) => {
     return (oldData === newData)
         || (oldData.includes(pre.f.id) && newData.includes(next.f.id))

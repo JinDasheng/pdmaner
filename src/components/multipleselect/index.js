@@ -154,7 +154,7 @@ const MultipleSelect = React.memo(({prefix, children, dropdownRender, allowClear
     optionsRef.current.style.width = `${rectSelect.width}px`;
     optionsRef.current.style.left = `${rectSelect.x}px`;
     const rect = dom.getBoundingClientRect();
-    if ((window.innerHeight - rectSelect.bottom) > rect.height) {
+     if ((window.innerHeight - rectSelect.bottom) > rect.height) {
       optionsRef.current.style.height = 'auto';
       optionsRef.current.style.top = `${rectSelect.bottom + 1}px`;
       optionsRef.current.style.bottom = 'unset';

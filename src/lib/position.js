@@ -60,10 +60,16 @@ export const alignBottom = (allCell, needPicker = true) => {
 // 水平分布
 export const alignRow = (allCell, needPicker = true) => {
     const tempCell = needPicker ? pickCellData(allCell) : allCell;
+    const tempCellCenter = tempCell.map(c => c.y + c.h / 2);
+    let centerY;
+    if(tempCellCenter.every(c => c === tempCellCenter[0])) {
+        centerY = tempCellCenter[0];
+    } else {
+        const maxY = Math.max(...tempCell.map(c => c.y + c.h));
+        centerY = maxY / 2;
+    }
     const maxX = Math.max(...tempCell.map(c => c.x + c.w));
     const minX = Math.min(...tempCell.map(c => c.x));
-    const maxY = Math.max(...tempCell.map(c => c.y + c.h));
-    const center = {x: maxX / 2, y: maxY / 2};
     const allCellWidth = tempCell.reduce((a, b) => a + b.w, 0);
     const minOffset = 25;
     const offset = (maxX - minX - allCellWidth) / ((tempCell.length - 1) || 1);
@@ -72,7 +78,7 @@ export const alignRow = (allCell, needPicker = true) => {
         .reduce((a, b, i) => {
             return a.concat({
                 ...b,
-                y: center.y - b.h / 2,
+                y: centerY - b.h / 2,
                 x: (i === 0 ? b.x : a[i-1].x + a[i-1].w + (offset < minOffset ? minOffset : offset)),
             })
         }, [])
@@ -81,10 +87,16 @@ export const alignRow = (allCell, needPicker = true) => {
 // 垂直分布
 export const alignColumn = (allCell, needPicker = true) => {
     const tempCell = needPicker ? pickCellData(allCell) : allCell;
-    const maxX = Math.max(...tempCell.map(c => c.x + c.w));
+    const tempCellCenter = tempCell.map(c => c.x + c.w / 2);
+    let centerX;
+    if(tempCellCenter.every(c => c === tempCellCenter[0])) {
+        centerX = tempCellCenter[0];
+    } else {
+        const maxX = Math.max(...tempCell.map(c => c.x + c.w));
+        centerX = maxX / 2;
+    }
     const minY = Math.min(...tempCell.map(c => c.y));
     const maxY = Math.max(...tempCell.map(c => c.y + c.h));
-    const center = {x: maxX / 2, y: maxY / 2};
     const minOffset = 25;
     const offset = (maxY - minY - tempCell.reduce((a, b) => a + b.h, 0)) / ((tempCell.length - 1) || 1);
     return tempCell
@@ -92,7 +104,7 @@ export const alignColumn = (allCell, needPicker = true) => {
         .reduce((a, b, i) => {
             return a.concat({
                 ...b,
-                x: center.x - b.w / 2,
+                x: centerX - b.w / 2,
                 y: (i === 0 ? b.y : a[i-1].y + a[i-1].h + (offset < minOffset ? minOffset : offset)),
             })
         }, [])

@@ -36,10 +36,10 @@ export const compareVersion = (v1 = '', v2) => {
   return needUpdate;
 };
 
-export const getVersion = () => {
+export const get = (url) => {
   return new Promise((res, rej) => {
     let id;
-    const result = _http.get(defaultUrl, (req) => {
+    const result = _http.get(url, (req) => {
       let result = '';
       req.on('data', (data) => {
         result += data;
@@ -67,5 +67,9 @@ export const getVersion = () => {
       result.abort(); // 超时1.5s
     }, 5000);
   })
+}
+
+export const getVersion = () => {
+  return get(defaultUrl)
 };
 

@@ -142,6 +142,18 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort, sea
   const onBodyClick = () => {
     updateSelectedColumns(empty);
   };
+  const comBlur = (f, name) => {
+    if(name === 'sort') {
+      updateTableData((p) => {
+        return {
+          ...p,
+          fields: (p.fields || []).sort((a, b) => {
+            return `${a.sort}`.localeCompare(`${b.sort}`);
+          }),
+        };
+      });
+    }
+  };
   const updateTableDataByName = (f, name, e) => {
     let value = e.target.value;
     if (checkboxComponents.includes(name)) {
@@ -1197,9 +1209,11 @@ fields}}
                   dataPosition.length + dataPosition.index)
               : filterFields).map((f, i) => (
                 <Tr
+                  comBlur={comBlur}
                   allFieldOptions={allFieldOptions}
                   needHideInGraph={needHideInGraph}
                   isView={isView}
+                  extAttrProps={isEntity ? dataSource?.profile?.extAttrProps : null}
                   entities={dataSource?.entities}
                   openDict={openDict}
                   selectedColumns={selectedColumns}
@@ -1265,10 +1279,10 @@ fields}}
         {
             !reading && <span className={`${currentPrefix}-table-opt-container`}><span className={`${currentPrefix}-table-opt`} ref={optRef}>
               <span className={`${currentPrefix}-table-opt-normal`}>
-                <Component.IconTitle disable={selectedFields.length === 0} title={Component.FormatMessage.string({id: 'tableEdit.moveStart'})} type='icon-zhiding' onClick={() => moveFields('up', 'start')}/>
-                <Component.IconTitle disable={selectedFields.length === 0} title={Component.FormatMessage.string({id: 'tableEdit.moveUp'})} type='icon-shangyi' onClick={() => moveFields('up')}/>
-                <Component.IconTitle disable={selectedFields.length === 0} title={Component.FormatMessage.string({id: 'tableEdit.moveDown'})} type='icon-xiayi' onClick={() => moveFields('down')}/>
-                <Component.IconTitle disable={selectedFields.length === 0} title={Component.FormatMessage.string({id: 'tableEdit.moveEnd'})} type='icon-zhidi' onClick={() => moveFields('down', 'end')}/>
+                {tableType !== 'dict' && <Component.IconTitle disable={selectedFields.length === 0} title={Component.FormatMessage.string({id: 'tableEdit.moveStart'})} type='icon-zhiding' onClick={() => moveFields('up', 'start')}/>}
+                {tableType !== 'dict' && <Component.IconTitle disable={selectedFields.length === 0} title={Component.FormatMessage.string({id: 'tableEdit.moveUp'})} type='icon-shangyi' onClick={() => moveFields('up')}/>}
+                {tableType !== 'dict' && <Component.IconTitle disable={selectedFields.length === 0} title={Component.FormatMessage.string({id: 'tableEdit.moveDown'})} type='icon-xiayi' onClick={() => moveFields('down')}/>}
+                {tableType !== 'dict' && <Component.IconTitle disable={selectedFields.length === 0} title={Component.FormatMessage.string({id: 'tableEdit.moveEnd'})} type='icon-zhidi' onClick={() => moveFields('down', 'end')}/>}
                 <Component.DropButton menuClick={menuClick} dropDownMenus={dropDownMenus} position='top'>
                   <Component.IconTitle title={Component.FormatMessage.string({id: 'tableEdit.addField'})} type='fa-plus' onClick={addFieldOpt}/>
                 </Component.DropButton>

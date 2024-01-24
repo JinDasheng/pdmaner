@@ -182,21 +182,23 @@ export const simplePackageChanges = (currentDataSource, preDataSource, db, needR
       return n;
     }
     return data.map(d => {
+      const fields = (d.fields || []).map(f => {
+        return {
+          ...f,
+          defKey: f.defKey?.toLocaleLowerCase(),
+          originDefKey: f.defKey,
+          originType: f.type,
+          type: f.type?.toLocaleLowerCase(),
+          len: f.len === null ? '' : parseNumber(f.len),
+          scale: f.scale === null ? '' : parseNumber(f.scale),
+        }
+      });
       return {
         ...d,
         defKey: d.defKey?.toLocaleLowerCase(),
         originDefKey: d.defKey,
-        fields: (d.fields || []).map(f => {
-          return {
-            ...f,
-            defKey: f.defKey?.toLocaleLowerCase(),
-            originDefKey: f.defKey,
-            originType: f.type,
-            type: f.type?.toLocaleLowerCase(),
-            len: f.len === null ? '' : parseNumber(f.len),
-            scale: f.scale === null ? '' : parseNumber(f.scale),
-          }
-        })
+        fields,
+        indexes: id2FieldDefKey(d.indexes, fields),
       }
     })
   };
@@ -343,6 +345,24 @@ export const simplePackageChanges = (currentDataSource, preDataSource, db, needR
   });
 };
 
+const id2FieldDefKey = (indexes = [], fields) => {
+  return indexes.map(i => {
+    return {
+      ...i,
+      fields: (i.fields || []).map(f => {
+        const refFieldIndex = fields.findIndex(field => field.id === f.fieldDefKey);
+        if(refFieldIndex > -1) {
+          return {
+            ...f,
+            fieldDefKey: fields[refFieldIndex].defKey,
+          };
+        }
+        return f;
+      }),
+    }
+  })
+}
+
 export const packageChanges = (currentDataSource, preDataSource, db) => {
   const assembling = (current = [], pre = [], type) => {
     const setNull = (data) => {
@@ -361,21 +381,7 @@ export const packageChanges = (currentDataSource, preDataSource, db) => {
       return {
         ...d,
         fields,
-        indexes: (d.indexes || []).map(i => {
-          return {
-            ...i,
-            fields: (i.fields || []).map(f => {
-              const refFieldIndex = fields.findIndex(field => field.id === f.fieldDefKey);
-              if(refFieldIndex > -1) {
-                return {
-                  ...f,
-                  fieldDefKey: fields[refFieldIndex].defKey,
-                };
-              }
-              return f;
-            }),
-          }
-        }),
+        indexes: id2FieldDefKey(d.indexes, fields),
         ...viewData,
       }
     }

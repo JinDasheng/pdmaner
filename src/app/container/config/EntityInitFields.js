@@ -28,6 +28,9 @@ export default React.memo(({ prefix, dataSource, dataChange,
         dataChange && dataChange(true, 'freeze');
     }
   }
+  const extAttrPropsUpdate = (value) => {
+      dataChange && dataChange(value, 'profile.extAttrProps');
+  }
   const columnsChange = (value) => {
       currentHeaders.current = value.map(h => {
           const current = currentHeaders.current.filter(v => v.refKey === h.refKey)[0];
@@ -78,7 +81,7 @@ export default React.memo(({ prefix, dataSource, dataChange,
           {
               key: '3',
               title: FormatMessage.string({id: 'config.EntityInitColumn'}),
-              content: <DefaultColumn className={`${currentPrefix}-setting-entity-init-columns`} dataSource={dataSource} columnsChange={columnsChange}/>
+              content: <DefaultColumn extAttrPropsUpdate={extAttrPropsUpdate} className={`${currentPrefix}-setting-entity-init-columns`} dataSource={dataSource} columnsChange={columnsChange}/>
           },
       ]}
   /></div>;

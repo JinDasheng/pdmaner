@@ -35,6 +35,12 @@
   & > div > div:first-child {
     margin-bottom: 3px;
   }
+  &-column-select {
+    width: 100%;
+    & > div {
+      width: 100% !important;
+    }
+  }
   &-check {
     width: 50px;
     text-align: center !important;
@@ -48,6 +54,20 @@
   }
 }
 .@{prefix}-setting-entity-init-columns {
+  &-option-help {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    i {
+      margin-left: 3px;
+    }
+  }
+  &-option-fetch {
+    position: absolute;
+    left: 5px;
+    top: 4px;
+  }
   & > div:last-child {
     height: calc(100% - 30px);
     overflow: auto;

@@ -9,7 +9,9 @@ import EntityBasePropertiesList from '../../app/container/entity/EntityBasePrope
 export default React.memo(({f, name, remarkChange, onKeyDown, currentPrefix,
                              onChange, onBlur, checkboxComponents, reading, cellRef, dicts,
                              setDict, getDataSource, updateDataSource, entities,mapping,
-                             openDict, defaultGroups, domains, uiHint, allFieldOptions}) => {
+                             openDict, defaultGroups, domains, uiHint, allFieldOptions,
+                             extAttrProps}) => {
+  const currentExt = extAttrProps?.[name] || {};
   const tooltipRef = useRef(null);
   const columnWidth = getColumnWidth();
   const cell = useRef(null);
@@ -17,6 +19,15 @@ export default React.memo(({f, name, remarkChange, onKeyDown, currentPrefix,
     cellRef && cellRef(cell);
   }, []);
   const numberComponents = ['len', 'scale'];
+  const getOptionData = () => {
+    let optionData;
+    try {
+      optionData = JSON.parse(currentExt.optionsData || '[]');
+    } catch (e) {
+      optionData = [];
+    }
+    return optionData;
+  };
   const openRemark = () => {
     const { Button, openModal } = Component;
     let tempValue = f[name];
@@ -219,6 +230,14 @@ export default React.memo(({f, name, remarkChange, onKeyDown, currentPrefix,
     </Component.Select>;
   } if (checkboxComponents.includes(name)) {
     return <Component.Checkbox checked={!!f[name]} onChange={onChange}/>;
+  } else if (attNames.includes(name) && currentExt.editType === 'CheckBox') {
+    return <Component.Checkbox
+      checked={!!f[name]}
+      onChange={e => onChange({
+      target: {
+        value: e.target.checked,
+      },
+    })}/>;
   } else if (name === 'hideInGraph') {
     let type = 'fa-eye';
     if (f[name]) {
@@ -227,9 +246,10 @@ export default React.memo(({f, name, remarkChange, onKeyDown, currentPrefix,
     return <Component.Icon
       type={type}
       onClick={() => onChange({target: { value: !f[name]}})}/>;
-  } else if (numberComponents.includes(name)) {
+  } else if (numberComponents.includes(name) ||
+      (attNames.includes(name) && currentExt.editType === 'NumberInput')) {
     return <Component.NumberInput value={f[name]} onChange={onChange}/>;
-  } else if (name === 'intro' || name === 'comment' || attNames.includes(name)) {
+  } else if (name === 'intro' || name === 'comment' || currentExt.editType === 'TextArea') {
     return <Component.Input
       onKeyDown={onKeyDown}
       ref={cell}
@@ -324,6 +344,35 @@ export default React.memo(({f, name, remarkChange, onKeyDown, currentPrefix,
         </Component.Select.Option>);
       })}
     </Component.Select>;
+  } else if(currentExt.editType === 'DropDown') {
+    return <Component.Select className={`${currentPrefix}-table-multi-select`} value={f[name]} onChange={onChange}>
+      {getOptionData().map((m) => {
+        return (<Component.Select.Option
+          key={m.value}
+          value={m.value}
+        >
+          {`${m.value}-${m.label}`}
+        </Component.Select.Option>);
+      })}
+    </Component.Select>;
+  } else if(currentExt.editType === 'DropDownMulti') {
+    return <Component.MultipleSelect
+      className={`${currentPrefix}-table-multi-select`}
+      onChange={values => onChange({
+          target: {
+            value: values.join(';'),
+          },
+        })}
+      checkValue={f[name]?.split(';') || []}
+    >
+      {
+        getOptionData().map(v => (
+          <Component.MultipleSelect.Option
+            key={v.value}
+            value={v.value}>{`${v.label}(${v.label || v.value})`}
+          </Component.MultipleSelect.Option>))
+      }
+    </Component.MultipleSelect>;
   }
   return <Component.Input
     trim={name === 'defKey'}
@@ -345,6 +394,9 @@ export default React.memo(({f, name, remarkChange, onKeyDown, currentPrefix,
       || (pre.f[pre.name] !== next.f[next.name]));
   } else if (pre.name === 'refEntity') {
     return pre?.entities === next?.entities;
+  } else if (attNames.includes(pre.name)) {
+    return !((pre?.extAttrProps !== next?.extAttrProps)
+        || (pre.f[pre.name] !== next.f[next.name]));
   } else if (pre.name === 'type' || pre.name === 'baseType') {
     return !((pre?.mapping !== next?.mapping)
         || (pre.f[pre.name] !== next.f[next.name]));

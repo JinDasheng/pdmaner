@@ -2,7 +2,7 @@ import {Graph} from '@antv/x6';
 import _ from 'lodash/object';
 import { elementToSVG } from 'dom-to-svg'
 
-import { calcCellData, getTextWidth } from '../datasource_util';
+import { calcCellData } from '../datasource_util';
 import { saveTempImages } from '../middle';
 
 
@@ -208,6 +208,8 @@ export const html2svg = (data = [], dom) => {
     const parent = f.parentElement;
     const ellipsis = f.querySelectorAll('.chiner-ellipsis');
     ellipsis.forEach(e => {
+      // 替换多余的空格
+      e.innerText = e.innerText.replace(/\s{3,}'/g, '  ');
     const width = e.getBoundingClientRect().width
       if(Math.abs(e.scrollWidth - width) > 1) {
         const text = e.innerText;

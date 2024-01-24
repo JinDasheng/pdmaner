@@ -59,7 +59,7 @@ export default React.memo(({prefix, dictData, dictChange, dataSource,
       } else if (isEmpty(b.sort)) {
         return -1;
       }
-      return a.sort - b.sort;
+      return `${a.sort}`.localeCompare(`${b.sort}`);
     }),
   }), [dictData]);
   const commonProps = {

@@ -13,7 +13,7 @@ import {getPrefix} from '../../lib/prefixUtil';
 export const Modal = DragCom(React.memo(React.forwardRef(({prefix, title, onClose, focusFirst,
                     children, small, status, buttons = [], closeable = true, onEnter,
                     fullScreen, bodyStyle = {}, modalStyle = {}, contentStyle = {},
-                    header }, forwardRef) => {
+                    header, footerStyle }, forwardRef) => {
   const currentPrefix = getPrefix(prefix);
   const _iconClose = () => {
     onClose && onClose();
@@ -65,7 +65,7 @@ export const Modal = DragCom(React.memo(React.forwardRef(({prefix, title, onClos
           {children}
           <div
             className={`${currentPrefix}-modal-footer`}
-            style={{display: buttons.length > 0 ? '' : 'none'}}
+            style={{display: buttons.length > 0 ? '' : 'none', ...footerStyle}}
             >
             {buttons}
           </div>
@@ -94,7 +94,7 @@ export const openModal = (com, params) => {
   }
   const ModalCompose = () => {
     const { title, small, buttons, status, fullScreen, bodyStyle,
-      modalStyle, contentStyle, closeable, focusFirst, onEnter, header } = params;
+      modalStyle, contentStyle, closeable, focusFirst, onEnter, header, footerStyle  } = params;
     const _iconClose = () => {
       const { onClose } = params;
       onClose && onClose();
@@ -116,6 +116,7 @@ export const openModal = (com, params) => {
           buttons={buttons}
           focusFirst={focusFirst}
           header={header}
+          footerStyle={footerStyle}
           >
           {com}
         </Modal>
