@@ -275,7 +275,7 @@ const VersionListBar = React.memo((props) => {
         if(versionsData.length === 0) {
             clearCache();
         }
-        if(menuType === '4' && versionsData.length > 0) {
+        if(menuType === '4' && versionsData.length > 0 && versionType === '1') {
             checkCurrent();
         }
     }, [menuType, versionsData.length]);
@@ -292,7 +292,7 @@ const VersionListBar = React.memo((props) => {
         // 数据库和模版发生了变化 需要重新生成变更数据
         needRefresh.current = true;
         clearCache();
-        if(menuTypeRef.current === '4' && versionsData.length > 0) {
+        if(menuTypeRef.current === '4' && versionsData.length > 0 && versionType === '1') {
             checkCurrent();
         }
     }, [defaultDb, codeTemplate]);

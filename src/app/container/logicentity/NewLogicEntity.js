@@ -1,4 +1,4 @@
-import React, {useState, useCallback, useMemo, useRef} from 'react';
+import React, {useState, useCallback, useMemo, useRef, useEffect} from 'react';
 import _ from 'lodash';
 
 import { FormatMessage, Input, Text, Table, MultipleSelect, Radio, Checkbox, FieldSet, Icon } from 'components';
@@ -107,8 +107,19 @@ export default React.memo(({prefix, dataSource, data, dataChange, getDataSource,
         }
         return null;
     }, [currentData.sysProps.fieldInputSuggest]);
+    useEffect(() => {
+        hasRender && hasRender({
+            twinkle: (key) => {
+                tableRef.current?.twinkleTr(key);
+            },
+        });
+        return () => {
+            hasDestory && hasDestory();
+        };
+    }, []);
     const renderTable = () => {
       return <Table
+        twinkle={param?.defKey}
         allFieldOptions={allFieldOptions}
         search={search}
         needHideInGraph={false}
@@ -123,8 +134,6 @@ export default React.memo(({prefix, dataSource, data, dataChange, getDataSource,
               return getDataSource ?  getDataSource() : dataSource;
           }}
         hasRender={hasRender}
-        hasDestory={hasDestory}
-        param={param}
         ready={ready}
         data={{
               fields: fieldsData,

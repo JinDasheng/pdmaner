@@ -1392,7 +1392,7 @@ export const getAllData = (params) => {
         },
         {
             key: 'fields',
-            data: entityData.reduce((a, b) => {
+            data: entityData.concat(logicEntityData).reduce((a, b) => {
                 return a.concat((b.fields || []).map((f) => {
                     // 模块名（没有则省略）/表(视图）代码[表显示名] /字段代码[字段显示名]
                     const groups = b.groups.map(g => g.name).join('|');
@@ -1650,4 +1650,81 @@ export const _mergeId = (newFields, oldFields) => {
        }
        return f;
     });
+}
+
+export const execCheck = (dataSource, checkId) => {
+    const namingRules = (dataSource.namingRules || []).filter(r => r.enable);
+    let d = (dataSource.entities || []).concat(dataSource.logicEntities || [])
+        .find(d => d.id === checkId);
+    const execFunction = (code, data) => {
+        // eslint-disable-next-line no-new-func
+        const myFunction = new Function('data', code);
+        let res = '';
+        try {
+            res = myFunction(data);
+        } catch (e) {
+            res = false;
+        }
+        return res;
+    }
+    return {
+        dataId: d.id,
+        checkResult: namingRules.reduce((p, n) => {
+            const typeName = d.type === 'L' ? 'logicEntity' : 'entity';
+            if(n.applyObjectType === d.type) {
+                if(n.applyFieldType === 'entity') {
+                    return p.concat({
+                        ruleId: n.id,
+                        dataId: d.id,
+                        applyFieldType: n.applyFieldType,
+                        ruleControlIntensity: n.controlIntensity,
+                        result: execFunction(n.programCode, {
+                            [typeName]: d
+                        })
+                    });
+                } else if(n.applyFieldType === 'field') {
+                    return p.concat((d.fields || []).map(f => {
+                        const tempData = {
+                            ...f,
+                            ..._transform(f, dataSource)
+                        };
+                        return {
+                            ruleId: n.id,
+                            dataId: f.id,
+                            applyFieldType: n.applyFieldType,
+                            ruleControlIntensity: n.controlIntensity,
+                            result: execFunction(n.programCode, {
+                                [typeName]: d,
+                                field: tempData
+                            })
+                        }
+                    }))
+                } else if(n.applyFieldType === 'index') {
+                    return p.concat((d.indexes || []).map(i => {
+                        const tempData = {
+                            ...i,
+                            fields: (i.fields || []).map(f => {
+                                const field = (d.fields || []).find(ie => f.fieldDefKey === ie.id);
+                                return {
+                                    ...f,
+                                    fieldDefKey: field?.defKey || '',
+                                };
+                            })
+                        };
+                        return {
+                            ruleId: n.id,
+                            dataId: i.id,
+                            applyFieldType: n.applyFieldType,
+                            ruleControlIntensity: n.controlIntensity,
+                            result: execFunction(n.programCode, {
+                                [typeName]: d,
+                                index: tempData
+                            })
+                        }
+                    }))
+                }
+            }
+            return p;
+        }, [])
+    }
 }

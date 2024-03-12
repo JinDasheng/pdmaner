@@ -412,7 +412,7 @@ const Menu = React.memo(forwardRef(({contextMenus = [], onContextMenu, fieldName
         jumpPosition(positionData, key, type);break;
       case 'fields':
         positionData.id = d.entity;
-        jumpPosition(positionData, 'entities', type);break;
+        jumpPosition(positionData, positionData.type === 'refLogicEntities' ? 'logicEntities' : 'entities', type);break;
       case 'dictItems':
         positionData.id = d.dict;
         jumpPosition(positionData, 'dicts', type);break;

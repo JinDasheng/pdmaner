@@ -1,6 +1,7 @@
-import React, {useEffect, useRef} from 'react';
+import React, {useEffect, useMemo, useRef} from 'react';
 import * as _ from 'lodash/object';
 import * as Component from 'components/index';
+import {subscribeEvent, unSubscribeEvent} from '../../lib/subscribe';
 import {attNames, emptyDict, getColumnWidth, validateDictBase} from '../../lib/datasource_util';
 import DictBase from '../../app/container/dict/DictBase';
 import EntityBasePropertiesList from '../../app/container/entity/EntityBasePropertiesList';
@@ -11,10 +12,30 @@ export default React.memo(({f, name, remarkChange, onKeyDown, currentPrefix,
                              setDict, getDataSource, updateDataSource, entities,mapping,
                              openDict, defaultGroups, domains, uiHint, allFieldOptions,
                              extAttrProps}) => {
+  const eventId = useMemo(() => Math.uuid(), []);
   const currentExt = extAttrProps?.[name] || {};
   const tooltipRef = useRef(null);
   const columnWidth = getColumnWidth();
   const cell = useRef(null);
+  useEffect(() => {
+    if(name === 'domain') {
+      const eventName = 'domainChange';
+      subscribeEvent(eventName, (domain) => {
+        if (domain.id === f[name]) {
+          onChange && onChange({
+            target: {
+              value: domain.id,
+              data: domain,
+            },
+          });
+        }
+      }, eventId);
+      return () => {
+        unSubscribeEvent(eventName, eventId);
+      };
+    }
+    return () => {};
+  }, []);
   useEffect(() => {
     cellRef && cellRef(cell);
   }, []);

@@ -35,7 +35,9 @@ export default React.memo(forwardRef(({prefix, getGraph, dataSource}, ref) => {
       setCells((getGraph()?.toJSON({diff: true}).cells || [])
         .map((c) => {
           if (c.originKey) {
-            const entity = (dataSource?.entities || []).filter(e => e.id === c.originKey)[0];
+            const entity = (dataSource?.entities || [])
+                .concat(dataSource?.logicEntities || [])
+                .filter(e => e.id === c.originKey)[0];
             if (entity) {
               const tempDisplayMode = entity.nameTemplate || '{defKey}[{defName}]';
               const finalName = tempDisplayMode.replace(/\{(\w+)\}/g, (match, word) => {

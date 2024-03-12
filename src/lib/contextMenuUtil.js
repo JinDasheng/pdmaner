@@ -37,7 +37,7 @@ import {
   transformFieldType,
   resetHeader,
   transform,
-  getUnGroup, getDefaultLogicSys, getLogicHeaders, getFieldBaseType,
+  getUnGroup, getDefaultLogicSys, getLogicHeaders, getFieldBaseType, updateBaseType,
 } from './datasource_util';
 // 专门处理左侧菜单 右键菜单数据
 import { separator } from '../../profile';
@@ -1021,7 +1021,15 @@ const editOpt = (dataSource, menu, updateDataSource) => {
             return v;
           }),
         };
-        updateDataSource && updateDataSource(tempDataSource);
+        if((dataType === 'domain') && (oldData.applyFor !== data.applyFor)) {
+          // 如果数据域的applyFor变更 需要调整所有该数据域下的baseType
+          tempDataSource = (updateBaseType(tempDataSource, data));
+          updateDataSource && updateDataSource(tempDataSource);
+          // 通知标签页内的列表更新
+          notify('domainChange', data);
+        } else {
+          updateDataSource && updateDataSource(tempDataSource);
+        }
       }
       modal && modal.close();
       Message.success({title: FormatMessage.string({id: 'optSuccess'})});

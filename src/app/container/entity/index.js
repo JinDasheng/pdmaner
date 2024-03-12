@@ -10,15 +10,18 @@ import './style/index.less';
 import {removeDataByTabId} from '../../../lib/cache';
 import {getPrefix} from '../../../lib/prefixUtil';
 import {subscribeEvent, unSubscribeEvent} from '../../../lib/subscribe';
+import CheckDetail from '../checkrule/CheckDetail';
 
 const Entity = React.memo(({prefix, dataSource, entity, tabDataChange, tabKey,
                              group, BaseExtraCom, customerHeaders, type, getConfig, saveUserData,
                              FieldsExtraOpt, updateDataSource, param, hasRender, hasDestory,
-                             getDataSource, openDict, openConfig}) => {
+                             getDataSource, openDict, openConfig, setMenuType,
+                             openCheckRuleConfig, jumpDetail}) => {
   const eventId = Math.uuid();
   const [key, setKey] = useState(Math.uuid());
   const [iniData, setInitData] = useState(getEntityOrViewByName(dataSource, entity) || {});
   const [data, updateData] = useState(iniData);
+  const tabRef = useRef(null);
   const dataRef = useRef(data);
   dataRef.current = data;
   useEffect(() => {
@@ -46,6 +49,10 @@ const Entity = React.memo(({prefix, dataSource, entity, tabDataChange, tabKey,
       isInit: true,
     });
   }, []);
+  const _jumpDetail = (...args) => {
+    tabRef.current.updateActive('base');
+    jumpDetail(...args);
+  };
   const dataChange = (value, name, optType) => {
     updateData((pre) => {
       const tempData = {
@@ -78,11 +85,16 @@ const Entity = React.memo(({prefix, dataSource, entity, tabDataChange, tabKey,
   const getRestData = () => {
     return dataRef.current;
   };
+  const setType = () => {
+    setMenuType('5');
+    openCheckRuleConfig(true);
+  };
   const currentPrefix = getPrefix(prefix);
   return <div className={`${currentPrefix}-entity`}>
     {/*<div className={`${currentPrefix}-entity-title`}>{entity}</div>*/}
     <div className={`${currentPrefix}-entity-content`} key={key}>
       <SimpleTab
+        ref={tabRef}
         options={[
           {
             key: 'base',
@@ -142,7 +154,17 @@ const Entity = React.memo(({prefix, dataSource, entity, tabDataChange, tabKey,
               updateDataSource={updateDataSource}
             />,
           },
-          ]}
+          ].concat(type === 'entity' ? [{
+          key: 'check',
+          title: FormatMessage.string({id: 'project.checkRule'}),
+          content: <CheckDetail
+            jumpDetail={_jumpDetail}
+            setType={setType}
+            isTab
+            tabData={data}
+            dataSource={dataSource}
+          />,
+        }] : [])}
       />
     </div>
   </div>;

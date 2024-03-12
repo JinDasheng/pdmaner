@@ -146,7 +146,9 @@ export default React.memo(({prefix, dataSource, labelRender, defaultCheckeds,
     while (true) {
       const parent = yield;
       const children = (parent.node?.children || [])
-          .filter(c => regRef.current.test(c.value || ''));
+          .filter((c) => {
+            return tree2array([c]).some(cc => regRef.current.test(cc.value || ''));
+          });
       for (let i = 0; i < children?.length; i += 1) {
         yield getNodeData(children[i], parent.nestingLevel + 1, parent.node);
       }

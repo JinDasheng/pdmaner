@@ -156,6 +156,7 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort, sea
   };
   const updateTableDataByName = (f, name, e) => {
     let value = e.target.value;
+    const targetData = e.target.data;
     if (checkboxComponents.includes(name)) {
       value = e.target.checked;
     }
@@ -165,13 +166,13 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort, sea
         ...pre,
         fields: pre.fields.map((field) => {
           if (name === 'domain') {
-            const domainData = domains.find(d => d.id === value);
+            const domainData = targetData || domains.find(d => d.id === value);
             if (selectedFieldsRef.current.includes(field.id) || (f.id === field.id)) {
               const newField = {
                 [name]: value,
-                type: value ? '' : f.type,
-                len: value ? '' : f.len,
-                scale: value ? '' : f.scale,
+                type: '',
+                len: '',
+                scale: '',
                 baseType: domainData?.applyFor || '',
               };
               changeFields.push({

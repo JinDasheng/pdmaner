@@ -2,6 +2,10 @@ import React, { useMemo, useRef, forwardRef, useImperativeHandle } from 'react';
 import AceEditor from 'react-ace';
 
 // eslint-disable-next-line import/no-extraneous-dependencies
+import 'ace-builds/src-noconflict/mode-javascript';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import 'ace-builds/src-noconflict/snippets/javascript';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import 'ace-builds/webpack-resolver';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import 'ace-builds/src-noconflict/mode-json';

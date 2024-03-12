@@ -32,6 +32,7 @@ import MessageHelp from './MessageHelp';
 import ToggleCase from '../container/tools/togglecase';
 import CompareTable from '../container/tools/comparetable';
 import History from '../container/tools/operationshistory';
+import CheckRule from '../container/checkrule';
 import { separator } from '../../../profile';
 import { getMenu, getMenus, dealMenuClick } from '../../lib/contextMenuUtil';
 import { moveArrayPosition } from '../../lib/array_util';
@@ -92,6 +93,7 @@ const Index = React.memo(({getUserData, mode, isChildWindow,
   const menuContainerCode = useRef(null);
   const activeTabStack = useRef([]);
   const importPdRef = useRef(null);
+  const checkRuleRef = useRef(null);
   const tabsRef = useRef(tabs);
   tabsRef.current = tabs;
   const dataSourceRef = useRef({});
@@ -122,6 +124,7 @@ const Index = React.memo(({getUserData, mode, isChildWindow,
   const headerToolRef = useRef(null);
   //const [menus, setMenus] = useState([]);
   const [menuType, setMenuType] = useState('1');
+  const [ruleConfigOpen, openCheckRuleConfig] = useState(false);
   const [versionType, setVersionType] = useState('1');
   const currentVersionRef = useRef(null);
   const currentMetaRef = useRef(null);
@@ -1326,6 +1329,7 @@ const Index = React.memo(({getUserData, mode, isChildWindow,
     headerToolRef.current.setIsCellSelected(cell);
   };
   const jumpEntity = (tabKey) => {
+    setMenuType('1');
     updateActiveKey(tabKey);
     activeTabStack.current = activeTabStack.current.filter(k => k !== tabKey);
     activeTabStack.current.push(tabKey);
@@ -1496,6 +1500,19 @@ const Index = React.memo(({getUserData, mode, isChildWindow,
         </Button>],
     });
   };
+  const _jumpDetail = (d, key) => {
+    if (key === 'standardFields') {
+      standardFieldRef.current?.openEdit(d);
+    } else {
+      let type = groupTypeRef.current;
+      if (!d.groups || d.groups.length === 0) {
+        type = 'modalAll';
+        updateGroupType(type);
+      }
+      setMenuType('1');
+      menuModelRef.current?.jumpDetail(d, key, type);
+    }
+  };
   const getTabComponent = (t) => {
     const type = t.type;
     const key = t.menuKey;
@@ -1525,11 +1542,15 @@ const Index = React.memo(({getUserData, mode, isChildWindow,
           openDict={_onMenuClick}
           entity={key}
           group={group}
+          setMenuType={setMenuType}
+          openCheckRuleConfig={openCheckRuleConfig}
           tabDataChange={data => tabDataChange(data, t)}
+          jumpDetail={_jumpDetail}
           />);
     } else if (type === 'logicEntity') {
       return (
         <LogicEntity
+          jumpDetail={_jumpDetail}
           saveUserData={restProps.saveUserData}
           getConfig={getConfig}
           type={type}
@@ -1545,6 +1566,8 @@ const Index = React.memo(({getUserData, mode, isChildWindow,
           entity={key}
           group={group}
           tabDataChange={data => tabDataChange(data, t)}
+          setMenuType={setMenuType}
+          openCheckRuleConfig={openCheckRuleConfig}
         />);
     } else if (type === 'view') {
       return <View
@@ -1725,16 +1748,29 @@ const Index = React.memo(({getUserData, mode, isChildWindow,
     }
   };
   const _menuTypeChange = (key) => {
-    if (key === '1') {
-      currentMenu.current = menuModelRef.current;
-    } else if (key === '2') {
-      currentMenu.current = menuDomainRef.current;
+    const updateMenuType = () => {
+      if (key === '1') {
+        currentMenu.current = menuModelRef.current;
+      } else if (key === '2') {
+        currentMenu.current = menuDomainRef.current;
+      }
+      setMenuType(key);
+      if(key !== '5') {
+        resizeContainer.current.style.minWidth = `${menuNorWidth + menuMinWidth}px`;
+        resizeContainer.current.style.width = `${menuNorWidth + menuMinWidth}px`;
+        resizeContainer.current.children[0].style.display = '';
+        if(resizeContainer.current.children[2]) {
+          resizeContainer.current.children[2].style.display = '';
+        }
+      }
+    };
+    if(checkRuleRef.current && (menuType === '5') && (key !== '5')) {
+      checkRuleRef.current?.checkLeave(() => {
+        updateMenuType();
+      });
+    } else {
+      updateMenuType();
     }
-    setMenuType(key);
-    resizeContainer.current.style.minWidth = `${menuNorWidth + menuMinWidth}px`;
-    resizeContainer.current.style.width = `${menuNorWidth + menuMinWidth}px`;
-    resizeContainer.current.children[0].style.display = '';
-    resizeContainer.current.children[2].style.display = '';
   };
   const _jumpPosition = (d, key) => {
     let type = groupTypeRef.current;
@@ -1744,19 +1780,6 @@ const Index = React.memo(({getUserData, mode, isChildWindow,
     }
     setMenuType('1');
     menuModelRef.current?.jumpPosition(d, key, type);
-  };
-  const _jumpDetail = (d, key) => {
-    if (key === 'standardFields') {
-      standardFieldRef.current?.openEdit(d);
-    } else {
-      let type = groupTypeRef.current;
-      if (!d.groups || d.groups.length === 0) {
-        type = 'modalAll';
-        updateGroupType(type);
-      }
-      setMenuType('1');
-      menuModelRef.current?.jumpDetail(d, key, type);
-    }
   };
   const onMouseDown = (e) => {
     isResize.current = {
@@ -1872,6 +1895,25 @@ const Index = React.memo(({getUserData, mode, isChildWindow,
             calcDomain={calcDomain}
             />
         }
+        {
+            (menuType === '5') && <CheckRule
+              ref={checkRuleRef}
+              configOpen={ruleConfigOpen}
+              tabDataChange={tabDataChange}
+              getDataSource={getDataSource}
+              save={otherTabSave}
+              jumpDetail={_jumpDetail}
+              jumpEntity={jumpEntity}
+              openDict={_onMenuClick}
+              validateTableStatus={validateTableStatus}
+              updateDataSource={restProps.update}
+              closeLoading={restProps.closeLoading}
+              openLoading={restProps.openLoading}
+              dataSource={restProps.dataSource}
+              common={common}
+              setMenuType={setMenuType}
+            />
+        }
         <AppCodeEdit
           updateDataSource={restProps.update}
           empty={<MessageHelp openHome={openHome} prefix={currentPrefix}/>}
@@ -1932,6 +1974,12 @@ const Index = React.memo(({getUserData, mode, isChildWindow,
   const setCurrentMeta = (m, isCustomer) => {
     currentMetaRef.current?.setMeta(m, isCustomer);
   };
+  const resizeContainerStyle = {
+    width: menuType !== '5' ? (menuNorWidth + menuMinWidth) : '50px',
+  };
+  if(menuType === '5') {
+    resizeContainerStyle.minWidth = '50px';
+  }
   return <Loading visible={common.loading} title={common.title}>
     <HeaderTool
       isChildWindow={isChildWindow}
@@ -1951,15 +1999,13 @@ const Index = React.memo(({getUserData, mode, isChildWindow,
       <div
         className={`${currentPrefix}-home-resize-container`}
         ref={resizeContainer}
-        style={{
-          width: menuNorWidth + menuMinWidth,
-        }}>
-        <span
+        style={resizeContainerStyle}>
+        {menuType !== '5' && <span
           onClick={fold}
           className={`${currentPrefix}-home-fold`}
         >
           <Icon type='fa-angle-double-left '/>
-        </span>
+        </span>}
         <Tab activeKey={menuType} onChange={_menuTypeChange}>
           <TabItem key='1' title={FormatMessage.string({id: 'modelTab'})} icon='model.svg'>
             <div
@@ -2139,6 +2185,7 @@ const Index = React.memo(({getUserData, mode, isChildWindow,
               />
             </div>
           </TabItem>
+          <TabItem key='5' title={FormatMessage.string({id: 'project.checkRule'})} icon='fa-flag-checkered' />
         </Tab>
         <div
           onMouseDown={onMouseDown}

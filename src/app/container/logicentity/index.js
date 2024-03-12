@@ -9,12 +9,15 @@ import {removeDataByTabId} from '../../../lib/cache';
 import {getPrefix} from '../../../lib/prefixUtil';
 import {subscribeEvent, unSubscribeEvent} from '../../../lib/subscribe';
 import NewLogicEntity from './NewLogicEntity';
+import CheckDetail from '../checkrule/CheckDetail';
 
 const LogicEntity = React.memo(({prefix, dataSource, entity, tabDataChange, tabKey,
-                             group, getConfig, saveUserData, getDataSource,
-                              updateDataSource, param, hasRender, hasDestory}) => {
+                             group, getConfig, saveUserData, getDataSource, setMenuType,
+                              updateDataSource, param, hasRender, hasDestory,
+                                  openCheckRuleConfig, jumpDetail}) => {
   const eventId = Math.uuid();
   const [key, setKey] = useState(Math.uuid());
+  const tabRef = useRef(null);
   const getLogicEntity = () => {
     return (dataSource.logicEntities || []).find(l => l.id === entity);
   };
@@ -47,6 +50,10 @@ const LogicEntity = React.memo(({prefix, dataSource, entity, tabDataChange, tabK
       isInit: true,
     });
   }, []);
+  const setType = () => {
+    setMenuType('5');
+    openCheckRuleConfig(true);
+  };
   const dataChange = (value, name) => {
     updateData((pre) => {
       const tempData = _.set({...pre}, name, value);
@@ -62,9 +69,14 @@ const LogicEntity = React.memo(({prefix, dataSource, entity, tabDataChange, tabK
       return tempData;
     });
   };
+  const _jumpDetail = (...args) => {
+    tabRef.current.updateActive('base');
+    jumpDetail(...args);
+  };
   const currentPrefix = getPrefix(prefix);
   return <div className={`${currentPrefix}-logic-entity-content`} key={key}>
     <SimpleTab
+      ref={tabRef}
       options={[
           {
             key: 'base',
@@ -97,6 +109,17 @@ const LogicEntity = React.memo(({prefix, dataSource, entity, tabDataChange, tabK
               updateDataSource={updateDataSource}
             />,
           },
+        {
+          key: 'check',
+          title: FormatMessage.string({id: 'project.checkRule'}),
+          content: <CheckDetail
+            setType={setType}
+            isTab
+            tabData={data}
+            dataSource={dataSource}
+            jumpDetail={_jumpDetail}
+          />,
+        },
         ]}
     />
   </div>;

@@ -16,7 +16,7 @@ import {
   _mergeData,
   _mergeDataSource,
   _transform,
-  _mergeId
+  _mergeId, demoTable
 } from './utils';
 import {postWorkerFuc} from './event_tool';
 
@@ -561,6 +561,17 @@ export const emptyRelation = {
   relationType: 'field',
   canvasData: {}
 };
+
+export const emptyRule = {
+  id: '',
+  defName: '',
+  intro: '',
+  controlIntensity: '',
+  applyObjectType: '',
+  applyFieldType: '',
+  programCode: '',
+  enable: true
+}
 
 export const validateStandardFields = (data) => {
   const calcData = (d, format) => {
@@ -1277,6 +1288,32 @@ export const transformFieldType = (dataSource, old) => {
   return transformDataSource(dataSource, old);
 }
 
+export const updateBaseType = (dataSource, domain) => {
+  const updateFieldBaseType = (d) => {
+    return {
+      ...d,
+      fields: (d.fields || []).map(f => {
+        if((f.domain === domain.id) && (f.baseType !== domain.applyFor)) {
+          return {
+            ...f,
+            baseType: domain.applyFor
+          };
+        }
+        return f;
+      })
+    }
+  }
+  return {
+    ...dataSource,
+    entities: (dataSource.entities || []).map(e => {
+      return updateFieldBaseType(e)
+    }),
+    views: (dataSource.views || []).map(v => {
+      return updateFieldBaseType(v)
+    })
+  }
+}
+
 export const transformTable = (data, dataSource, code, type = 'id', codeType = 'dbDDL') => {
   const fields = data.fields || [];
   const entities = dataSource.entities || [];
@@ -1956,6 +1993,13 @@ export const transformationData = (oldDataSource) => {
       },
     }
   }
+  if (compareVersion('4.9.2', oldDataSource.version.split('.'))) {
+    // 调整nameTemplate位置
+    tempDataSource = {
+      ...tempDataSource,
+      namingRules: tempDataSource.namingRules || emptyProjectTemplate.namingRules,
+    }
+  }
     return tempDataSource;
 };
 
@@ -2604,4 +2648,94 @@ export const id2Def = (...args) => {
 
 export const mergeId = (...args) => {
   return _mergeId(...args);
+}
+
+export const checkDemoData = () => {
+  return [
+      {
+        entity: demoTable.entity,
+        applyObjectType: 'P',
+        applyFieldType: 'entity'
+      },
+      {
+        field:demoTable.entity.fields[0],
+        entity: demoTable.entity,
+        applyObjectType: 'P',
+        applyFieldType: 'field'
+      },
+      {
+        index:demoTable.entity.indexes[0],
+        entity: demoTable.entity,
+        applyObjectType: 'P',
+        applyFieldType: 'index'
+      },
+      {
+        logicEntity: demoTable.entity,
+        applyObjectType: 'L',
+        applyFieldType: 'entity'
+      },
+      {
+        field:demoTable.entity.fields[0],
+        logicEntity: demoTable.entity,
+        applyObjectType: 'L',
+        applyFieldType: 'field'
+      },
+  ];
+}
+
+
+export const checkItems = () => {
+  return [{
+    name: '逻辑模型-逻辑实体',
+    applyObjectType: 'L',
+    applyFieldType: 'entity',
+  },
+    {
+      name: '逻辑模型-逻辑实体属性',
+      applyObjectType: 'L',
+      applyFieldType: 'field',
+    },
+    {
+      name: '数据表-数据表',
+      applyObjectType: 'P',
+      applyFieldType: 'entity',
+    },
+    {
+      name: '数据表-数据表字段',
+      applyObjectType: 'P',
+      applyFieldType: 'field',
+    },
+    {
+      name: '数据表-索引',
+      applyObjectType: 'P',
+      applyFieldType: 'index',
+    }];
+}
+
+export const checkResultItems = () => {
+  return [{
+    name: '逻辑模型-规范检查',
+    applyObjectType: 'L',
+    applyFieldType: 'entity',
+  },
+    {
+      name: '字段-规范检查',
+      applyObjectType: 'L',
+      applyFieldType: 'field',
+    },
+    {
+      name: '表-规范检查',
+      applyObjectType: 'P',
+      applyFieldType: 'entity',
+    },
+    {
+      name: '字段-规范检查',
+      applyObjectType: 'P',
+      applyFieldType: 'field',
+    },
+    {
+      name: '索引-规范检查',
+      applyObjectType: 'P',
+      applyFieldType: 'index',
+    }];
 }

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
 
 import SimpleTabContent from './SimpleTabContent';
 import Icon from '../icon';
@@ -6,11 +6,11 @@ import Icon from '../icon';
 import './style/index.less';
 import {getPrefix} from '../../lib/prefixUtil';
 // 结构简单的TAB组件
-export default React.memo(({ prefix, options = [], customerTitle, customerFooter,
+export default React.memo(forwardRef(({ prefix, options = [], customerTitle, customerFooter,
                              onDelete, disableEdit, onAdd, draggable, onPositionChange,
                              defaultActive,
                              offsetHeight, tabActiveChange, type = 'top', className = '', edit,
-                             onTabDoubleClick }) => {
+                             onTabDoubleClick }, ref) => {
   const [stateOptions, setStateOptions] = useState(options);
   const tabStack = useRef([]);
   const [over, setOver] = useState(null);
@@ -24,9 +24,16 @@ export default React.memo(({ prefix, options = [], customerTitle, customerFooter
   useEffect(() => {
     setStateOptions(options);
     tabStack.current = tabStack.current.filter(k => options.findIndex(o => o.key === k) > -1);
-    updateActive(tabStack.current.length > 0 ? tabStack.current[tabStack.current.length - 1]
-        : options[0]?.key);
+    if(!tabStack.current.includes(active)) {
+      updateActive(tabStack.current.length > 0 ? tabStack.current[tabStack.current.length - 1]
+          : options[0]?.key);
+    }
   }, [options]);
+  useImperativeHandle(ref, () => {
+    return {
+      updateActive,
+    };
+  }, []);
   const deleteFuc = (e, key) => {
     e.stopPropagation();
     onDelete && onDelete(key, () => {
@@ -122,4 +129,4 @@ export default React.memo(({ prefix, options = [], customerTitle, customerFooter
       }
     </div>
   </div>;
-});
+}));
