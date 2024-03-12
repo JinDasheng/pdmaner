@@ -155,10 +155,15 @@
       "perMachine": false
     },
     "linux": {
-      "icon": "256x256.png",
-      "target": [
-        "AppImage"
-      ]
+	"icon": "icons",
+	"artifactName": "${productName}-${os}_${arch}_v${version}.${ext}",
+      	"target": {
+        "target": "deb",
+        "arch": [
+          "arm64",
+          "x64"
+        ]
+      }
     },
     "mac": {
       "artifactName": "${productName}-${os}_${arch}_v${version}.${ext}",
