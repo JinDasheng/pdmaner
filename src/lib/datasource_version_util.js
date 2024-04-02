@@ -299,7 +299,10 @@ export const simplePackageChanges = (currentDataSource, preDataSource, db, needR
           opt: 'update',
           data: {
             id: cData.id,
-            baseInfo: _.pick(cData, baseNames),
+            baseInfo: _.pick({
+              ...cData,
+              defKey: cData.originDefKey
+            }, baseNames),
             baseChanged: baseChanged || null,
             fieldAdded: null,
             fieldRemoved: null,
