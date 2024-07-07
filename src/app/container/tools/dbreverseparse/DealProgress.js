@@ -83,6 +83,7 @@ export default React.memo(({prefix, dataSource, config, selectedTable,
             const fields = (t.fields || []).map(f => ({...f, id: Math.uuid()}));
             return {
               ...t,
+              type: 'P',
               id: Math.uuid(),
               fields,
               indexes: (t.indexes || []).map(i => ({

@@ -21,6 +21,7 @@ export default React.memo(({placeholder, prefix, dataSource,
   const id = useMemo(() => Math.uuid(), []);
   const suggestRef = useRef(null);
   const searchRef = useRef(null);
+  const comSearchRef = useRef(null);
   const [searchValue, setSearchValue] = useState('');
   const [allData, setAllData] = useState([]);
   const sourceChangeRef = useRef(false);
@@ -49,6 +50,7 @@ export default React.memo(({placeholder, prefix, dataSource,
     addBodyClick(id, (e) => {
       if (!searchRef?.current?.contains(e.target) && !listRef?.current?.contains(e.target)) {
         setSearchValue('');
+        comSearchRef.current.resetSearchValue();
       }
     });
     return () => {
@@ -69,11 +71,13 @@ export default React.memo(({placeholder, prefix, dataSource,
   };
   const _jumpPosition = (...args) => {
     setSearchValue('');
+    comSearchRef.current.resetSearchValue();
     modalRef.current?.close();
     jumpPosition && jumpPosition(...args);
   };
   const _jumpDetail = (...args) => {
     setSearchValue('');
+    comSearchRef.current.resetSearchValue();
     modalRef.current?.close();
     jumpDetail && jumpDetail(...args);
   };
@@ -265,7 +269,12 @@ export default React.memo(({placeholder, prefix, dataSource,
     return '';
   }, [searchValue, allData]);
   return <div className={`${currentPrefix}-search-suggest`} ref={suggestRef}>
-    <SearchInput ref={searchRef} value={searchValue} placeholder={placeholder} onChange={onChange}/>
+    <SearchInput
+      comRef={comSearchRef}
+      ref={searchRef}
+      defaultValue={searchValue}
+      placeholder={placeholder}
+      onChange={onChange}/>
     {
       ReactDom.createPortal(childrenMemo, document.body)
     }

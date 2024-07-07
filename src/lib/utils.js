@@ -1161,11 +1161,11 @@ export const _mergeDataSource = (oldDataSource, newDataSource, selectEntity, ign
     });
     const tempDiagrams = diagrams.concat(newDiagrams);
     // 合并分组
-    const removeGroupEntities = tempEntities.filter(e => e.old).map(e => e.id);
+    const removeGroupEntities = tempEntities.filter(e => e.old).map(e => e.old);
     const viewGroups = (oldDataSource.viewGroups || []);
     const newViewGroups = (newDataSource.viewGroups || []);
     const tempViewGroups = _mergeData(viewGroups, newViewGroups, true, false).map(g => {
-        const currentGroupEntities = newEntities.filter(e => e.group === g.id || e.group === g.old)
+        const currentGroupEntities = newEntities.filter(e => e.group && (e.group === g.id || e.group === g.old))
             .map((newE) => {
                 const data = tempEntities.find(e => e.old === newE.id)
                 if (data) {

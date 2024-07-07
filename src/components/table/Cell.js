@@ -1,6 +1,7 @@
 import React, {useEffect, useMemo, useRef} from 'react';
 import * as _ from 'lodash/object';
 import * as Component from 'components/index';
+import { TableContent } from '../../lib/context';
 import {subscribeEvent, unSubscribeEvent} from '../../lib/subscribe';
 import {attNames, emptyDict, getColumnWidth, validateDictBase} from '../../lib/datasource_util';
 import DictBase from '../../app/container/dict/DictBase';
@@ -144,20 +145,22 @@ export default React.memo(({f, name, remarkChange, onKeyDown, currentPrefix,
       };
       return <div className={`${currentPrefix}-table-dict-items`}>
         <div style={{width: '100%', height: '100%', overflow: 'auto'}}>
-          <Table
-            disableDragRow
-            disableHeaderSort
-            disableHeaderIcon
-            customerHeaders
-            reading
-            data={{
-                headers: ['defKey', 'defName', 'intro', 'enabled'].map(i => ({
-                  refKey: i,
-                  value: Component.FormatMessage.string({id: `dict.item.${i}`}),
-                })),
-                fields: data?.items || [],
-              }}
-          />
+          <TableContent.Provider value={{}}>
+            <Table
+              disableDragRow
+              disableHeaderSort
+              disableHeaderIcon
+              customerHeaders
+              reading
+              data={{
+                  headers: ['defKey', 'defName', 'intro', 'enabled'].map(i => ({
+                    refKey: i,
+                    value: Component.FormatMessage.string({id: `dict.item.${i}`}),
+                  })),
+                  fields: data?.items || [],
+                }}
+            />
+          </TableContent.Provider>
         </div>
         <Button key='ok' onClick={() => onOk()}>{Component.FormatMessage.string({id: 'button.edit'})}</Button>
       </div>;

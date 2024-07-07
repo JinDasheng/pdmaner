@@ -74,7 +74,7 @@ export default React.memo(forwardRef(({prefix, dataSource, onCheck, ruleResults,
     }
   }
   const openObjectView = (data, source, param) => {
-    const isEntity = data.type === 'P';
+    const isEntity = data.type !== 'L';
     const refNames = isEntity ? 'refEntities' : 'refLogicEntities';
     const key = data.id;
     const group = source?.viewGroups?.filter(v => v[refNames]?.some(r => r ===
@@ -171,7 +171,7 @@ export default React.memo(forwardRef(({prefix, dataSource, onCheck, ruleResults,
         }}
       >
         <span>{index}</span>
-        <span><FormatMessage id={`checkRule.${data.type === 'P' ? 'entity' : 'logicEntity'}`}/></span>
+        <span><FormatMessage id={`checkRule.${data.type !== 'L' ? 'entity' : 'logicEntity'}`}/></span>
         <Tooltip placement='top' title={data.defKey}>
           <span
             onClick={() => openObjectView(data, source)}

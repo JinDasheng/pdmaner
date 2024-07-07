@@ -521,6 +521,7 @@ export default React.memo(forwardRef(({prefix, style, dataSource, config, empty,
             const resultDataSource = mergeFromMeta([{
                 ...currentMetaData,
                 id: Math.uuid(),
+                type: 'P',
                 fields: (currentMetaData.fields || []).map((f) => {
                     return {
                         ...f,

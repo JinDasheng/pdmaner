@@ -1722,10 +1722,15 @@ const Index = React.memo(({getUserData, mode, isChildWindow,
   };
   const standardFieldMemo = useMemo(() => {
     return <StandardField
+      config={config}
       ref={standardFieldRef}
       activeKey={activeKey}
       dataSource={restProps.dataSource}
       updateDataSource={restProps.update}
+      openLoading={restProps.openLoading}
+      closeLoading={restProps.closeLoading}
+      projectInfo={projectInfo}
+      dealExportFile={dealExportFile}
     />;
   }, [restProps.dataSource, activeKey]);
   const dropDownMenus = useMemo(() => ([
@@ -1982,6 +1987,7 @@ const Index = React.memo(({getUserData, mode, isChildWindow,
   }
   return <Loading visible={common.loading} title={common.title}>
     <HeaderTool
+      menuType={menuType}
       isChildWindow={isChildWindow}
       mode={mode}
       dataSource={restProps.dataSource}

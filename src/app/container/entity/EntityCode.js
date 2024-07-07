@@ -237,7 +237,7 @@ const CodeContent = React.memo(({ data, dataSource, group, codeType, codeTemplat
     </div>;
   };
   return <SimpleTab
-    offsetHeight={30}
+    offsetHeight={60}
     customerTitle={codeTemplate.type === 'appCode' ? <CustomerTitle/> : ''}
     customerFooter={<CustomerFooter/>}
     type='left'

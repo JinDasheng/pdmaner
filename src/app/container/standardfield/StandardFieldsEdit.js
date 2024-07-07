@@ -1,5 +1,7 @@
-import React, {useMemo, useEffect, useRef, useState, useCallback} from 'react';
+import React, {useMemo, useEffect, useRef, useState, useCallback, forwardRef, useImperativeHandle} from 'react';
 import {
+  FormatMessage,
+  IconTitle,
   Table,
 } from 'components';
 import  _ from 'lodash/object';
@@ -12,7 +14,10 @@ import {
 } from '../../../lib/datasource_util';
 
 
-export default React.memo(({prefix, dataChange, dataSource, twinkle, updateDataSource}) => {
+export default React.memo(forwardRef(({prefix, dataChange, dataSource, twinkle, updateDataSource,
+                             importStandardFields, importStandardExcelFields,
+                             exportStandardFields, exportStandardExcelFields,
+                                        exportStandardExcelFieldsLibTpl}, ref) => {
   const id = useMemo(() => Math.uuid(), []);
   const tableRef = useRef(null);
   const standardFields = useMemo(() => (dataSource.standardFields || []), []);
@@ -20,15 +25,17 @@ export default React.memo(({prefix, dataChange, dataSource, twinkle, updateDataS
   const [width, setWidth] = useState(0);
   const resizeDomRef = useRef(null);
   const isTwinkleRef = useRef(false);
-  useEffect(() => {
-    addDomResize(resizeDomRef.current, id, () => {
-      setWidth(resizeDomRef.current.clientWidth - 40);
-    });
-    return () => {
-      removeDomResize(resizeDomRef.current, id);
-    };
-  }, []);
-  const currentPrefix = getPrefix(prefix);
+  const commonProps = {
+    disableHeaderIcon: true,
+    customerHeaders: true,
+    disableHeaderSort: true,
+    disableHeaderReset: true,
+    disableAddStandard: true,
+    fixHeader: false,
+  };
+  const getDataSource = () => {
+    return dataSource;
+  };
   const tableDataChange = (groupData, tableData, fields) => {
     newDataRef.current = newDataRef.current.map((g) => {
       if (g.id === groupData.id) {
@@ -40,27 +47,6 @@ export default React.memo(({prefix, dataChange, dataSource, twinkle, updateDataS
       return g;
     });
     dataChange && dataChange(newDataRef.current, fields);
-  };
-  const tableDataGroupChange = (groupData) => {
-    newDataRef.current = groupData.map((g) => {
-      const currentGroup = (newDataRef.current || []).find(c => c.id === g.id) || {};
-      return {
-        ...currentGroup,
-        ..._.pick(g, ['defKey', 'defName', 'id']),
-      };
-    });
-    dataChange && dataChange(newDataRef.current, []);
-  };
-  const commonProps = {
-    disableHeaderIcon: true,
-    customerHeaders: true,
-    disableHeaderSort: true,
-    disableHeaderReset: true,
-    disableAddStandard: true,
-    fixHeader: false,
-  };
-  const getDataSource = () => {
-    return dataSource;
   };
   const getChildren = (g) => {
     return {
@@ -74,15 +60,46 @@ export default React.memo(({prefix, dataChange, dataSource, twinkle, updateDataS
           getDataSource={getDataSource}
           customerHeaders={false}
           data={{
-            headers: (dataSource.profile?.headers?.filter(h => h.enabled !== false
-                && !attNames.includes(h.refKey))),
-            fields: g.fields,
+              headers: (dataSource.profile?.headers?.filter(h => h.enabled !== false
+                  && !attNames.includes(h.refKey))),
+              fields: g.fields,
             }}
           dataSource={dataSource}
           tableDataChange={(tableData, type, data) => tableDataChange(g, tableData, data)}
         />
       </div>,
     };
+  };
+  useImperativeHandle(ref, () => {
+    return {
+      resetStandardFields: (data) => {
+        newDataRef.current = data;
+        tableRef.current.updateTableData({
+          headers: getStandardGroupColumns(),
+          fields: data.map(g => getChildren(g)),
+        });
+        dataChange && dataChange(data);
+      },
+    };
+  }, [width]);
+  useEffect(() => {
+    addDomResize(resizeDomRef.current, id, () => {
+      setWidth(resizeDomRef.current.clientWidth - 40);
+    });
+    return () => {
+      removeDomResize(resizeDomRef.current, id);
+    };
+  }, []);
+  const currentPrefix = getPrefix(prefix);
+  const tableDataGroupChange = (groupData) => {
+    newDataRef.current = groupData.map((g) => {
+      const currentGroup = (newDataRef.current || []).find(c => c.id === g.id) || {};
+      return {
+        ...currentGroup,
+        ..._.pick(g, ['defKey', 'defName', 'id']),
+      };
+    });
+    dataChange && dataChange(newDataRef.current, []);
   };
   const onAdd = () => {
     return new Promise((res) => {
@@ -121,6 +138,35 @@ export default React.memo(({prefix, dataChange, dataSource, twinkle, updateDataS
   const itemValidate = (items) => {
     return validate(items, emptyStandardGroup, 'StandardGroup');
   };
+  const ExtraOpt = useCallback(() => {
+    return <span className={`${currentPrefix}-standard-fields-export-opt`}>
+      <IconTitle
+        title={<FormatMessage id='standardFields.importStandardExcelFieldsLib'/>}
+        type='fa-file-excel-o'
+        onClick={importStandardExcelFields}
+      />
+      <IconTitle
+        title={<FormatMessage id='standardFields.exportStandardExcelFieldsLib'/>}
+        type='fa-file-excel-o'
+        onClick={() => exportStandardExcelFields(newDataRef.current)}
+      />
+      <IconTitle
+        title={<FormatMessage id='standardFields.importStandardFieldsLib'/>}
+        type='icon-daoru'
+        onClick={importStandardFields}
+      />
+      <IconTitle
+        title={<FormatMessage id='standardFields.exportStandardFieldsLib'/>}
+        type='icon-daochu'
+        onClick={() => exportStandardFields(newDataRef.current)}
+      />
+      <IconTitle
+        title={<FormatMessage id='standardFields.exportStandardExcelFieldsLibTpl'/>}
+        type='icon-daochu'
+        onClick={exportStandardExcelFieldsLibTpl}
+      />
+    </span>;
+  }, []);
   return <div className={`${currentPrefix}-standard-fields`} ref={resizeDomRef}>
     <Table
       {...commonProps}
@@ -136,6 +182,7 @@ export default React.memo(({prefix, dataChange, dataSource, twinkle, updateDataS
       expand
       ready={ready}
       search={search}
+      ExtraOpt={ExtraOpt}
     />
   </div>;
-});
+}));

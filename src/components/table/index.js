@@ -566,7 +566,7 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort, sea
         fields: newFields,
       };
     });
-    tableDataChange && tableDataChange(newFields, 'fields', 'delete');
+    tableDataChange && tableDataChange(newFields, 'fields');
     const selectField = newFields[(minIndex - 1) < 0 ? 0 : minIndex - 1];
     updateSelectedFields((selectField && [selectField.id]) || empty);
   };
@@ -678,9 +678,9 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort, sea
               .map(f => ({
                 ...f,
                 id: Math.uuid(),
-                primaryKey: false,
-                notNull: false,
-                autoIncrement: false,
+                // primaryKey: false,
+                // notNull: false,
+                // autoIncrement: false,
               }));
           let newCurrent = [...current];
           let result = false;

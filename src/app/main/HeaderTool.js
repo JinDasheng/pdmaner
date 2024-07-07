@@ -8,7 +8,7 @@ const GroupIconGroup = GroupIcon.GroupIconGroup;
 
 export default React.memo(forwardRef(({currentPrefix, close, iconClick, openModal,
                                         activeTab, dataSource, mode, isChildWindow,
-                                        jumpPosition, jumpDetail}, ref) => {
+                                        jumpPosition, jumpDetail, menuType}, ref) => {
   const [isCellSelected, setIsCellSelected] = useState([]);
   const themeMode = dataSource?.profile?.themeMode || 'themeDay';
   const calcIsCellSelected = (isSimple) => {
@@ -34,6 +34,9 @@ export default React.memo(forwardRef(({currentPrefix, close, iconClick, openModa
     } else {
       close();
     }
+  };
+  const checkDisable = () => {
+    return activeTab?.type !== 'diagram' || (menuType !== '1' &&  menuType !== '2');
   };
   return <div className={`${currentPrefix}-head ${currentPrefix}-head-${!isChildWindow ? 'normal' : 'view'}`}>
     <div className={`${currentPrefix}-head-logo`}>
@@ -68,10 +71,10 @@ export default React.memo(forwardRef(({currentPrefix, close, iconClick, openModa
       <GroupIconGroup>
         <GroupIcon
           draggable
-          hoverTitle={activeTab?.type !== 'diagram' ? FormatMessage.string({id: 'toolbar.relationEnableTitle'}) : ''}
+          hoverTitle={checkDisable() ? FormatMessage.string({id: 'toolbar.relationEnableTitle'}) : ''}
           title={FormatMessage.string({id: 'toolbar.emptyEntity'})}
           icon='icon-kongbiao'
-          disable={activeTab?.type !== 'diagram'}
+          disable={checkDisable()}
                //style={{cursor: 'move'}}
           onClick={iconClick}
           groupKey='empty'
@@ -80,10 +83,10 @@ export default React.memo(forwardRef(({currentPrefix, close, iconClick, openModa
         <GroupIcon
           draggable
           className={`${currentPrefix}-head-db`}
-          hoverTitle={activeTab?.type !== 'diagram' ? FormatMessage.string({id: 'toolbar.relationEnableTitle'}) : ''}
+          hoverTitle={checkDisable() ? FormatMessage.string({id: 'toolbar.relationEnableTitle'}) : ''}
           title={FormatMessage.string({id: 'toolbar.emptyLogic'})}
           icon='fa-columns'
-          disable={activeTab?.type !== 'diagram'}
+          disable={checkDisable()}
             //style={{cursor: 'move'}}
           onClick={iconClick}
           groupKey='logic'
@@ -92,20 +95,20 @@ export default React.memo(forwardRef(({currentPrefix, close, iconClick, openModa
         <GroupIcon
           draggable
           className={`${currentPrefix}-head-db`}
-          hoverTitle={activeTab?.type !== 'diagram' ? FormatMessage.string({id: 'toolbar.relationEnableTitle'}) : ''}
+          hoverTitle={checkDisable() ? FormatMessage.string({id: 'toolbar.relationEnableTitle'}) : ''}
           title={FormatMessage.string({id: 'toolbar.group'})}
           icon='fa-object-group'
                //style={{cursor: 'move'}}
           onClick={iconClick}
           groupKey='group'
-          disable={activeTab?.type !== 'diagram'}
+          disable={checkDisable()}
                //onMouseDown={e => iconClick(e, 'group')}
            />
         <GroupIcon
           className={`${currentPrefix}-head-db`}
           dropType='all'
-          disable={activeTab?.type !== 'diagram'}
-          hoverTitle={activeTab?.type !== 'diagram' ? FormatMessage.string({id: 'toolbar.relationEnableTitle'}) : ''}
+          disable={checkDisable()}
+          hoverTitle={checkDisable() ? FormatMessage.string({id: 'toolbar.relationEnableTitle'}) : ''}
           groupKey='shape'
           title={FormatMessage.string({id: 'toolbar.shape'})}
           icon='fa-square-o'
@@ -118,20 +121,20 @@ export default React.memo(forwardRef(({currentPrefix, close, iconClick, openModa
                ]}/>
         <GroupIcon
           draggable
-          hoverTitle={activeTab?.type !== 'diagram' ? FormatMessage.string({id: 'toolbar.relationEnableTitle'}) : ''}
+          hoverTitle={checkDisable() ? FormatMessage.string({id: 'toolbar.relationEnableTitle'}) : ''}
           title={FormatMessage.string({id: 'toolbar.mind'})}
-          icon={<div className={`${currentPrefix}-head-mind ${currentPrefix}-head-mind-${activeTab?.type !== 'diagram' ? 'disable' : 'normal'}`} >
+          icon={<div className={`${currentPrefix}-head-mind ${currentPrefix}-head-mind-${checkDisable() ? 'disable' : 'normal'}`} >
             <div className={`${currentPrefix}-head-mind-img`} />
           </div>}
           groupKey='mind'
           onClick={iconClick}
-          disable={activeTab?.type !== 'diagram'}
+          disable={checkDisable()}
            />
         <GroupIcon
           topStyle={{height: '24px'}}
           dropType='all'
-          disable={activeTab?.type !== 'diagram' || !calcIsCellSelected(false)}
-          hoverTitle={activeTab?.type !== 'diagram' ? FormatMessage.string({id: 'toolbar.relationEnableTitle'}) : ''}
+          disable={checkDisable() || !calcIsCellSelected(false)}
+          hoverTitle={checkDisable() ? FormatMessage.string({id: 'toolbar.relationEnableTitle'}) : ''}
           groupKey='alignment'
           title={FormatMessage.string({id: 'toolbar.alignment'})}
           icon='fa-align-left'
@@ -267,12 +270,12 @@ export default React.memo(forwardRef(({currentPrefix, close, iconClick, openModa
                         {
                           key: 'png',
                           name: FormatMessage.string({id: 'toolbar.exportImgPng'}),
-                          disable: activeTab?.type !== 'diagram',
+                          disable: checkDisable(),
                         },
                         {
                           key: 'svg',
                           name: FormatMessage.string({id: 'toolbar.exportImgSvg'}),
-                          disable: activeTab?.type !== 'diagram',
+                          disable: checkDisable(),
                         },
                       ],
                     },

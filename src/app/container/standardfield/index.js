@@ -15,20 +15,20 @@ import {
   Icon, IconTitle, Message,
   Modal,
   openModal,
-  SearchInput,
+  SearchInput, Terminal,
   Tooltip, Upload,
 } from 'components';
 import _ from 'lodash/object';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import {FixedSizeTree as Tree} from 'react-vtree';
 import StandardFieldsEdit from './StandardFieldsEdit';
-import StandardFieldsListSelect from './StandardFieldsListSelect';
 import {getPrefix} from '../../../lib/prefixUtil';
 import { separator } from '../../../../profile';
 import {validateStandardFields, reset} from '../../../lib/datasource_util';
 import './style/index.less';
 import {getAllTabData, replaceDataByTabId} from '../../../lib/cache';
 import {notify} from '../../../lib/subscribe';
+import {connectDB, getLogPath, saveAsTemplate, selectDir, showItemInFolder} from '../../../lib/middle';
 
 const OptHelp = ({currentPrefix}) => {
   return <div className={`${currentPrefix}-standard-fields-list-title-help`}>
@@ -36,17 +36,21 @@ const OptHelp = ({currentPrefix}) => {
   </div>;
 };
 
-export default forwardRef(({prefix, dataSource, updateDataSource, activeKey}, ref) => {
+export default forwardRef(({prefix, dataSource, updateDataSource, projectInfo,
+                             activeKey, config, openLoading, closeLoading,
+                             dealExportFile}, ref) => {
   const currentPrefix = getPrefix(prefix);
   const [fold, setFold] = useState(true);
   const [filterValue, setFilterValue] = useState('');
   const [selectFields, setSelectFields] = useState([]);
   const selectFieldsRef = useRef([]);
   selectFieldsRef.current = [...selectFields];
-  const listSelectRef = useRef([]);
   const contentRef = useRef(null);
   const dataSourceRef = useRef(dataSource);
   dataSourceRef.current = dataSource;
+  const configRef = useRef(null);
+  configRef.current = config;
+  const editRef = useRef(null);
   const iconClick = () => {
     setFold(pre => !pre);
   };
@@ -140,6 +144,106 @@ export default forwardRef(({prefix, dataSource, updateDataSource, activeKey}, re
       }
     });
   };
+  const pickerStandFields = (dataObj) => {
+    editRef.current.resetStandardFields(dataObj);
+    Message.success({title: FormatMessage.string({id: 'optSuccess'})});
+  };
+  const exportStandardExcelFieldsLibTpl = () => {
+    saveAsTemplate('PDManer-excel-standard-field', 'xlsx');
+  };
+  const exportStandardFields = () => {
+    const standardFields = _.get(dataSource, 'standardFields', []);
+    Download(
+        [JSON.stringify(standardFields.map(s => ({
+          ...s,
+          fields: s.fields?.map(f => reset(f, dataSource,['id', 'defKey'])),
+        })), null, 2)],
+        'application/json',
+        `${dataSource.name}-${FormatMessage.string({id: 'standardFields.standardFieldsLib'})}-${moment().format('YYYYMDHHmmss')}.json`,
+    );
+  };
+  const exportStandardExcelFields = (data) => {
+    const result = validateStandardFields(data);
+    if (!result) {
+      selectDir(dataSourceRef.current.name, 'xlsx')
+          .then((file) => {
+            openLoading(FormatMessage.string({id: 'toolbar.exportExcel'}));
+            connectDB({
+              ...dataSourceRef.current,
+              standardFields: data,
+            }, configRef.current, {
+              sinerFile: projectInfo,
+              outFile: file,
+            }, 'GenStandardFieldExcelImpl', (res) => {
+              dealExportFile(res, file);
+            });
+          });
+    } else {
+      Modal.error({
+        title: FormatMessage.string({id: 'optFail'}),
+        message: result,
+      });
+    }
+  };
+  const importStandardExcelFields = () => {
+    Upload('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', (file) => {
+      openLoading(FormatMessage.string({id: 'toolbar.importExcel'}));
+      connectDB(dataSourceRef.current, configRef.current, {
+        excelFile: file.path,
+      }, 'ParseStandardFieldExcelImpl', (result) => {
+        if (result.status === 'FAILED') {
+          const termReady = (term) => {
+            term.write(typeof result.body === 'object' ? JSON.stringify(result.body, null, 2)
+                : result.body);
+          };
+          Modal.error({
+            bodyStyle: {width: '80%'},
+            contentStyle: {width: '100%', height: '100%'},
+            title: FormatMessage.string({id: 'optFail'}),
+            message: <div>
+              <div style={{textAlign: 'center'}}><FormatMessage id='dbConnect.log'/><a onClick={showItemInFolder}>{getLogPath()}</a></div>
+              <Terminal termReady={termReady}/>
+            </div>,
+          });
+          closeLoading();
+        } else {
+          closeLoading();
+          pickerStandFields(result.body.map((g) => {
+            return {
+              ...g,
+              id: Math.uuid(),
+              fields: (g.fields || []).map((f) => {
+                return {
+                  ...f,
+                  id: Math.uuid(),
+                };
+              }),
+            };
+          }));
+        }
+      });
+    }, (f) => {
+      return f.name.endsWith('.xlsx');
+    }, false);
+  };
+  const importStandardFields = () => {
+    Upload('application/json', (data) => {
+      try {
+        const dataObj = JSON.parse(data).map(d => ({
+          ...d,
+          fields: (d.fields || []).map(f => reset({...f, id: Math.uuid()}, dataSource, ['defKey', 'id'])),
+        }));
+        pickerStandFields(dataObj);
+      } catch (err) {
+        Modal.error({
+          title: FormatMessage.string({id: 'optFail'}),
+          message: FormatMessage.string({id: 'standardFields.errData'}),
+        });
+      }
+    }, (file) => {
+      return file.name.endsWith('.json');
+    });
+  };
   const onClick = (d) => {
     let changeFields = [];
     let tempData;
@@ -190,6 +294,12 @@ export default forwardRef(({prefix, dataSource, updateDataSource, activeKey}, re
       dataChange={dataChange}
       dataSource={dataSource}
       updateDataSource={updateDataSource}
+      exportStandardExcelFields={exportStandardExcelFields}
+      importStandardExcelFields={importStandardExcelFields}
+      importStandardFields={importStandardFields}
+      exportStandardFields={exportStandardFields}
+      exportStandardExcelFieldsLibTpl={exportStandardExcelFieldsLibTpl}
+      ref={editRef}
     />, {
       closeable: false,
       bodyStyle: {width: '80%'},
@@ -202,63 +312,6 @@ export default forwardRef(({prefix, dataSource, updateDataSource, activeKey}, re
           <FormatMessage id='button.cancel'/>
         </Button>,
       ],
-    });
-  };
-  const exportStandardFields = () => {
-    const standardFields = _.get(dataSource, 'standardFields', []);
-    Download(
-        [JSON.stringify(standardFields.map(s => ({
-          ...s,
-          fields: s.fields?.map(f => reset(f, dataSource,['id', 'defKey'])),
-        })), null, 2)],
-        'application/json',
-      `${dataSource.name}-${FormatMessage.string({id: 'standardFields.standardFieldsLib'})}-${moment().format('YYYYMDHHmmss')}.json`,
-     );
-  };
-  const importStandardFields = () => {
-    Upload('application/json', (data) => {
-      try {
-        const dataObj = JSON.parse(data).map(d => ({
-          ...d,
-          fields: (d.fields || []).map(f => reset({...f, id: Math.uuid()}, dataSource, ['defKey', 'id'])),
-        }));
-        let modal;
-        const onOk = () => {
-          updateDataSource({
-            ...dataSource,
-            standardFields: listSelectRef.current.getStandardFields(),
-          });
-          modal.close();
-          Message.success({title: FormatMessage.string({id: 'optSuccess'})});
-        };
-        const onClose = () => {
-          modal.close();
-        };
-        const standardFields = _.get(dataSource, 'standardFields', []);
-        modal = openModal(<StandardFieldsListSelect
-          prefix={`${currentPrefix}-standard-fields`}
-          ref={listSelectRef}
-          data={dataObj}
-          groups={standardFields}
-        />, {
-          bodyStyle: {width: '70%'},
-          title: <FormatMessage id='standardFields.importStandardFieldsLib'/>,
-          buttons: [
-            <Button key='ok' onClick={onOk} type='primary'>
-              <FormatMessage id='button.ok'/>
-            </Button>,
-            <Button key='cancel' onClick={onClose}>
-              <FormatMessage id='button.close'/>
-            </Button>],
-        });
-      } catch (err) {
-        Modal.error({
-          title: FormatMessage.string({id: 'optFail'}),
-          message: FormatMessage.string({id: 'standardFields.errData'}),
-        });
-      }
-    }, (file) => {
-      return file.name.endsWith('.json');
     });
   };
   useImperativeHandle(ref, () => {
@@ -348,8 +401,6 @@ export default forwardRef(({prefix, dataSource, updateDataSource, activeKey}, re
           <Tooltip title={<OptHelp currentPrefix={currentPrefix}/>} force placement='topLeft'>
             <IconTitle type='icon-xinxi'/>
           </Tooltip>
-          <IconTitle title={<FormatMessage id='standardFields.importStandardFieldsLib'/>} type='icon-daoru' onClick={importStandardFields}/>
-          <IconTitle title={<FormatMessage id='standardFields.exportStandardFieldsLib'/>} type='icon-daochu' onClick={exportStandardFields}/>
           <IconTitle title={<FormatMessage id='standardFields.setting'/>} type='icon-weihu' onClick={onClick}/>
         </span>
       </div>
