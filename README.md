@@ -1,7 +1,7 @@
 # 此项目已经关闭归档
 
 全部功能已由PDMaas承接，**最新版本PDMaas**: [yonsum/PDMaas](https://gitee.com/yonsum/PDMaas)
-[![star](https://gitee.com/yonsum/PDMaas/badge/star.svg?theme=gvp)](https://gitee.com/yonsum/PDMaas/stargazers) 
+[![star](https://gitee.com/yonsum/PDMaas/badge/star.svg?theme=gvp)](https://gitee.com/yonsum/PDMaas) 
 
 
 - 官方网站： [www.yonsum.com](https://www.yonsum.com/)
