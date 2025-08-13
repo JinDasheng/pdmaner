@@ -1,3 +1,17 @@
+---
+
+# 此项目已经关闭归档
+全部功能已由PDMaas承接
+
+**最新PDMaas**: [yonsum/PDMaas](https://gitee.com/yonsum/PDMaas)
+
+**如想了解更多，请查阅以下文章:**
+- [【官方公告】PDManer永久停更、PDMaas全面接管：98%功能无损继承](https://mp.weixin.qq.com/s/HCQjAOdVEOqGst-3AJFsNg)
+- [PDMan→PDManer→PDMaas：一款数据建模工具三次更名的七年进化之路](https://mp.weixin.qq.com/s/EaM5M5A4FSekOZ2Mzgnz_A)
+
+---
+
+
 # 一、软件介绍
 
 PDManer元数建模，是一款多操作系统开源免费的桌面版关系数据库模型建模工具，相对于PowerDesigner，他具备界面简洁美观，操作简单，上手容易等特点。支持Windows,Mac,Linux等操作系统，也能够支持国产操作系统，能够支持的数据库如下：
