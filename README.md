@@ -1,3 +1,20 @@
+#
+```
+docker run --rm -ti \                                                                                                                INT ✘  2m 6s  
+--env-file <(env | grep -iE 'DEBUG|NODE_|ELECTRON_|YARN_|NPM_|CI|CIRCLE|TRAVIS_TAG|TRAVIS|TRAVIS_REPO_|TRAVIS_BUILD_|TRAVIS_BRANCH|TRAVIS_PULL_REQUEST_|APPVEYOR_|CSC_|GH_|GITHUB_|BT_|AWS_|STRIP|BUILD_') \
+--env ELECTRON_CACHE="/root/.cache/electron" \
+--env ELECTRON_BUILDER_CACHE="/root/.cache/electron-builder" \
+-v ${PWD}:/project \
+-v ${PWD##*/}-node-modules:/project/node_modules \
+-v ~/.cache/electron:/root/.cache/electron \
+-v ~/.cache/electron-builder:/root/.cache/electron-builder \
+electronuserland/builder:16-wine
+
+yarn install
+yarn run package-linux
+```
+
+
 # 此项目已经关闭归档
 
 全部功能已由PDMaas承接，**最新版本PDMaas**: [yonsum/PDMaas](https://gitee.com/yonsum/PDMaas)
